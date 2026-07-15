@@ -2,26 +2,26 @@ body{
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     min-height: 100vh;
-    background: linear-gradient(
-        to bottom , 
-        rgb(3, 3, 3) 5%,
-        rgb(6, 6, 6) 20% ,
-        rgb(7, 7, 7) 50% ,
-        rgb(10, 10, 10) 75%,
-        rgb(13, 13, 13) 100%
-    );
+    background-color: #100b09;
     color: rgb(197, 197, 197);
     display: flex;
     align-items: center;
     justify-content: center;
 }
+#logo{
+    
+    font-size: 5rem;
+}
+#part{
+    color: #c9a227;
+}
 #central_content{
     display: flex;
     flex-direction: column;
-    gap: 5%;
     align-items: center;
 }
 #cont{
+  
     width: min(90%, 1000px);
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -29,6 +29,7 @@ body{
     align-items: center;
     justify-content: center;
     column-gap: 1%;
+    
 }
 @keyframes fade_in{
 
@@ -86,7 +87,7 @@ body{
     animation: appear 3s 3s forwards;
     transition: background-color 0.3s ease;
     border-radius: 20px;
-    border-style: solid;
+    border: 2px,solid,#c9a227;
     width: 6rem;
     height: 3rem;
     color: white;
@@ -103,16 +104,7 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
-    
-    height: 70vh;
+    justify-content: center;
+    height: 50vh;
     width: 30vw;
-    
-    background: linear-gradient(
-        to bottom ,
-        rgb(12, 3, 0) 20% ,
-        rgba(12, 3, 0, 0.7) 40%  ,
-        rgba(12, 3, 0,0.5) 50% , 
-        rgba(12, 3, 0,0) 100%
-    );
-  
 }
