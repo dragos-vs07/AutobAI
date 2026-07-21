@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/main_template.css') }}" >
+
+        <title>AutobAI</title>
+
+    </head>
+
+    <body>
+        
+        <div class = "upper_nav_bar">
+
+                <button class ="btn">My listings</button>
+                <button class ="btn">Predict value</button>
+                <button class ="btn">Account</button>
+
+        </div>
+
+        {% block content %}
+        {% endblock %}
+
+    </body>
+
+</html>
