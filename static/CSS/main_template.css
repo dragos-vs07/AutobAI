@@ -1,4 +1,7 @@
 
+*{
+    box-sizing: border-box;
+}
 body{
     font-family: Arial, Helvetica, sans-serif;
     background-color: #100b09;
@@ -6,15 +9,28 @@ body{
     padding: 0px;
 }
 
-.upper_nav_bar{
+#btn_area{
+    gap: 10%;
+    flex: 1;
     display: flex;
-    flex-direction: row;
-    align-items: center;
     justify-content: center;
-    gap: 30%;
-    width: 100vw;
+}
+
+#pic_area {
+    padding-right: 10px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+}
+
+.upper_nav_bar{
+    padding-left: 5px;
+    display: flex;
+    align-items: center;
+    gap: 5rem;
+    width: 100%;
     height: 7vh;
-    border-bottom: 2px , solid , black;
+    border-bottom: 2px  solid  black;
     background-color:rgb(29, 29, 29);
 }
 .btn{
@@ -25,8 +41,21 @@ body{
     border-radius: 15px;
     cursor: pointer;
     background-color:rgb(24, 23, 23);
-    border: 2px , solid , #c9a227;
+    border: 2px  solid  #c9a227;
 }
 .btn:hover{
     background-color: rgb(68, 65, 65);
+}
+.pic{
+    cursor: pointer;
+    width: 2rem;
+    height: 30%;
+    color: white;
+}
+#logo{
+    color: white;
+    font-size: 2rem;
+}
+#part{
+    color: #c9a227;
 }
