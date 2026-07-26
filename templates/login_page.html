@@ -1,0 +1,35 @@
+{% extends "main_template.html" %}
+
+{% block head %}
+
+    <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/login_page.css') }}" >
+
+{% endblock %}
+
+{% block content %}
+    <div class ="content">
+
+        <h1> Login</h1>
+
+                <form class ="login_form" method = "POST" action = "/submit_login">
+
+                    <h3>Username or Email</h3>
+                    <input type="text" class ="input_box" name = "username_or_email" required >
+
+                    <br>
+                    
+                    <h3>Password</h3>
+                    <input type="password" class ="input_box" name = "password" required >
+
+                    <br>
+
+                    <button type="submit" class ="btn">Login</button>
+
+                    {% for m in get_flashed_messages() %}
+                        <br>
+                        <p style="color:rgb(139, 0, 0)">{{m}}</p>
+                    {% endfor %}
+
+                </form>
+
+{% endblock %}

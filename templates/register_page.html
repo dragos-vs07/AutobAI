@@ -1,0 +1,48 @@
+{% extends "main_template.html" %}
+
+{% block head %}
+
+    <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/register_page.css') }}" >
+
+{% endblock %}
+
+{% block content %}
+
+      <div class ="content">
+
+        <h1> Register</h1>
+                <form class ="reg_form" method = "POST" action = "/submit_registration">
+
+                    <h3>Username</h3>
+                    <input type="text" class ="input_box" name = "username" required required minlength="5" maxlength="20">
+
+                    <br>
+
+                    <h3>Email</h3>
+                    <input type="text" class ="input_box" name = "email" required >
+
+                    <br>
+                    
+                    <h3>Password</h3>
+                    <input type="password" class ="input_box" name = "password" required required minlength="5" maxlength="20">
+
+                    <br>
+                    
+                    <h3>Confirm password</h3>
+                    <input type="password" class ="input_box" name = "cpassword" required required minlength="5" maxlength="20">
+                    
+                    <br>
+
+                    <button type="submit" class ="btn">Create account</button>
+
+                    {% for m in get_flashed_messages() %}
+                        <br>
+                        <p style="color:rgb(139, 0, 0)">{{m}}</p>
+                    {% endfor %}
+                </form>
+            <p>Already have an account?</p>
+            <p onclick = "window.location.href='/loginp'" id ="login_txt">Login</p>
+
+    </div> 
+        
+{% endblock %}
