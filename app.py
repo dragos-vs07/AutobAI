@@ -1,4 +1,4 @@
-from flask import Flask , render_template , session , request , flash , redirect , url_for
+from flask import Flask , render_template , session , request , flash , redirect , url_for , jsonify
 from extensions import db , migrate
 import pandas as pd
 from werkzeug.security import generate_password_hash , check_password_hash
@@ -10,6 +10,40 @@ db.init_app(app)
 migrate.init_app(app, db)
 
 from models import User, CarMake, CarModel, Listing, ListingImages,  Conversations, Messages
+
+body_styles = [
+    "Sedan",
+    "Hatchback",
+    "Coupe",
+    "Convertible",
+    "Roadster",
+    "Station Wagon",
+    "SUV",
+    "Crossover",
+    "Pickup Truck",
+    "Van",
+    "Minivan",
+    "Liftback",
+    "Fastback",
+    "Limousine",
+]
+
+engine_configurations = [
+                              "Inline-3 (I3)",
+                              "Inline-4 (I4)",
+                              "Inline-5 (I5)",
+                              "Inline-6 (I6)",
+                              "V6",
+                              "V8",
+                              "V10",
+                              "V12",
+                              "Flat-4 (Boxer)",
+                              "Flat-6 (Boxer)",
+                              "W12",
+                              "W16",
+                              "Rotary",
+                              "Other"
+                             ]
 
 @app.route("/")
 def load_home():
@@ -23,7 +57,13 @@ def load_general_page():
 def load_make_listing_page():
     if not session.get("user_id"):
           return redirect(url_for("load_home"))
-    return render_template("make_listing_page.html")
+
+    
+    return render_template("make_listing_page.html" ,
+                           brands = CarMake.query.order_by(CarMake.brand).all() ,
+                           engine_configurations = engine_configurations , 
+                           body_styles = body_styles
+                        )
 
 @app.route("/predictp")
 def load_predict_page():
@@ -128,7 +168,16 @@ def login_user():
 def logout_user():
       session.clear()
       return redirect(url_for("load_general_page"))
-            
+
+@app.route("/API/get_models/<string:brand>")
+def find_models(brand):
+     b = CarMake.query.filter_by(brand = brand).first();
+
+     return jsonify([
+          {
+          "model" : model.model
+          }
+      for model in b.models])
 
 if __name__ == "__main__":
         app.run()

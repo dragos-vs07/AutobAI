@@ -14,35 +14,58 @@
 
         <form class = "listing_form" enctype="multipart/form-data">
 
+            <div class ="upper_area">
+
                 <div id ="general_area" class ="cell">
 
                     <h2>General information</h2>
 
+                        <p>Brand</p>
+
+                        <select class ="input_box" id ="makes_dropdown_list">
+
+                            {% for b in brands %}
+                                <option value="{{b.brand}}" class ="input_box">{{b.brand.title()}}</option>
+                            {% endfor %}
+
+                        </select>
+
+                        <br>
+
+                        <p>Model</p>
+                        <select class ="input_box" id="models_drodown_list">
+                        </select>
+
+                        <br>
+
+                        <p>Model Year</p>
+                        <input type="number" min="1800" max ="2026" placeholder = "year" class ="input_box">
+
+                        <br>
+                        
+                        <p>Body Style</p>
+                        
+                        <select class="input_box">
+                            {% for bs in body_styles %}
+                                <option class="input_box" value="{{bs}}">{{bs}}</option>
+                            {% endfor %}
+                        </select>
+
+                        <br>
+
+                        <p>Colour</p>
+                        <input type="text" placeholder = "colour" class="input_box">
+
+                        <br>
+                        
                         <p>Price</p>
                         <div>
                             <input type="number" min="0" max="500000" value = "0" id = "PriceNumber" class ="input_box">
                             <input type="range" min="0" max="500000" value = "0" id = "PriceRange">
                         </div>
 
-                        <p>Fabrication Year</p>
-                        <input type="number" min="1800" max ="2026" placeholder = "year" class ="input_box">
-
-                        <p>Colour</p>
-                        <input type="text" placeholder = "colour" class="input_box">
                 </div>
 
-                <br>
-                <br>
-                
-                <div id ="img_area" class ="cell">
-
-                        <h2>Add images</h2>
-                         <input type="file" name="carImages" accept="image/*" multiple>
-                </div>
-
-                <br>
-                <br>
-                
                 <div id = "technicals_area" class ="cell">
                     
                     <h2>Technical details</h2>
@@ -60,6 +83,8 @@
 
                     </div>
 
+                        <br>
+                        
                     <p>Engine displacement</p>
 
                     <div>
@@ -73,6 +98,8 @@
 
                     </div>
 
+                        <br>
+                        
                     <p>Fuel efficiency</p>
 
                     <div>
@@ -86,6 +113,28 @@
                         <label for="unitmpg">mpg</label>
                     </div>
 
+                    <br>
+
+                    <p>Engine configuration</p>
+
+                    <select class ="input_box">
+                        {% for ec in engine_configurations %}
+                            <option class ="input_box" value="{{ec}}">{{ec}}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+                
+            
+            </div>
+
+                <br>
+                <br>
+
+                <div id ="img_area" class ="cell">
+
+                        <h2>Add images</h2>
+                         <input type="file" name="carImages" accept="image/*" multiple>
                 </div>
 
                 <br>

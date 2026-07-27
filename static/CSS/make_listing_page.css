@@ -25,6 +25,16 @@ body{
     padding-left: 6px;
     padding: 6px;
 }
+.upper_area{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20rem;
+}
+@media (max-width: 900px) {
+    .upper_area {
+        grid-template-columns: 1fr;
+    }
+}
 .listing_form{
     width: 80%;
     color: white;
