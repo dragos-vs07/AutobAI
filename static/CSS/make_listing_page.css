@@ -1,0 +1,43 @@
+body{
+    display: flex;
+    flex-direction: column;
+}
+.content{
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: center;
+}
+.cell{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+#description_area{
+    width: 80%;
+}
+.input_box{
+    border-radius: 10px;
+    background-color:rgb(29, 29, 29);
+    border: 1px solid #c9a227;
+    color: white;
+    padding-left: 6px;
+    padding: 6px;
+}
+.listing_form{
+    width: 80%;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 15px;
+    border: 2px solid white;
+    border-radius: 15px;
+    background-color: rgb(24, 23, 23);
+}
+#descp_box{
+    width: 100%;
+    height: 20rem;
+}

@@ -21,6 +21,8 @@ def load_general_page():
 
 @app.route("/mklistp")
 def load_make_listing_page():
+    if not session.get("user_id"):
+          return redirect(url_for("load_home"))
     return render_template("make_listing_page.html")
 
 @app.route("/predictp")
@@ -37,7 +39,13 @@ def load_login_page():
 
 @app.route("/accountp")
 def load_account_page():
-    return render_template("account_page.html")
+
+    if not session.get("user_id"):
+      return redirect(url_for("load_home"))
+
+    user = User.query.filter_by(id = session.get("user_id")).first()
+
+    return render_template("account_page.html", user = user)
 
 @app.route("/infop")
 def load_information_page():
@@ -116,7 +124,10 @@ def login_user():
            flash("Login data incorrect")
            return(redirect(url_for("load_login_page")))
 
-      
+@app.route("/logout")
+def logout_user():
+      session.clear()
+      return redirect(url_for("load_general_page"))
             
 
 if __name__ == "__main__":

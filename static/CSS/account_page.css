@@ -1,0 +1,26 @@
+
+body{
+    display: flex;
+    flex-direction: column;
+}
+.content{
+    color: white;
+    flex: 1;
+    flex-direction: column;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.container{
+    width: 25%;
+    padding: 10px;
+    border-radius: 15px;
+    background-color: rgb(24, 23, 23);
+    border: 2px solid  white;
+}
+#logout_button{
+    display: flex;
+    align-content: center;
+    justify-content: center;
+    width: 5rem;
+}

@@ -1,0 +1,109 @@
+{% extends "main_template.html" %}
+
+{% block head %}
+
+    <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/make_listing_page.css') }}" >
+
+{% endblock %}
+
+{% block content %}
+
+<br>
+
+    <div class ="content">
+
+        <form class = "listing_form" enctype="multipart/form-data">
+
+                <div id ="general_area" class ="cell">
+
+                    <h2>General information</h2>
+
+                        <p>Price</p>
+                        <div>
+                            <input type="number" min="0" max="500000" value = "0" id = "PriceNumber" class ="input_box">
+                            <input type="range" min="0" max="500000" value = "0" id = "PriceRange">
+                        </div>
+
+                        <p>Fabrication Year</p>
+                        <input type="number" min="1800" max ="2026" placeholder = "year" class ="input_box">
+
+                        <p>Colour</p>
+                        <input type="text" placeholder = "colour" class="input_box">
+                </div>
+
+                <br>
+                <br>
+                
+                <div id ="img_area" class ="cell">
+
+                        <h2>Add images</h2>
+                         <input type="file" name="carImages" accept="image/*" multiple>
+                </div>
+
+                <br>
+                <br>
+                
+                <div id = "technicals_area" class ="cell">
+                    
+                    <h2>Technical details</h2>
+
+                    <p>Power</p>
+
+                    <div>
+
+                        <input type="number" min="0"  placeholder = "hp" class ="input_box" id = "ep">
+                        <input type="radio" id="unithp" name="enginePowerUnit" checked>
+                        <label for="unithp">hp(PS)</label>
+
+                        <input type="radio" id="unitkW" name="enginePowerUnit" >
+                        <label for="unitkW">kW</label>
+
+                    </div>
+
+                    <p>Engine displacement</p>
+
+                    <div>
+                        <input type="number" min="0" placeholder = "L"  class ="input_box" id = "ed">
+
+                        <input type="radio" id="unitL" name="engineDisplacementUnit" checked>
+                        <label for="unitL">L</label>
+
+                        <input type="radio" id="unitCC" name="engineDisplacementUnit" >
+                        <label for="unitCC">cc</label>
+
+                    </div>
+
+                    <p>Fuel efficiency</p>
+
+                    <div>
+
+                        <input type="number" min="0" placeholder = "l/100km"   class ="input_box" id="fe">
+                        
+                        <input type="radio" id="unitLkm" name="fuelEfficiencyUnit"  checked>
+                        <label for="unitLkm">l/100km</label>
+
+                        <input type="radio" id="unitmpg" name="fuelEfficiencyUnit">
+                        <label for="unitmpg">mpg</label>
+                    </div>
+
+                </div>
+
+                <br>
+                <br>
+                
+                <div id = "description_area" class ="cell">
+                        <h2>Description</h2>
+                        <input type = "text" class ="input_box" id = "descp_box">
+                </div>
+
+                <br>
+                <br>
+
+                <button type="submit" class ="btn">Submit listing</button>
+        </form>
+
+    </div>
+
+    <script src = "{{ url_for( 'static' , filename = 'JavaScript/make_listing_page.js')}}" ></script>
+
+{% endblock %}

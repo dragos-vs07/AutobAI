@@ -1,0 +1,33 @@
+{% extends "main_template.html" %}
+
+{% block head %}
+
+     <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/account_page.css') }}" >
+
+{% endblock %}
+
+{% block content %}
+
+    <div class = "content">
+
+            <h2>Account information</h2>
+
+            <div class = "container">
+
+                <p>Username:</p>
+                <p>{{user.username}}</p>
+                
+                <br>
+
+                <p>Email:</p>
+                <p>{{user.email}}</p>
+
+                <br>
+                
+                <button class ="btn" id = "logout_button" onclick = "window.location.href='/logout'">Logout</button>
+
+            </div>
+
+    </div>
+
+{% endblock %}
