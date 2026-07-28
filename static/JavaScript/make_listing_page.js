@@ -50,25 +50,117 @@ unitkW.addEventListener('change' , () => {
 })
 
 makesddl = document.getElementById("makes_dropdown_list");
-modelsddl = document.getElementById("models_drodown_list");
+modelsddl = document.getElementById("models_dropdown_list");
 
+modelsddl.addEventListener('change' , () => {
+
+    if(modelsddl.value == "Other")
+        document.getElementById("other_model").style = "display: block";
+    else
+        document.getElementById("other_model").style = "display: none";
+})
 async function display_models(brand)
 {
-    const response = await fetch(`/API/get_models/${brand}`);
-    const models = await response.json();
-
     modelsddl.innerHTML = "";
 
-    for (const m of models)
+    if(brand != "Other" && brand != "Unknown")
     {
-        const option = document.createElement("option");
-        option.value = m.model;
-        option.textContent = m.model;
-        option.className = "input_box";
-        modelsddl.appendChild(option);
+            const response = await fetch(`/API/get_models/${brand}`);
+            const models = await response.json();
+
+            
+
+            for (const m of models)
+            {
+                const option = document.createElement("option");
+                option.value = m.model;
+                option.textContent = m.model;
+                option.className = "input_box";
+                modelsddl.appendChild(option);
+            }
     }
+
+    let option = document.createElement("option");
+    option.value = "Other";
+    option.textContent = "Other";
+    option.className = "input_box";
+    modelsddl.appendChild(option);
+
+    option = document.createElement("option");
+    option.value = "Unknown";
+    option.textContent = "Unknown";
+    option.className = "input_box";
+    modelsddl.appendChild(option);
 }
 
-makesddl.addEventListener('change', function(){ display_models(this.value) });
+makesddl.addEventListener('change', function(){ 
+
+    document.getElementById("other_model").style = "display: none";
+
+    display_models(this.value);
+
+    if (this.value == "Other")
+        document.getElementById("other_brand").style="display: block";
+    else
+        document.getElementById("other_brand").style="display: none";
+});
 
 display_models(makesddl.value);
+
+mlg = document.getElementById("mileageInput");
+
+unitkm = document.getElementById("unitkm");
+unitmiles = document.getElementById("unitmiles");
+
+unitkm.addEventListener('change' , () => {
+    mlg.placeholder = "km";
+})
+
+unitmiles.addEventListener('change' , () => {
+    mlg.placeholder = "miles";
+})
+
+const ft = document.getElementById("fuel_type");
+
+ft.addEventListener('change' , () => {
+    if(ft.value == "Other")
+        document.getElementById("other_fuel").style = "display: block";
+    else
+        document.getElementById("other_fuel").style = "display: none";
+})
+
+const engc = document.getElementById("engine_config");
+
+engc.addEventListener('change' , () => {
+    if(engc.value == "Other")
+        document.getElementById("other_engine_config").style = "display: block";
+    else
+        document.getElementById("other_engine_config").style = "display: none";
+})
+
+const dt = document.getElementById("drivetrain");
+
+dt.addEventListener('change' , () => {
+    if(dt.value == "Other")
+        document.getElementById("other_drivetrain").style = "display: block";
+    else
+        document.getElementById("other_drivetrain").style = "display: none";
+})
+
+const trans = document.getElementById("trans");
+
+trans.addEventListener('change' , () => {
+    if(trans.value == "Other")
+        document.getElementById("other_trans").style = "display: block";
+    else
+        document.getElementById("other_trans").style = "display: none";
+})
+
+const bs = document.getElementById("bs");
+
+bs.addEventListener('change' , () => {
+    if(bs.value == "Other")
+        document.getElementById("other_bs").style = "display: block";
+    else
+        document.getElementById("other_bs").style = "display: none";
+})

@@ -22,19 +22,30 @@
 
                         <p>Brand</p>
 
-                        <select class ="input_box" id ="makes_dropdown_list">
+                            <select class ="input_box" id ="makes_dropdown_list">
 
-                            {% for b in brands %}
-                                <option value="{{b.brand}}" class ="input_box">{{b.brand.title()}}</option>
-                            {% endfor %}
+                                {% for b in brands %}
+                                    <option value="{{b.brand}}" class ="input_box">{{b.brand.title()}}</option>
+                                {% endfor %}
 
-                        </select>
+                                <option class="input_box" value="Other">Other</option>
+                                <option class="input_box" value="Unknown">Unknown</option>
+
+                            </select>
+
+                            <br>
+
+                            <input type="text" class ="input_box" style="display: none" id = "other_brand" placeholder ="other brand">
 
                         <br>
 
                         <p>Model</p>
-                        <select class ="input_box" id="models_drodown_list">
+                        <select class ="input_box" id="models_dropdown_list">
                         </select>
+
+                         <br>
+
+                            <input type="text" class ="input_box" style="display: none" id = "other_model" placeholder ="other model">
 
                         <br>
 
@@ -45,11 +56,29 @@
                         
                         <p>Body Style</p>
                         
-                        <select class="input_box">
+                        <select class="input_box" id = "bs">
                             {% for bs in body_styles %}
                                 <option class="input_box" value="{{bs}}">{{bs}}</option>
                             {% endfor %}
                         </select>
+
+                         <br>
+
+                        <input type="text" class ="input_box" style="display: none" id = "other_bs" placeholder ="other body style">
+
+                        <br>
+
+                        <p>Mileage</p>
+
+                        <div>
+                            <input type="number" placeholder="km" class="input_box" id="mileageInput">
+
+                            <input type="radio" id="unitkm" name="MileageUnit" checked="true">
+                            <label for="unitkm">km</label>
+
+                            <input type="radio" id="unitmiles" name="MileageUnit">
+                            <label for="unitmiles">miles</label>
+                        </div>
 
                         <br>
 
@@ -115,13 +144,67 @@
 
                     <br>
 
+                    <p>Fuel type</p>
+
+                    <select class ="input_box" id = "fuel_type">
+                        <option class="input_box" value="Gasoline(Petrol)">Gasoline(Petrol)</option>
+                        <option class="input_box" value="Diesel">Diesel</option>
+                        <option class="input_box" value="LPG">LPG</option>
+                        <option class="input_box" value="Electric">Electric</option>
+                        <option class="input_box" value="Hybrid">Hybrid</option>
+                        <option class="input_box" value="Plug-in Hybrid">Plug-in Hybrid</option>
+                        <option class="input_box" value="Other">Other</option>
+                        <option class="input_box" value="Unknown">Unknown</option>
+                    </select>
+
+                    <br>
+
+                    <input type="text" class ="input_box" style="display: none" id = "other_fuel" placeholder ="other fuel">
+
+                    <br>
+
                     <p>Engine configuration</p>
 
-                    <select class ="input_box">
+                    <select class ="input_box" id = "engine_config">
                         {% for ec in engine_configurations %}
                             <option class ="input_box" value="{{ec}}">{{ec}}</option>
                         {% endfor %}
                     </select>
+
+                    <br>
+
+                    <input type="text" class ="input_box" style="display: none" id = "other_engine_config" placeholder ="other engine configuration">
+
+                    <br>
+
+                    <p>Drivetrain</p>
+
+                    <select class ="input_box" id = "drivetrain">
+                        <option class="input_box" value="FWD">FWD</option>
+                        <option class="input_box" value="RWD">RWD</option>
+                        <option class="input_box" value="AWD">AWD</option>
+                        <option class="input_box" value="4WD">4WD</option>
+                        <option class="input_box" value="Other">Other</option>
+                        <option class="input_box" value="Unknown">Unknown</option>
+                    </select>
+
+                    <br>
+
+                    <input type="text" class ="input_box" style="display: none" id = "other_drivetrain" placeholder ="other drivetrain">
+
+                    <p>Transmission</p>
+
+                    <select class ="input_box" id = "trans">
+                        <option class="input_box" value="Manual">Manual</option>
+                        <option class="input_box" value="Automatic">Automatic</option>
+                        <option class="input_box" value="Semi-Automatic">Semi-Automatic</option>
+                        <option class="input_box" value="Other">Other</option>
+                        <option class="input_box" value="Unknown">Unknown</option>
+                    </select>
+
+                    <br>
+
+                    <input type="text" class ="input_box" style="display: none" id = "other_trans" placeholder ="other transmission">
 
                 </div>
                 

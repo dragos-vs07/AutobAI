@@ -14,6 +14,7 @@ class CarMake(db.Model):
     __tablename__ = 'car_make'
     id = db.Column(db.Integer,primary_key = True)
     brand = db.Column(db.String(80) , unique = True , nullable = False)
+    
     models = db.relationship('CarModel' , backref = 'make' , lazy = True)
 
 class CarModel(db.Model):
@@ -30,24 +31,27 @@ class Listing(db.Model):
     model_id = db.Column(db.Integer, db.ForeignKey('car_model.id'), nullable = False)
 
     title = db.Column(db.String(120), nullable = False)
-    description = db.Column(db.Text, nullable = False)
-
     price_usd = db.Column(db.Integer, nullable = False)
-    fabrication_year = db.Column(db.Integer, nullable = False)
+
+    drivetrain = db.Column(db.String(40) , nullable = True)
+    fuel_type = db.Column(db.String(40) , nullable = True)
+    transmission = db.Column(db.String(40) , nullable = True)
+    description = db.Column(db.Text, nullable = True)
+    fabrication_year = db.Column(db.Integer, nullable = True)
+    mileage = db.Column(db.Integer , nullable = True)
     horsepower = db.Column(db.Integer, nullable = True)
     engine_displacement = db.Column(db.Integer, nullable = True)
-    fuel_ef = db.Column(db.Integer, nullable = True)
+    fuel_ef = db.Column(db.Float, nullable = True)
     colour = db.Column(db.String(40), nullable = True)
     body_style = db.Column(db.String(40), nullable = True)
-    had_accident = db.Column(db.Boolean, default = False)
 
     # these are NULL unless the car is sold thus also signaling the selling happened and the car is no longer on listing
     sell_date = db.Column(db.DateTime , nullable = True) 
     sell_price = db.Column(db.Integer , nullable = True)
 
-    status = db.Column(db.String(20), default='active') # seller can make the listing private or public 
+    status = db.Column(db.String(20), default='private', index=True ) # seller can make the listing private or public 
     creation_date = db.Column(db.DateTime, default=datetime.utcnow)
-    images = db.relationship('ListingImages' , backref = 'listing' ,lazy=True)
+    images = db.relationship('ListingImages', backref = 'listing', lazy=True, cascade='all, delete-orphan')
 
 class ListingImages(db.Model):
     id = db.Column(db.Integer, primary_key=True)

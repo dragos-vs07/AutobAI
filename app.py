@@ -26,6 +26,8 @@ body_styles = [
     "Liftback",
     "Fastback",
     "Limousine",
+    "Other",
+    "Unknown"
 ]
 
 engine_configurations = [
@@ -42,7 +44,8 @@ engine_configurations = [
                               "W12",
                               "W16",
                               "Rotary",
-                              "Other"
+                              "Other",
+                              "Unknown"
                              ]
 
 @app.route("/")
@@ -178,6 +181,7 @@ def find_models(brand):
           "model" : model.model
           }
       for model in b.models])
+
 
 if __name__ == "__main__":
         app.run()
