@@ -3,10 +3,7 @@ html , body{
     height: 100%;
     margin: 0;
 }
-body{
-  display: flex;
-  flex-direction: column;  
-}
+
 .content{
     display: flex;
     flex: 1;
@@ -35,4 +32,10 @@ body{
     border: 1px solid #c9a227;
     color: white;
     padding-left: 6px;
+}
+@media(max-width: 760px)
+{
+    .content{
+    margin-left: 90px;
+    }
 }
