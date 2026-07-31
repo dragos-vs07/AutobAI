@@ -1,6 +1,10 @@
 from datetime import datetime
 from extensions import db
 
+# the unit table follows metric , thus as follows:
+#  price = euro, mileage = km, engine power = hp(PS),
+#  displacement = L, fuel efficiency = l/100km
+
 class User(db.Model):
     __tablename__ = 'user'
     id = db.Column(db.Integer,primary_key = True)
@@ -31,17 +35,18 @@ class Listing(db.Model):
     model_id = db.Column(db.Integer, db.ForeignKey('car_model.id'), nullable = False)
 
     title = db.Column(db.String(120), nullable = False)
-    price_usd = db.Column(db.Integer, nullable = False)
+    price = db.Column(db.Integer, nullable = False)
 
+    configuration = db.Column(db.String(40) , nullable = True)
     drivetrain = db.Column(db.String(40) , nullable = True)
     fuel_type = db.Column(db.String(40) , nullable = True)
     transmission = db.Column(db.String(40) , nullable = True)
     description = db.Column(db.Text, nullable = True)
-    fabrication_year = db.Column(db.Integer, nullable = True)
+    year = db.Column(db.Integer, nullable = True)
     mileage = db.Column(db.Integer , nullable = True)
-    horsepower = db.Column(db.Integer, nullable = True)
-    engine_displacement = db.Column(db.Integer, nullable = True)
-    fuel_ef = db.Column(db.Float, nullable = True)
+    power = db.Column(db.Integer, nullable = True)
+    displacement = db.Column(db.Float, nullable = True)
+    fuel_efficiency = db.Column(db.Float, nullable = True)
     colour = db.Column(db.String(40), nullable = True)
     body_style = db.Column(db.String(40), nullable = True)
 

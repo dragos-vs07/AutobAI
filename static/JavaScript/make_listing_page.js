@@ -73,7 +73,7 @@ async function display_models(brand)
             for (const m of models)
             {
                 const option = document.createElement("option");
-                option.value = m.model;
+                option.value = m.id;
                 option.textContent = m.model;
                 option.className = "input_box";
                 modelsddl.appendChild(option);
@@ -97,15 +97,18 @@ makesddl.addEventListener('change', function(){
 
     document.getElementById("other_model").style = "display: none";
 
-    display_models(this.value);
+    display_models(makesddl.options[makesddl.selectedIndex].dataset.brand);
 
-    if (this.value == "Other")
+    if (makesddl.options[makesddl.selectedIndex].dataset.brand == "Other")
+    {
         document.getElementById("other_brand").style="display: block";
+        document.getElementById("other_model").style="display: block";
+    }
     else
         document.getElementById("other_brand").style="display: none";
 });
 
-display_models(makesddl.value);
+display_models(makesddl.options[makesddl.selectedIndex].dataset.brand);
 
 mlg = document.getElementById("mileageInput");
 

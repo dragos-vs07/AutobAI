@@ -12,7 +12,7 @@
 
     <div class ="content">
 
-        <form class = "listing_form" enctype="multipart/form-data">
+        <form action="/upload_listing" class = "listing_form" method="post" enctype="multipart/form-data">
 
             <div class ="upper_area">
 
@@ -22,41 +22,41 @@
 
                         <p>Brand</p>
 
-                            <select class ="input_box" id ="makes_dropdown_list">
+                            <select class ="input_box" id ="makes_dropdown_list" name="make_id">
 
                                 {% for b in brands %}
-                                    <option value="{{b.brand}}" class ="input_box">{{b.brand.title()}}</option>
+                                    <option value="{{b.id}}" class ="input_box" data-brand = "{{b.brand}}">{{b.brand.title()}}</option>
                                 {% endfor %}
 
-                                <option class="input_box" value="Other">Other</option>
+                                <option class="input_box" value="Other" data-brand = "Other">Other</option>
                                 <option class="input_box" value="Unknown">Unknown</option>
 
                             </select>
 
                             <br>
 
-                            <input type="text" class ="input_box" style="display: none" id = "other_brand" placeholder ="other brand">
+                            <input type="text" class ="input_box" style="display: none" id = "other_brand" placeholder ="other brand" name="other_make">
 
                         <br>
 
                         <p>Model</p>
-                        <select class ="input_box" id="models_dropdown_list">
+                        <select class ="input_box" id="models_dropdown_list" name = "model_id" >
                         </select>
 
                          <br>
 
-                            <input type="text" class ="input_box" style="display: none" id = "other_model" placeholder ="other model">
+                            <input type="text" class ="input_box" style="display: none" id = "other_model" placeholder ="other model" name = "other_model">
 
                         <br>
 
                         <p>Model Year</p>
-                        <input type="number" min="1800" max ="2026" placeholder = "year" class ="input_box">
+                        <input type="number" min="1800" max ="2026" placeholder = "year" class ="input_box" name = "year">
 
                         <br>
                         
                         <p>Body Style</p>
                         
-                        <select class="input_box" id = "bs">
+                        <select class="input_box" id = "bs" name = "body_style">
                             {% for bs in body_styles %}
                                 <option class="input_box" value="{{bs}}">{{bs}}</option>
                             {% endfor %}
@@ -64,34 +64,40 @@
 
                          <br>
 
-                        <input type="text" class ="input_box" style="display: none" id = "other_bs" placeholder ="other body style">
+                        <input type="text" class ="input_box" style="display: none" id = "other_bs" placeholder ="other body style" name = "other_body_style">
 
                         <br>
 
                         <p>Mileage</p>
 
                         <div>
-                            <input type="number" placeholder="km" class="input_box" id="mileageInput">
+                            <input type="number" placeholder="km" class="input_box" id="mileageInput" name = "mileage">
 
-                            <input type="radio" id="unitkm" name="MileageUnit" checked="true">
+                            <input type="radio" id="unitkm" name="MileageUnit" checked="true"value="km">
                             <label for="unitkm">km</label>
 
-                            <input type="radio" id="unitmiles" name="MileageUnit">
+                            <input type="radio" id="unitmiles" name="MileageUnit" value="mile">
                             <label for="unitmiles">miles</label>
                         </div>
 
                         <br>
 
                         <p>Colour</p>
-                        <input type="text" placeholder = "colour" class="input_box">
+                        <input type="text" placeholder = "colour" class="input_box" name = "colour">
 
                         <br>
                         
                         <p>Price</p>
                         <div>
-                            <input type="number" min="0" max="500000" value = "0" id = "PriceNumber" class ="input_box">
-                            <input type="range" min="0" max="500000" value = "0" id = "PriceRange">
+                            <input type="number" min="0" max="500000" value = "0" id = "PriceNumber" class ="input_box" name = "price">
+
+                            <input type="radio" id="unitDollar" name="priceUnit" checked value="dollar">
+                            <label for="unitDollar">$</label>
+
+                            <input type="radio" id="unitEuro" name="priceUnit" value="euro">
+                            <label for="unitEuro">€</label>
                         </div>
+                        <input type="range" min="0" max="500000" value = "0" id = "PriceRange" >
 
                 </div>
 
@@ -103,11 +109,11 @@
 
                     <div>
 
-                        <input type="number" min="0"  placeholder = "hp" class ="input_box" id = "ep">
-                        <input type="radio" id="unithp" name="enginePowerUnit" checked>
+                        <input type="number" min="0"  placeholder = "hp" class ="input_box" id = "ep" name = "power">
+                        <input type="radio" id="unithp" name="enginePowerUnit" checked value = "hp">
                         <label for="unithp">hp(PS)</label>
 
-                        <input type="radio" id="unitkW" name="enginePowerUnit" >
+                        <input type="radio" id="unitkW" name="enginePowerUnit" value = "kW">
                         <label for="unitkW">kW</label>
 
                     </div>
@@ -117,12 +123,12 @@
                     <p>Engine displacement</p>
 
                     <div>
-                        <input type="number" min="0" placeholder = "L"  class ="input_box" id = "ed">
+                        <input type="number" step="any" min="0" placeholder = "L"  class ="input_box" id = "ed" name = "displacement">
 
-                        <input type="radio" id="unitL" name="engineDisplacementUnit" checked>
+                        <input type="radio" id="unitL" name="engineDisplacementUnit" checked value="L">
                         <label for="unitL">L</label>
 
-                        <input type="radio" id="unitCC" name="engineDisplacementUnit" >
+                        <input type="radio" id="unitCC" name="engineDisplacementUnit" value="cc">
                         <label for="unitCC">cc</label>
 
                     </div>
@@ -133,12 +139,12 @@
 
                     <div>
 
-                        <input type="number" min="0" placeholder = "l/100km"   class ="input_box" id="fe">
+                        <input type="number" min="0" placeholder = "l/100km"   class ="input_box" id="fe" name = "fuel_efficiency">
                         
-                        <input type="radio" id="unitLkm" name="fuelEfficiencyUnit"  checked>
+                        <input type="radio" id="unitLkm" name="fuelEfficiencyUnit"  checked value="l/100km">
                         <label for="unitLkm">l/100km</label>
 
-                        <input type="radio" id="unitmpg" name="fuelEfficiencyUnit">
+                        <input type="radio" id="unitmpg" name="fuelEfficiencyUnit" value="mpg">
                         <label for="unitmpg">mpg</label>
                     </div>
 
@@ -146,7 +152,7 @@
 
                     <p>Fuel type</p>
 
-                    <select class ="input_box" id = "fuel_type">
+                    <select class ="input_box" id = "fuel_type" name = "fuel_type">
                         <option class="input_box" value="Gasoline(Petrol)">Gasoline(Petrol)</option>
                         <option class="input_box" value="Diesel">Diesel</option>
                         <option class="input_box" value="LPG">LPG</option>
@@ -159,13 +165,13 @@
 
                     <br>
 
-                    <input type="text" class ="input_box" style="display: none" id = "other_fuel" placeholder ="other fuel">
+                    <input type="text" class ="input_box" style="display: none" id = "other_fuel" placeholder ="other fuel" name = "other_fuel">
 
                     <br>
 
                     <p>Engine configuration</p>
 
-                    <select class ="input_box" id = "engine_config">
+                    <select class ="input_box" id = "engine_config" name = "configuration">
                         {% for ec in engine_configurations %}
                             <option class ="input_box" value="{{ec}}">{{ec}}</option>
                         {% endfor %}
@@ -173,13 +179,13 @@
 
                     <br>
 
-                    <input type="text" class ="input_box" style="display: none" id = "other_engine_config" placeholder ="other engine configuration">
+                    <input type="text" class ="input_box" style="display: none" id = "other_config" placeholder ="other engine configuration" name = "other_configuration">
 
                     <br>
 
                     <p>Drivetrain</p>
 
-                    <select class ="input_box" id = "drivetrain">
+                    <select class ="input_box" id = "drivetrain" name = "drivetrain">
                         <option class="input_box" value="FWD">FWD</option>
                         <option class="input_box" value="RWD">RWD</option>
                         <option class="input_box" value="AWD">AWD</option>
@@ -190,11 +196,11 @@
 
                     <br>
 
-                    <input type="text" class ="input_box" style="display: none" id = "other_drivetrain" placeholder ="other drivetrain">
+                    <input type="text" class ="input_box" style="display: none" id = "other_drivetrain" placeholder ="other drivetrain" name = "other_drivetrain">
 
                     <p>Transmission</p>
 
-                    <select class ="input_box" id = "trans">
+                    <select class ="input_box" id = "trans" name = "transmission">
                         <option class="input_box" value="Manual">Manual</option>
                         <option class="input_box" value="Automatic">Automatic</option>
                         <option class="input_box" value="Semi-Automatic">Semi-Automatic</option>
@@ -217,6 +223,11 @@
                 <div id ="img_area" class ="cell">
 
                         <h2>Add images</h2>
+
+                        <p>Cover image</p>
+                         <input type="file" name="coverCarImage" accept="image/*"  required>
+
+                        <p>Additional images</p>
                          <input type="file" name="carImages" accept="image/*" multiple>
                 </div>
 
@@ -224,16 +235,39 @@
                 <br>
                 
                 <div id = "description_area" class ="cell">
+
+                        <h2>Title</h2>
+                        <input type = "text" class ="input_box" id = "title_box" name = "title" required style="width:100%">
+
+                        <br>
+
                         <h2>Description</h2>
-                        <input type = "text" class ="input_box" id = "descp_box">
+                        <input type = "text" class ="input_box" id = "descp_box" name = "description">
                 </div>
 
                 <br>
                 <br>
 
+                <div>
+                        <input type="radio" id = "prvlst"  name="status" checked value="private">
+                        <label for="prvlst">Private</label>
+
+                        <input type="radio" id="pblst" name="status" value="public">
+                        <label for="pblst">Public</label>
+                </div>
+                
+                <br>
+                <br>
+
+                {% for m in get_flashed_messages() %}
+                    <br>
+                    <p style="color:rgb(139, 0, 0)">{{m}}</p>
+                {% endfor %}
+
                 <button type="submit" class ="btn">Submit listing</button>
         </form>
 
+        
     </div>
 
     <script src = "{{ url_for( 'static' , filename = 'JavaScript/make_listing_page.js')}}" ></script>
