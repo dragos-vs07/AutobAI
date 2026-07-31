@@ -31,12 +31,14 @@ class Listing(db.Model):
     __tablename__ = 'listing'
     id = db.Column(db.Integer, primary_key=True)
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
-    make_id = db.Column(db.Integer, db.ForeignKey('car_make.id'), nullable = False)
-    model_id = db.Column(db.Integer, db.ForeignKey('car_model.id'), nullable = False)
 
     title = db.Column(db.String(120), nullable = False)
     price = db.Column(db.Integer, nullable = False)
 
+    make_id = db.Column(db.Integer, db.ForeignKey('car_make.id'), nullable = True)
+    model_id = db.Column(db.Integer, db.ForeignKey('car_model.id'), nullable = True)
+    other_make = db.Column(db.String(40) , nullable = True)
+    other_model = db.Column(db.String(40) , nullable = True)
     configuration = db.Column(db.String(40) , nullable = True)
     drivetrain = db.Column(db.String(40) , nullable = True)
     fuel_type = db.Column(db.String(40) , nullable = True)
@@ -56,7 +58,7 @@ class Listing(db.Model):
 
     status = db.Column(db.String(20), default='private', index=True ) # seller can make the listing private or public 
     creation_date = db.Column(db.DateTime, default=datetime.utcnow)
-    images = db.relationship('ListingImages', backref = 'listing', lazy=True, cascade='all, delete-orphan')
+    images = db.relationship('ListingImages', backref = 'listing', lazy= "dynamic", cascade='all, delete-orphan')
 
 class ListingImages(db.Model):
     id = db.Column(db.Integer, primary_key=True)

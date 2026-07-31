@@ -136,9 +136,9 @@ const engc = document.getElementById("engine_config");
 
 engc.addEventListener('change' , () => {
     if(engc.value == "Other")
-        document.getElementById("other_engine_config").style = "display: block";
+        document.getElementById("other_config").style = "display: block";
     else
-        document.getElementById("other_engine_config").style = "display: none";
+        document.getElementById("other_config").style = "display: none";
 })
 
 const dt = document.getElementById("drivetrain");

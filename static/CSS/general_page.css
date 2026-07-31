@@ -1,0 +1,23 @@
+#content{
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+#listings_area{
+    display: grid;
+    grid-template-columns: repeat(4, 1fr); 
+    align-self: stretch;
+    gap: 15px;
+    padding: 15px;
+    border-radius: 15px;
+    border: 2px solid white;
+}
+#search_bar{
+    border-radius: 10px;
+    background-color:rgb(29, 29, 29);
+    border: 1px solid #c9a227;
+    color: white;
+    padding-left: 6px;
+}
