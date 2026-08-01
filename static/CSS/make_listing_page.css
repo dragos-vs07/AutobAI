@@ -14,9 +14,7 @@ body{
     align-items: center;
     justify-content: center;
 }
-#description_area{
-    width: 80%;
-}
+
 .input_box{
     border-radius: 10px;
     background-color:rgb(29, 29, 29);
@@ -47,9 +45,22 @@ body{
     border-radius: 15px;
     background-color: rgb(24, 23, 23);
 }
+#title_box{
+    width: 30rem;
+}
 #descp_box{
-    width: 100%;
+    width: 50rem;
     height: 20rem;
+}
+#title_area{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+#description_area{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
 }
 @media(max-width: 760px)
 {

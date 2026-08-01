@@ -200,9 +200,9 @@ def find_models(brand):
 def find_listings():
       page = request.args.get("page", 1, type=int)
 
-
       return jsonify([{
-           "listing_i" : l.id,
+           "listing_id" : l.id,
+           "title": l.title,
            "price" : l.price,
            "brand" : l.other_make if l.other_make else CarMake.query.filter_by(id = l.make_id).first().brand ,
            "model" : l.other_model if l.other_model else CarModel.query.filter_by(id = l.model_id).first().model ,
@@ -349,6 +349,13 @@ def make_listing():
           flash("Conversion from USD to EUR failed , try manual conversion or use EUR until problem is fixed")
           return redirect(url_for("load_make_listing_page"))
 
+     if len(form_data[2]) > 80:
+          flash("Title too long , please shorten the input")
+          return redirect(url_for("load_make_listing_page"))
+
+     if len(form_data[8]) > 1000:
+          flash("Description too long, please shorten the input")
+          return redirect(url_for("load_make_listing_page"))
      
      new_listing = Listing(
            seller_id = session.get("user_id") ,

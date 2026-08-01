@@ -235,15 +235,26 @@
                 <br>
                 <br>
                 
-                <div id = "description_area" class ="cell">
+                <div id = "text_area" class ="cell">
 
                         <h2>Title</h2>
-                        <input type = "text" class ="input_box" id = "title_box" name = "title" required style="width:100%">
+                        <div id = "title_area">
+
+                        <input type = "text" class ="input_box" id = "title_box" name = "title" required  maxlength = "80">
+                        <p id = "char_counter_t" style = "color:rgb(111, 111, 111)">0/80</p>
+
+                        </div>
 
                         <br>
 
                         <h2>Description</h2>
-                        <input type = "text" class ="input_box" id = "descp_box" name = "description">
+
+                        <div id ="description_area">
+
+                        <input type = "text" class ="input_box" id = "descp_box" name = "description" maxlength = "1000">
+                        <p id = "char_counter_d" style = "color:rgb(111, 111, 111)">0/1000</p>
+
+                        </div>
                 </div>
 
                 <br>

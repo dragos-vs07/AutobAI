@@ -167,3 +167,15 @@ bs.addEventListener('change' , () => {
     else
         document.getElementById("other_bs").style = "display: none";
 })
+
+title_input = document.getElementById("title_box");
+
+title_input.addEventListener("input", () => {
+    document.getElementById("char_counter_t").textContent = `${title_input.value.length}/80`
+})
+
+description_input = document.getElementById("descp_box");
+
+description_input.addEventListener("input", () => {
+    document.getElementById("char_counter_d").textContent = `${description_input.value.length}/1000`
+})

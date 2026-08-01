@@ -32,7 +32,7 @@ class Listing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
 
-    title = db.Column(db.String(120), nullable = False)
+    title = db.Column(db.String(81), nullable = False)
     price = db.Column(db.Integer, nullable = False)
 
     make_id = db.Column(db.Integer, db.ForeignKey('car_make.id'), nullable = True)
