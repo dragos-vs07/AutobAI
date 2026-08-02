@@ -40,10 +40,10 @@
     transition: background-color 0.3s ease;
     background-color: rgb(68, 65, 65);
 }
-@media(max-width: 760px){
+@media(max-width: 830px){
     #content{
-        justify-content: flex-start;   /* was center */
-        align-items: center;           /* fine to keep, listings_area is centered by grid anyway */
+        justify-content: flex-start;  
+        align-items: center;          
         overflow-y: auto;
         min-height: 0;
         height: 100vh;

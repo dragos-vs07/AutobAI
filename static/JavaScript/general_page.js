@@ -1,5 +1,5 @@
 
-fetch("API/get_public_listings?page=1")
+fetch("API/get_listings?page=1&lpp=24")
 .then( response => response.json())
 .then(data => {
     const container = document.getElementById("listings_area");

@@ -74,7 +74,7 @@ body{
     color: #c9a227;
 }
 
-@media(max-width: 760px)
+@media(max-width: 830px)
 {
     body{
         display: flex;

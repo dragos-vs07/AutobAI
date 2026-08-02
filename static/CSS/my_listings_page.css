@@ -1,3 +1,6 @@
+body{
+    align-items: flex-start;
+}
 #content{
     padding: 15px;
     display: flex;
@@ -29,6 +32,13 @@
     gap: 10px;
 }
 .image{
-    width: 15vw; 
-    height: 15vw;
+    width: 17vw; 
+    height: 17vw;
+}
+@media(max-width:830px){
+    #listings_area{
+        margin-left: 80px;
+       
+    }
+
 }

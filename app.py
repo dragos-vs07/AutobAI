@@ -15,8 +15,6 @@ migrate.init_app(app, db)
 
 from models import User, CarMake, CarModel, Listing, ListingImages,  Conversations, Messages, Favorites
 
-LPP = 24    # listings per page in display
-
 body_styles = [
     "Sedan",
     "Hatchback",
@@ -97,17 +95,7 @@ def load_my_listings_page():
             return redirect(url_for("load_home"))
      
      return render_template("my_listings_page.html",
-                            listings = [ { 
-
-                              "title": l.title,
-                              "price" : l.price,
-                              "brand" : l.other_make if l.other_make else CarMake.query.filter_by(id = l.make_id).first().brand ,
-                              "model" : l.other_model if l.other_model else CarModel.query.filter_by(id = l.model_id).first().model ,
-                              "mileage" : l.mileage,
-                              "cover_img_path" : l.images.filter_by(cover_image = True).first().image_path,
-                              "views" :l.views,
-                              "favorites": len( Favorites.query.filter_by(listing_id = l.id).all() ),
-                            }for l in User.query.filter_by(id = session.get("user_id")).first().listings ] )
+                            user_id = session.get("user_id") )
 
 @app.route("/predictp")
 def load_predict_page():
@@ -232,9 +220,26 @@ def find_models(brand):
 
 # 24 listings on one page 
 # IMPLEMENT FILTERS 
-@app.route("/API/get_public_listings")
+@app.route("/API/get_listings")
 def find_listings():
+      
       page = request.args.get("page", 1, type=int)
+      seller_id = request.args.get("seller_id" , -1 , type=int)
+      listings_per_page = min(request.args.get("lpp", 1, type=int), 50)
+
+      listings = []
+
+      # if a seller id is specified, but no user is logged in or isnt the owner we only return public
+      if seller_id != -1 and ( not session.get("user_id") or session.get("user_id") != seller_id ): 
+          listings = Listing.query.filter_by( seller_id = seller_id, status = "public" ).offset(
+          (page-1) * listings_per_page).limit(listings_per_page).all()
+
+      elif seller_id != -1 and session.get("user_id") == seller_id: # if the owner himself requests them , we give all
+           listings = Listing.query.filter_by( seller_id = seller_id).offset(
+           (page-1) * listings_per_page).limit(listings_per_page).all()
+
+      else:    # otherwise we return all listings on the website ( visible ones )
+           listings = Listing.query.filter_by( status = "public" ).offset( (page-1) * listings_per_page).limit(listings_per_page).all()
 
       return jsonify([{
            "listing_id" : l.id,
@@ -243,8 +248,10 @@ def find_listings():
            "brand" : l.other_make if l.other_make else CarMake.query.filter_by(id = l.make_id).first().brand ,
            "model" : l.other_model if l.other_model else CarModel.query.filter_by(id = l.model_id).first().model ,
            "mileage" : l.mileage,
-           "cover_img_path" : l.images.filter_by(cover_image = True).first().image_path
-      } for l in Listing.query.filter_by( status = "public").offset( (page-1) * LPP).limit(LPP).all() ])
+           "cover_img_path" : l.images.filter_by(cover_image = True).first().image_path,
+           "views" : l.views,
+           "favorites" : len( Favorites.query.filter_by(listing_id = l.id).all() )
+      } for l in listings ])
      
 # the unit table follows metric , thus as follows:
 #  price = euro, mileage = km, engine power = hp(PS),
