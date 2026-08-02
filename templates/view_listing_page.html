@@ -1,0 +1,25 @@
+{% extends "main_template.html" %}
+
+{% block head %}
+
+    <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/view_listing_page.css') }}" >
+
+{% endblock %}
+
+{% block content %}
+
+    <div id="content">
+        
+        <img src="{{cover_img_path}}">
+        
+       
+            {% for img in images %}
+
+                <img src = "{{img.image_path}}">
+
+            {% endfor %}
+        
+
+    </div>
+
+{% endblock %}

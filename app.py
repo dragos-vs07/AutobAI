@@ -62,6 +62,24 @@ def load_home():
 def load_general_page():
       return render_template("general_page.html")
 
+@app.route("/viewlisting")
+def load_vew_listing_page():
+     listing_id = request.args.get("listing_id" , -1 , type=int)
+     listing = Listing.query.filter_by(id = listing_id).first()
+
+     if not listing :
+          return redirect(url_for("load_general_page"))
+
+     if session.get("user_id") != listing.seller_id:
+          listing.views = listing.views + 1
+          db.session.commit()
+     
+     return render_template("view_listing_page.html",
+                            listing = listing,
+                            cover_img_path = listing.images.filter_by(cover_image = True).first().image_path,
+                            images = listing.images.filter_by(cover_image = False).all()
+                            )
+
 @app.route("/mklistp")
 def load_make_listing_page():
     if not session.get("user_id"):

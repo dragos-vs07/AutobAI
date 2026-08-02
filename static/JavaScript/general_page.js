@@ -44,6 +44,10 @@ fetch("API/get_public_listings?page=1")
             cell.appendChild(car_def);
             cell.appendChild(mileage);
 
+            cell.addEventListener('click',()=>{
+                window.location.href = `/viewlisting?listing_id=${listing.listing_id}`;
+            })
+
             container.appendChild(cell);
         } 
 })
