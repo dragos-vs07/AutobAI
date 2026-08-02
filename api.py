@@ -20,6 +20,33 @@ def find_models(brand):
 
 # 24 listings on one page
 # IMPLEMENT FILTERS
+@api.route("/check_favourite")
+def check_fav():
+    listing_id = request.args.get("listing_id",-1,type=int)
+    listing = Listing.query.filter_by(id=listing_id).first()
+
+    if not listing or not session.get("user_id"):
+        return jsonify({
+            "status": "fail"
+        })
+
+    row = Favorites.query.filter_by(listing_id=listing_id, user_id=session.get("user_id")).first()
+
+    if row:
+        db.session.delete(row)
+    else:
+        db.session.add(Favorites(
+            user_id = session.get("user_id"),
+            listing_id = listing_id
+        ))
+
+    db.session.commit()
+
+    return jsonify({
+                "status": "success",
+                "favourited": "False" if row else "True"
+            })
+
 @api.route("/get_listings")
 def find_listings():
 
@@ -50,5 +77,6 @@ def find_listings():
         "mileage": l.mileage,
         "cover_img_path": l.images.filter_by(cover_image=True).first().image_path,
         "views": l.views,
-        "favorites": len(Favorites.query.filter_by(listing_id=l.id).all())
+        "favorites": len(Favorites.query.filter_by(listing_id=l.id).all()),
+        "is_favourite": "True" if session.get("user_id") and Favorites.query.filter_by(listing_id=l.id, user_id=session.get("user_id")).first() else "False"
     } for l in listings])

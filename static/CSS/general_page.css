@@ -27,6 +27,7 @@
 }
 
 .listing{
+    position: relative;
     color: white;
     border: 2px solid #c9a227;
     padding: 10px;
@@ -39,6 +40,32 @@
 .listing:hover{
     transition: background-color 0.3s ease;
     background-color: rgb(68, 65, 65);
+}
+.listing:has(.fav_icon:hover) {
+  background-color: rgb(24, 23, 23); /* same as .listing's non-hover background */
+}
+.fav_icon {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+}
+
+.fav_icon svg {
+    transition: fill 0.3s ease;
+}
+
+svg.is-not-favourited {
+    fill: none;
+}
+.fav_icon:hover svg.is-not-favourited {
+    fill: rgb(236, 28, 80);
+}
+
+svg.is-favourited {
+    fill: rgb(236, 28, 80);
+}
+.fav_icon:hover svg.is-favourited {
+    fill: none;
 }
 @media(max-width: 830px){
     #content{
@@ -68,7 +95,7 @@
         margin-left: 70px;
     }
 }
-@media(max-width: 450px)
+@media(max-width: 500px)
 {
     #search_bar{
         margin-left: 80px;
