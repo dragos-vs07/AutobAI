@@ -26,6 +26,20 @@
     padding-left: 6px;
 }
 
+.listing{
+    color: white;
+    border: 2px solid #c9a227;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer
+}
+.listing:hover{
+    transition: background-color 0.3s ease;
+    background-color: rgb(68, 65, 65);
+}
 @media(max-width: 760px){
     #content{
         justify-content: flex-start;   /* was center */

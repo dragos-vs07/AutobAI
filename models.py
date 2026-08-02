@@ -12,7 +12,8 @@ class User(db.Model):
     email =  db.Column(db.String(80) , unique = True , nullable = False)
     password_hash = db.Column(db.String(255) ,  nullable = False)
     creation_date = db.Column(db.DateTime , default = datetime.utcnow)
-    listings = db.relationship('Listing' , backref = 'seller', lazy = True)
+    listings = db.relationship('Listing', backref = 'seller', lazy = True)
+    favorites = db.relationship('Favorites', backref = 'user', lazy = True )
 
 class CarMake(db.Model):
     __tablename__ = 'car_make'
@@ -32,9 +33,11 @@ class Listing(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     seller_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable = False)
 
+    # LISTING SPECIFICS
     title = db.Column(db.String(81), nullable = False)
     price = db.Column(db.Integer, nullable = False)
 
+    # CAR SPECIFICATIONS
     make_id = db.Column(db.Integer, db.ForeignKey('car_make.id'), nullable = True)
     model_id = db.Column(db.Integer, db.ForeignKey('car_model.id'), nullable = True)
     other_make = db.Column(db.String(40) , nullable = True)
@@ -56,6 +59,7 @@ class Listing(db.Model):
     sell_date = db.Column(db.DateTime , nullable = True) 
     sell_price = db.Column(db.Integer , nullable = True)
 
+    views = db.Column(db.Integer, nullable=True, default=0)
     status = db.Column(db.String(20), default='private', index=True ) # seller can make the listing private or public 
     creation_date = db.Column(db.DateTime, default=datetime.utcnow)
     images = db.relationship('ListingImages', backref = 'listing', lazy= "dynamic", cascade='all, delete-orphan')
@@ -65,6 +69,13 @@ class ListingImages(db.Model):
     listing_id = db.Column(db.Integer , db.ForeignKey('listing.id') , nullable = False)
     image_path = db.Column(db.String(255) , nullable = False)
     cover_image = db.Column(db.Boolean , nullable = False)
+
+class Favorites(db.Model):
+    __tablename__ = 'favorites'
+    __table_args__ = (db.UniqueConstraint("user_id", "listing_id"),)
+    id = db.Column(db.Integer , primary_key =True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
+    listing_id = db.Column(db.Integer, db.ForeignKey('listing.id') , nullable = False)
 
 class Conversations(db.Model):
     __tablename__ = 'conversation'

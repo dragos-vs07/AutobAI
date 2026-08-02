@@ -8,8 +8,7 @@ fetch("API/get_public_listings?page=1")
     for (const listing of data)
         {
             const cell = document.createElement("div");
-
-            cell.style = "color: white; border: 1px solid #c9a227; padding: 10px; border-radius: 10px; display: flex; flex-direction: column; align-items: center; cursor: pointer ";
+            cell.classList.add("listing");
 
             const cover_img = document.createElement("img");
 

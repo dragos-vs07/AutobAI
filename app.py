@@ -13,7 +13,7 @@ app.config.from_object("config.Config")
 db.init_app(app)
 migrate.init_app(app, db)
 
-from models import User, CarMake, CarModel, Listing, ListingImages,  Conversations, Messages
+from models import User, CarMake, CarModel, Listing, ListingImages,  Conversations, Messages, Favorites
 
 LPP = 24    # listings per page in display
 
@@ -72,6 +72,24 @@ def load_make_listing_page():
                            engine_configurations = engine_configurations , 
                            body_styles = body_styles
                         )
+
+@app.route("/mylistingsp")
+def load_my_listings_page():
+     if not session.get("user_id"):
+            return redirect(url_for("load_home"))
+     
+     return render_template("my_listings_page.html",
+                            listings = [ { 
+
+                              "title": l.title,
+                              "price" : l.price,
+                              "brand" : l.other_make if l.other_make else CarMake.query.filter_by(id = l.make_id).first().brand ,
+                              "model" : l.other_model if l.other_model else CarModel.query.filter_by(id = l.model_id).first().model ,
+                              "mileage" : l.mileage,
+                              "cover_img_path" : l.images.filter_by(cover_image = True).first().image_path,
+                              "views" :l.views,
+                              "favorites": len( Favorites.query.filter_by(listing_id = l.id).all() ),
+                            }for l in User.query.filter_by(id = session.get("user_id")).first().listings ] )
 
 @app.route("/predictp")
 def load_predict_page():
