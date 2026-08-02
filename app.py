@@ -1,17 +1,22 @@
 from flask import Flask , render_template , session , request , flash , redirect , url_for , jsonify
 from extensions import db , migrate
-import pandas as pd
-import uuid
 from werkzeug.security import generate_password_hash , check_password_hash
 from werkzeug.utils import secure_filename
+from api import api
+from auth import auth
 import os
 import requests
+import pandas as pd
+import uuid
 
 app = Flask(__name__)
 app.config.from_object("config.Config")
 
 db.init_app(app)
 migrate.init_app(app, db)
+
+app.register_blueprint(api)
+app.register_blueprint(auth)
 
 from models import User, CarMake, CarModel, Listing, ListingImages,  Conversations, Messages, Favorites
 
@@ -35,22 +40,22 @@ body_styles = [
 ]
 
 engine_configurations = [
-                              "Inline-3 (I3)",
-                              "Inline-4 (I4)",
-                              "Inline-5 (I5)",
-                              "Inline-6 (I6)",
-                              "V6",
-                              "V8",
-                              "V10",
-                              "V12",
-                              "Flat-4 (Boxer)",
-                              "Flat-6 (Boxer)",
-                              "W12",
-                              "W16",
-                              "Rotary",
-                              "Other",
-                              "Unknown"
-                             ]
+     "Inline-3 (I3)",
+     "Inline-4 (I4)",
+     "Inline-5 (I5)",
+     "Inline-6 (I6)",
+     "V6",
+     "V8",
+     "V10",
+     "V12",
+     "Flat-4 (Boxer)",
+     "Flat-6 (Boxer)",
+     "W12",
+     "W16",
+     "Rotary",
+     "Other",
+     "Unknown"
+     ]
 
 @app.route("/")
 def load_home():
@@ -61,7 +66,7 @@ def load_general_page():
       return render_template("general_page.html")
 
 @app.route("/viewlisting")
-def load_vew_listing_page():
+def load_view_listing_page():
      listing_id = request.args.get("listing_id" , -1 , type=int)
      listing = Listing.query.filter_by(id = listing_id).first()
 
@@ -125,133 +130,6 @@ def load_information_page():
                 return redirect(url_for("load_home"))
           
           return render_template("information_page.html")
-
-@app.route("/submit_registration" , methods = ["POST"])
-def register_account():
-     
-     username = request.form.get("username","")
-     email = request.form.get("email","")
-     password = request.form.get("password","")
-     cpassword = request.form.get("cpassword","")
-
-     if not username or not email or not password or not cpassword:
-          flash("Please fill in all the fields")
-          return(redirect(url_for("load_register_page")))
-
-     if any(char.isspace() for char in username) or any(char.isspace() for char in email) or any(char.isspace() for char in password) or any(char.isspace() for char in cpassword):
-      flash("No whitespaces allowed in input")
-      return(redirect(url_for("load_register_page")))
-
-     if len(username) < 5 or len(password) < 5 or len(email) < 5 or len(cpassword) < 5:
-           flash("All inputs must have at least 5 characters")
-           return(redirect(url_for("load_register_page")))
-     
-     if User.query.filter_by(username = username).first() :
-           flash("Account with entered username already registered" , "nuquser")
-           return(redirect(url_for("load_register_page")))
-     
-     if User.query.filter_by(email = email).first() :
-                flash("Account with entered email already registered" , "nuqemail")
-                return(redirect(url_for("load_register_page")))
-
-     if password != cpassword:
-           flash("Confirmed password not the same" , "dpass")
-           return(redirect(url_for("load_register_page")))
-           
-     db.session.add(User(
-           username = username , 
-           email = email ,
-           password_hash = generate_password_hash(password)
-     ))
-
-     db.session.commit()
-     
-     session["user_id"] = User.query.filter_by(username = username).first().id
-    
-     return(redirect(url_for("load_register_page")))
-
-@app.route("/submit_login" , methods = ["POST"])
-def login_user():
-      ue = request.form.get("username_or_email")
-      input_password = request.form.get("password")
-
-      if not ue:
-            flash("Must input username or email")
-            return(redirect(url_for("load_login_page")))
-
-      if not input_password:
-            flash("Must input password")
-            return(redirect(url_for("load_login_page")))
-
-      user = User.query.filter_by(username = ue).first()
-
-      if not user:
-        user = User.query.filter_by(email = ue).first()
-
-      if not user:
-           flash("Login data incorrect")
-           return(redirect(url_for("load_login_page")))
-      
-      if check_password_hash( user.password_hash , input_password ):
-            session["user_id"] = user.id
-            return(redirect(url_for("load_general_page")))
-      else:
-           flash("Login data incorrect")
-           return(redirect(url_for("load_login_page")))
-
-@app.route("/logout")
-def logout_user():
-      if not session.get("user_id"):
-            return redirect(url_for("load_home"))
-       
-      session.clear()
-      return redirect(url_for("load_general_page"))
-
-@app.route("/API/get_models/<string:brand>")
-def find_models(brand):
-     b = CarMake.query.filter_by(brand = brand).first();
-
-     return jsonify([
-          {
-          "id" : model.id,
-          "model" : model.model
-          }
-      for model in b.models])
-
-# 24 listings on one page 
-# IMPLEMENT FILTERS 
-@app.route("/API/get_listings")
-def find_listings():
-      
-      page = request.args.get("page", 1, type=int)
-      seller_id = request.args.get("seller_id" , -1 , type=int)
-      listings_per_page = min(request.args.get("lpp", 1, type=int), 50)
-
-      listings = []
-
-      # if a seller id is specified, but no user is logged in or isnt the owner we only return public
-      if seller_id != -1 and ( not session.get("user_id") or session.get("user_id") != seller_id ): 
-          listings = Listing.query.filter_by( seller_id = seller_id, status = "public" ).offset(
-          (page-1) * listings_per_page).limit(listings_per_page).all()
-
-      elif seller_id != -1 and session.get("user_id") == seller_id: # if the owner himself requests them , we give all
-           listings = Listing.query.filter_by( seller_id = seller_id).offset(
-           (page-1) * listings_per_page).limit(listings_per_page).all()
-
-      else:    # otherwise we return all listings on the website ( visible ones )
-           listings = Listing.query.filter_by( status = "public" ).offset( (page-1) * listings_per_page).limit(listings_per_page).all()
-
-      return jsonify([{
-           "listing_id" : l.id,
-           "title": l.title,
-           "price" : l.price,
-           "brand" : l.other_make if l.other_make else CarMake.query.filter_by(id = l.make_id).first().brand ,
-           "model" : l.other_model if l.other_model else CarModel.query.filter_by(id = l.model_id).first().model ,
-           "mileage" : l.mileage,
-           "cover_img_path" : l.images.filter_by(cover_image = True).first().image_path,
-           "views" : l.views,
-           "favorites" : len( Favorites.query.filter_by(listing_id = l.id).all() )
-      } for l in listings ])
      
 # the unit table follows metric , thus as follows:
 #  price = euro, mileage = km, engine power = hp(PS),
