@@ -25,7 +25,7 @@ def check_fav():
     listing_id = request.args.get("listing_id",-1,type=int)
     listing = Listing.query.filter_by(id=listing_id).first()
 
-    if not listing or not session.get("user_id"):
+    if not listing or not session.get("user_id") or session.get("user_id") == listing.seller_id:
         return jsonify({
             "status": "fail"
         })
@@ -70,6 +70,7 @@ def find_listings():
 
     return jsonify([{
         "listing_id": l.id,
+        "seller_id": l.seller_id,
         "title": l.title,
         "price": l.price,
         "brand": l.other_make if l.other_make else CarMake.query.filter_by(id=l.make_id).first().brand,

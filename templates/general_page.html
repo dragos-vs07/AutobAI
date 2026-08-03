@@ -23,5 +23,6 @@
     </div>
 
 </div>
+    <script> const userId = {{ session.get("user_id") | tojson }}; </script>
     <script src = "{{ url_for( 'static' , filename = 'JavaScript/general_page.js')}}" ></script>
 {% endblock %}

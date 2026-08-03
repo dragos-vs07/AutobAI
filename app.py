@@ -274,7 +274,7 @@ def make_listing():
           flash("Title too long , please shorten the input")
           return redirect(url_for("load_make_listing_page"))
 
-     if len(form_data[8]) > 1000:
+     if form_data[8] and len(form_data[8]) > 1000:
           flash("Description too long, please shorten the input")
           return redirect(url_for("load_make_listing_page"))
      
