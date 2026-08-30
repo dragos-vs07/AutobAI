@@ -34,11 +34,11 @@ html , body{
     height: 40vh;
     display: flex;
     flex-direction: column;
-    padding: 10px;
+    align-items: center;
+    padding: 15px;
     border: 2px solid #c9a227;
     border-radius: 15px;
     background-color: rgb(24, 23, 23);
-    gap: 15px;
 }
 .col1{
     display: flex;
@@ -48,4 +48,22 @@ html , body{
     display: flex;
     flex-direction: row;
     gap: 5px;
+}
+#contact_button{
+    cursor: pointer;
+    padding: 5px;
+    color: white;
+    font-weight: bold;
+    border-style: none;
+    border-radius: 10px;
+    background-color: rgb(2, 73, 0);
+}
+#evaluate_button{
+    cursor: pointer;
+    padding: 5px;
+    color:white;
+    font-weight: bold;
+    border-style: none;
+    border-radius: 10px;
+    background-color: rgb(13, 101, 177);
 }

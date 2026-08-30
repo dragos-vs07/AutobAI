@@ -4,7 +4,6 @@ fetch(`/API/get_listings?page=1&seller_id=${userId}&lpp=5`)
 
     for (const l of data)
     {
-        console.log(`$here: {l.id}`);
         const listing = document.createElement("div");
         listing.classList.add("listing");
 
@@ -60,6 +59,15 @@ fetch(`/API/get_listings?page=1&seller_id=${userId}&lpp=5`)
         
         text_area.appendChild(info1);
         text_area.appendChild(info2);
+        
+        const edit_btn = document.createElement("button");
+        edit_btn.innerHTML = "Edit";
+        edit_btn.classList.add("btn");
+        edit_btn.addEventListener("click", ()=>{
+            window.location.href = `/editlistingp?listing_id=${l.listing_id}`;
+        })
+        text_area.appendChild(document.createElement("br"))
+        text_area.appendChild(edit_btn)
 
         listing.appendChild(text_area);
 

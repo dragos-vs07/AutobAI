@@ -14,7 +14,7 @@
 
             <div class ="image_area">
 
-                <img src="{{cover_img_path}}" id="view_img">
+                <img src="{{cover_img_path}}" id="view_img" style="border: 2px,solid,white">
                 
                     <div class ="secondary_images">
 
@@ -29,7 +29,7 @@
 
             <div class="description_area">
 
-                <h4>General information</h4>
+                <h3>General information</h4>
                 <strong>{{brand.title()}}</strong>
                 <strong>{{model.title()}}</strong>
                 <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-clock-icon lucide-calendar-clock"><path d="M16 14v2.2l1.6 1"/><path d="M16 2v3"/><path d="M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338"/><path d="M3 9h5.859"/><path d="M8 2v3"/><circle cx="16" cy="16" r="6"/></svg> <strong>{{ listing.year}}</strong></p>
@@ -39,7 +39,7 @@
 
             <div class="description_area">
 
-                <h4>Engine details</h4>
+                <h3>Engine details</h4>
                 <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gauge-icon lucide-gauge"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg> <strong> {{ listing.power}} hp</strong></p>
                 <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cylinder-icon lucide-cylinder"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg> <strong>{{listing.displacement}} l</strong></p>
                 <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><strong>{{listing.configuration}}</strong></p>
@@ -48,14 +48,14 @@
 
             <div class="description_area">
 
-                <h4>Transmission and drivetrain</h4>
+                <h3>Transmission and drivetrain</h4>
                 <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><strong>{{listing.transmission}}</strong></p>
                 <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><strong>{{listing.drivetrain}}</strong></p>
 
             </div>
 
             <div class="description_area">
-                <h4>Fuel information</h4>
+                <h3>Fuel information</h4>
                 <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><strong>{{listing.fuel_type}}</strong></p>
                 <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fuel-icon lucide-fuel"><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0v-6.998a2 2 0 0 0-.59-1.42L18 5"/><path d="M14 21V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16"/><path d="M2 21h13"/><path d="M3 9h11"/></svg> <strong>{{listing.fuel_efficiency}} l/100km</strong></p>
             </div>
@@ -64,13 +64,19 @@
 
         </div>
 
-        <h1>{{listing.price}} €</h1>
-        <h2>{{brand.title()}} {{model.title()}}</h2>
-        <div class="row">
-            
-            <p style="border: 2px solid #c9a227;border-radius: 15px; padding:5px;">{{listing.description}}</p>
+        <h1 style="padding-left: 15px;">{{listing.price}} €</h1>
+        <h2 style="padding-left: 15px;">{{brand.title()}} {{model.title()}}</h2>
 
+        <div class="buttons_area" style="display:flex; flex-direction:row; gap:5px; padding-left: 15px;">
+            <button id="contact_button">Contact</button>
+            <button id="evaluate_button">Evaluate</button>
         </div>
+
+        {% if listing.description %}
+        <div class="row" style="display:flex; flex:1;">
+            <p style="border: 2px solid #c9a227;border-radius: 15px; padding:5px; display:flex; flex:1; justify-content: center;">{{listing.description}}</p>
+        </div>
+        {% endif %}
 
     </div>
 

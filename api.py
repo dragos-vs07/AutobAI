@@ -81,3 +81,4 @@ def find_listings():
         "favorites": len(Favorites.query.filter_by(listing_id=l.id).all()),
         "is_favourite": "True" if session.get("user_id") and Favorites.query.filter_by(listing_id=l.id, user_id=session.get("user_id")).first() else "False"
     } for l in listings])
+

@@ -11,6 +11,7 @@ import uuid
 
 app = Flask(__name__)
 app.config.from_object("config.Config")
+app.config["MAX_CONTENT_LENGTH"] = 30 * 1024 * 1024
 
 db.init_app(app)
 migrate.init_app(app, db)
@@ -116,6 +117,21 @@ def load_register_page():
 def load_login_page():
     return render_template("login_page.html")
 
+@app.route("/editlistingp")
+def load_edit_listing_page():
+     if not session.get("user_id"):
+           return redirect(url_for("load_home"))
+     
+     listing_id = request.args.get("listing_id")
+     if not listing_id :
+          return redirect(url_for("load_my_listings_page"))
+
+     return render_template("edit_listing_page.html",
+                           listing = Listing.query.filter_by( id = listing_id ).first(),
+                           brands = CarMake.query.order_by(CarMake.brand).all() ,
+                           engine_configurations = engine_configurations , 
+                           body_styles = body_styles,
+                           )
 @app.route("/accountp")
 def load_account_page():
 
@@ -189,9 +205,12 @@ def normalise_fuel_efficiency(value , unit):
             return 235.215 / float(value) 
      return float(value)
 
+
 def save_listing_image(file,is_cover,listing_id):
 
+      
       ALLOWED = {".jpg", ".jpeg", ".png", ".webp"}
+      
       filename = secure_filename(file.filename)
       ext = os.path.splitext(filename)[1].strip().lower()
 
@@ -265,6 +284,13 @@ def make_listing():
      if not cover_image or not cover_image.filename :
             flash("Must submit a cover image")
             return redirect(url_for("load_make_listing_page"))
+
+     cover_image.seek(0, os.SEEK_END)
+     size = cover_image.tell()
+     cover_image.seek(0)
+     if size > 5 * 1024 * 1024:
+          flash("Image size too large")
+          return redirect(url_for("load_make_listing_page"))
      
      currency_convert = normalise_currency(form_data[3], form_units[0])
 
@@ -306,11 +332,21 @@ def make_listing():
      db.session.add(new_listing)
      db.session.commit()
 
-
      save_listing_image(cover_image,True,new_listing.id)
 
-     for image in request.files.getlist("carImages"):
+     car_list = request.files.getlist("carImages")
+     if len(car_list) > 10 :
+          flash("Maximum number of photos exceeded")
+          return redirect(url_for("load_make_listing_page"))
+
+     for image in car_list:
             if image.filename:
+             image.seek(0, os.SEEK_END)
+             size = image.tell()
+             image.seek(0)
+             if size > 5 * 1024 * 1024:
+                  flash("Image size too large")
+                  return redirect(url_for("load_make_listing_page"))
              save_listing_image(image,False,new_listing.id)
 
      db.session.commit()
@@ -318,6 +354,9 @@ def make_listing():
      flash("Listing uploaded successfuly")
      return redirect(url_for("load_make_listing_page"))
 
+@app.route("/edit_listing")
+def confirm_edit():
+     return 
 
 if __name__ == "__main__":
         app.run()

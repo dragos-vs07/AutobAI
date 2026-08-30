@@ -1,18 +1,13 @@
 {% extends "main_template.html" %}
 
 {% block head %}
-
-    <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/make_listing_page.css') }}" >
-
+    <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/edit_listing_page.css') }}" >
 {% endblock %}
 
 {% block content %}
+ <div class ="content">
 
-<br>
-
-    <div class ="content">
-
-        <form action="/upload_listing" class = "listing_form" method="post" enctype="multipart/form-data">
+        <form action="/edit_listing" class = "listing_form" method="post" enctype="multipart/form-data">
 
             <div class ="upper_area">
 
@@ -25,17 +20,17 @@
                             <select class ="input_box" id ="makes_dropdown_list" name="make_id">
 
                                 {% for b in brands %}
-                                    <option value="{{b.id}}" class ="input_box" data-brand = "{{b.brand}}">{{b.brand.title()}}</option>
+                                    <option value="{{b.id}}" class ="input_box" data-brand = "{{b.brand}}" {% if listing.make_id == b.id %}selected{% endif %}>{{b.brand.title()}}</option>
                                 {% endfor %}
 
-                                <option class="input_box" value="Other" data-brand = "Other">Other</option>
-                                <option class="input_box" value="Unknown">Unknown</option>
+                                <option class="input_box" value="Other" data-brand = "Other" {% if listing.other_make %}selected{% endif %}>Other</option>
+                                <option class="input_box" value="Unknown" {% if not listing.make_id and not listing.other_make %}selected{% endif %}>Unknown</option>
 
                             </select>
 
                             <br>
 
-                            <input type="text" class ="input_box" style="display: none" id = "other_brand" placeholder ="other brand" name="other_make_id">
+                            <input type="text" class ="input_box" style="display: none" id = "other_brand" value ="{{ listing.other_make or '' }}" placeholder ="other brand" name="other_make_id">
 
                         <br>
 
@@ -45,12 +40,12 @@
 
                          <br>
 
-                            <input type="text" class ="input_box" style="display: none" id = "other_model" placeholder ="other model" name = "other_model_id">
+                            <input type="text" class ="input_box" style="display: none" id = "other_model" value ="{{ listing.other_model or '' }}" placeholder ="other model" name = "other_model_id">
 
                         <br>
 
                         <p>Model Year</p>
-                        <input type="number" min="1800" max ="2026" placeholder = "year" class ="input_box" name = "year">
+                        <input type="number" min="1800" max ="2026" value = "{{ listing.year or '' }}" class ="input_box" name = "year">
 
                         <br>
                         
@@ -58,7 +53,7 @@
                         
                         <select class="input_box" id = "bs" name = "body_style">
                             {% for bs in body_styles %}
-                                <option class="input_box" value="{{bs}}">{{bs}}</option>
+                                <option class="input_box" value="{{bs}}" {% if listing.body_style == bs %}selected{% endif %}>{{bs}}</option>
                             {% endfor %}
                         </select>
 
@@ -71,7 +66,7 @@
                         <p>Mileage</p>
 
                         <div>
-                            <input type="number" placeholder="km" class="input_box" id="mileageInput" name = "mileage">
+                            <input type="number" value="{{ listing.mileage or '' }}" class="input_box" id="mileageInput" name = "mileage">
 
                             <input type="radio" id="unitkm" name="MileageUnit" checked="true"value="km">
                             <label for="unitkm">km</label>
@@ -83,13 +78,13 @@
                         <br>
 
                         <p>Colour</p>
-                        <input type="text" placeholder = "colour" class="input_box" name = "colour">
+                        <input type="text" value = "{{ listing.colour or '' }}" class="input_box" name = "colour">
 
                         <br>
                         
                         <p>Price</p>
                         <div>
-                            <input type="number" min="0" max="500000" value = "0" id = "PriceNumber" class ="input_box" name = "price">
+                            <input type="number" min="0" max="500000" value = "{{ listing.price or 0 }}" id = "PriceNumber" class ="input_box" name = "price">
 
                             <input type="radio" id="unitEuro" name="priceUnit" checked value="euro">
                             <label for="unitEuro">€</label>
@@ -98,7 +93,7 @@
                             <label for="unitDollar">$</label>
 
                         </div>
-                        <input type="range" min="0" max="500000" value = "0" id = "PriceRange" >
+                        <input type="range" min="0" max="500000" value = "{{ listing.price or 0 }}" id = "PriceRange" >
 
                 </div>
 
@@ -110,7 +105,7 @@
 
                     <div>
 
-                        <input type="number" min="0"  placeholder = "hp" class ="input_box" id = "ep" name = "power">
+                        <input type="number" min="0" value = "{{ listing.power or '' }}" placeholder = "hp" class ="input_box" id = "ep" name = "power">
                         <input type="radio" id="unithp" name="enginePowerUnit" checked value = "hp">
                         <label for="unithp">hp(PS)</label>
 
@@ -124,7 +119,7 @@
                     <p>Engine displacement</p>
 
                     <div>
-                        <input type="number" step="any" min="0" placeholder = "L"  class ="input_box" id = "ed" name = "displacement">
+                        <input type="number" step="any" min="0" value = "{{ listing.displacement or '' }}" placeholder = "L"  class ="input_box" id = "ed" name = "displacement">
 
                         <input type="radio" id="unitL" name="engineDisplacementUnit" checked value="L">
                         <label for="unitL">L</label>
@@ -140,7 +135,7 @@
 
                     <div>
 
-                        <input type="number" min="0" step="any" placeholder = "l/100km"   class ="input_box" id="fe" name = "fuel_efficiency">
+                        <input type="number" min="0" step="any" value = "{{ listing.fuel_efficiency or '' }}" placeholder = "l/100km"   class ="input_box" id="fe" name = "fuel_efficiency">
                         
                         <input type="radio" id="unitLkm" name="fuelEfficiencyUnit"  checked value="l/100km">
                         <label for="unitLkm">l/100km</label>
@@ -154,14 +149,14 @@
                     <p>Fuel type</p>
 
                     <select class ="input_box" id = "fuel_type" name = "fuel_type">
-                        <option class="input_box" value="Gasoline(Petrol)">Gasoline(Petrol)</option>
-                        <option class="input_box" value="Diesel">Diesel</option>
-                        <option class="input_box" value="LPG">LPG</option>
-                        <option class="input_box" value="Electric">Electric</option>
-                        <option class="input_box" value="Hybrid">Hybrid</option>
-                        <option class="input_box" value="Plug-in Hybrid">Plug-in Hybrid</option>
-                        <option class="input_box" value="Other">Other</option>
-                        <option class="input_box" value="Unknown">Unknown</option>
+                        <option class="input_box" value="Gasoline(Petrol)" {% if listing.fuel_type == "Gasoline(Petrol)" %}selected{% endif %}>Gasoline(Petrol)</option>
+                        <option class="input_box" value="Diesel" {% if listing.fuel_type == "Diesel" %}selected{% endif %}>Diesel</option>
+                        <option class="input_box" value="LPG" {% if listing.fuel_type == "LPG" %}selected{% endif %}>LPG</option>
+                        <option class="input_box" value="Electric" {% if listing.fuel_type == "Electric" %}selected{% endif %}>Electric</option>
+                        <option class="input_box" value="Hybrid" {% if listing.fuel_type == "Hybrid" %}selected{% endif %}>Hybrid</option>
+                        <option class="input_box" value="Plug-in Hybrid" {% if listing.fuel_type == "Plug-in Hybrid" %}selected{% endif %}>Plug-in Hybrid</option>
+                        <option class="input_box" value="Other" {% if listing.fuel_type == "Other" %}selected{% endif %}>Other</option>
+                        <option class="input_box" value="Unknown" {% if not listing.fuel_type %}selected{% endif %}>Unknown</option>
                     </select>
 
                     <br>
@@ -174,7 +169,7 @@
 
                     <select class ="input_box" id = "engine_config" name = "configuration">
                         {% for ec in engine_configurations %}
-                            <option class ="input_box" value="{{ec}}">{{ec}}</option>
+                            <option class ="input_box" value="{{ec}}" {% if listing.configuration == ec %}selected{% endif %}>{{ec}}</option>
                         {% endfor %}
                     </select>
 
@@ -187,12 +182,12 @@
                     <p>Drivetrain</p>
 
                     <select class ="input_box" id = "drivetrain" name = "drivetrain">
-                        <option class="input_box" value="FWD">FWD</option>
-                        <option class="input_box" value="RWD">RWD</option>
-                        <option class="input_box" value="AWD">AWD</option>
-                        <option class="input_box" value="4WD">4WD</option>
-                        <option class="input_box" value="Other">Other</option>
-                        <option class="input_box" value="Unknown">Unknown</option>
+                        <option class="input_box" value="FWD" {% if listing.drivetrain == "FWD" %}selected{% endif %}>FWD</option>
+                        <option class="input_box" value="RWD" {% if listing.drivetrain == "RWD" %}selected{% endif %}>RWD</option>
+                        <option class="input_box" value="AWD" {% if listing.drivetrain == "AWD" %}selected{% endif %}>AWD</option>
+                        <option class="input_box" value="4WD" {% if listing.drivetrain == "4WD" %}selected{% endif %}>4WD</option>
+                        <option class="input_box" value="Other" {% if listing.drivetrain == "Other" %}selected{% endif %}>Other</option>
+                        <option class="input_box" value="Unknown" {% if not listing.drivetrain %}selected{% endif %}>Unknown</option>
                     </select>
 
                     <br>
@@ -202,11 +197,11 @@
                     <p>Transmission</p>
 
                     <select class ="input_box" id = "trans" name = "transmission">
-                        <option class="input_box" value="Manual">Manual</option>
-                        <option class="input_box" value="Automatic">Automatic</option>
-                        <option class="input_box" value="Semi-Automatic">Semi-Automatic</option>
-                        <option class="input_box" value="Other">Other</option>
-                        <option class="input_box" value="Unknown">Unknown</option>
+                        <option class="input_box" value="Manual" {% if listing.transmission == "Manual" %}selected{% endif %}>Manual</option>
+                        <option class="input_box" value="Automatic" {% if listing.transmission == "Automatic" %}selected{% endif %}>Automatic</option>
+                        <option class="input_box" value="Semi-Automatic" {% if listing.transmission == "Semi-Automatic" %}selected{% endif %}>Semi-Automatic</option>
+                        <option class="input_box" value="Other" {% if listing.transmission == "Other" %}selected{% endif %}>Other</option>
+                        <option class="input_box" value="Unknown" {% if not listing.transmission %}selected{% endif %}>Unknown</option>
                     </select>
 
                     <br>
@@ -220,27 +215,13 @@
 
                 <br>
                 <br>
-
-                <div id ="img_area" class ="cell">
-
-                        <h2>Add images</h2>
-
-                        <p>Cover image</p>
-                         <input type="file" name="coverCarImage" accept="image/png, image/jpeg, image/webp"  required>
-
-                        <p>Additional images</p>
-                         <input type="file" name="carImages" accept="image/png, image/jpeg, image/webp" multiple>
-                </div>
-
-                <br>
-                <br>
                 
                 <div id = "text_area" class ="cell">
 
                         <h2>Title</h2>
                         <div id = "title_area">
 
-                        <input type = "text" class ="input_box" id = "title_box" name = "title" required  maxlength = "80">
+                        <input type = "text" class ="input_box" id = "title_box" name = "title" required  maxlength = "80" value = "{{ listing.title or '' }}">
                         <p id = "char_counter_t" style = "color:rgb(111, 111, 111)">0/80</p>
 
                         </div>
@@ -251,7 +232,7 @@
 
                         <div id ="description_area">
 
-                        <input type = "text" class ="input_box" id = "descp_box" name = "description" maxlength = "1000">
+                        <input type = "text" class ="input_box" id = "descp_box" name = "description" maxlength = "1000" value = "{{ listing.description or '' }}">
                         <p id = "char_counter_d" style = "color:rgb(111, 111, 111)">0/1000</p>
 
                         </div>
@@ -261,10 +242,10 @@
                 <br>
 
                 <div>
-                        <input type="radio" id = "prvlst"  name="status" checked value="private">
+                        <input type="radio" id = "prvlst"  name="status" value="private" {% if listing.status == "private" %}checked{% endif %}>
                         <label for="prvlst">Private</label>
 
-                        <input type="radio" id="pblst" name="status" value="public">
+                        <input type="radio" id="pblst" name="status" value="public" {% if listing.status == "public" %}checked{% endif %}>
                         <label for="pblst">Public</label>
                 </div>
                 
@@ -276,11 +257,13 @@
                     <p style="color:rgb(139, 0, 0)">{{m}}</p>
                 {% endfor %}
 
-                <button type="submit" class ="btn">Submit listing</button>
+                <div style="display: flex; flex-direction: row; gap: 5px;">
+                    <button type="submit" class ="btn">Submit changes</button>
+                    <button class ="btn" style="background-color:rgb(86, 3, 0)">Cancel</button>
+                </div>
         </form>
 
         
     </div>
-    <script src = "{{ url_for( 'static' , filename = 'JavaScript/make_listing_page.js')}}" ></script>
-
+     <script src = "{{ url_for( 'static' , filename = 'JavaScript/edit_listing_page.js')}}" ></script>
 {% endblock %}
