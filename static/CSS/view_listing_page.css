@@ -1,0 +1,51 @@
+html , body{
+    color: white;
+    height: 100%;
+    margin: 0;
+}
+#content{
+    padding: 15px;
+    display: flex;
+    flex-direction: row; 
+    gap: 15px;
+}
+#view_img{
+    width: 30vw;
+    height: 40vh;
+}
+.row{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.sec_img{
+    width: 35px;
+    height: 35px;
+    cursor: pointer;
+    border: 2px,solid,white;
+}
+.image_area{
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    
+}
+.description_area{
+    height: 40vh;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border: 2px solid #c9a227;
+    border-radius: 15px;
+    background-color: rgb(24, 23, 23);
+    gap: 15px;
+}
+.col1{
+    display: flex;
+    flex-direction: column;
+}
+.secondary_images{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}

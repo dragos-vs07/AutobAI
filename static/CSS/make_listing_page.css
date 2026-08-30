@@ -62,6 +62,12 @@ body{
     flex-direction: row;
     gap: 5px;
 }
+@media(max-width: 830px)
+{
+    .content{
+        margin-left: 60px;
+    }
+}
 @media(max-width: 760px)
 {
     .content{
