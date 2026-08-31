@@ -216,6 +216,47 @@
                 <br>
                 <br>
                 
+            <div id ="image_area">
+                <h2>Images</h2>
+
+                {% for img in listing.images %}
+                        {% if img.cover_image %}
+                            <label class = "image-item">
+                                <input type="checkbox" value="{{img.id}}" name="delete_cov_img" class="delete_checkbox" id="cover_image_del_checkbox"> 
+                                <img src="{{img.image_path}}" class="delete_image" style="width:200px;height:200px;">
+                            </label>
+                        {% endif %}
+                    {% endfor %}
+                        
+                     <div id="new_cvr" style="display:none;">
+                        <p>Load new cover image</p>
+                        <input type="file" name="carImages" accept="image/png, image/jpeg, image/webp, image/jfif">
+                     </div>
+                <br>
+
+                <div id="sec_images_area">
+
+                    {% for img in listing.images %}
+                        {% if not img.cover_image %}
+                        <label class = "image-item">
+                                <input type="checkbox" value="{{img.id}}" name="delete_imgs" class="delete_checkbox"> 
+                                <img src="{{img.image_path}}" class="delete_image">
+                        </label>
+                        {% endif %}
+                        
+                    {% endfor %}
+
+                    
+                </div>
+
+                <div id="new_sec_img">
+                    <p>Add more images</p>
+                    <input type="file" name="carImages" accept="image/png, image/jpeg, image/webp, image/jfif" id="sec_img_input" multiple>
+                </div>
+
+                <p id="file_count"></p>
+            </div>
+
                 <div id = "text_area" class ="cell">
 
                         <h2>Title</h2>

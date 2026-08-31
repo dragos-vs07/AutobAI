@@ -1,4 +1,3 @@
-
 pb = document.getElementById("PriceRange");
 pn = document.getElementById("PriceNumber");
 
@@ -52,13 +51,15 @@ unitkW.addEventListener('change' , () => {
 makesddl = document.getElementById("makes_dropdown_list");
 modelsddl = document.getElementById("models_dropdown_list");
 
-modelsddl.addEventListener('change' , () => {
-
+const updateOtherModelVisibility = () => {
     if(modelsddl.value == "Other")
         document.getElementById("other_model").style = "display: block";
     else
         document.getElementById("other_model").style = "display: none";
-})
+}
+
+modelsddl.addEventListener('change', updateOtherModelVisibility);
+
 async function display_models(brand)
 {
     modelsddl.innerHTML = "";
@@ -67,8 +68,6 @@ async function display_models(brand)
     {
             const response = await fetch(`/API/get_models/${brand}`);
             const models = await response.json();
-
-            
 
             for (const m of models)
             {
@@ -91,14 +90,11 @@ async function display_models(brand)
     option.textContent = "Unknown";
     option.className = "input_box";
     modelsddl.appendChild(option);
+
+    updateOtherModelVisibility();
 }
 
-makesddl.addEventListener('change', function(){ 
-
-    document.getElementById("other_model").style = "display: none";
-
-    display_models(makesddl.options[makesddl.selectedIndex].dataset.brand);
-
+const updateOtherBrandVisibility = () => {
     if (makesddl.options[makesddl.selectedIndex].dataset.brand == "Other")
     {
         document.getElementById("other_brand").style="display: block";
@@ -106,9 +102,19 @@ makesddl.addEventListener('change', function(){
     }
     else
         document.getElementById("other_brand").style="display: none";
+}
+
+makesddl.addEventListener('change', function(){
+
+    document.getElementById("other_model").style = "display: none";
+
+    display_models(makesddl.options[makesddl.selectedIndex].dataset.brand);
+
+    updateOtherBrandVisibility();
 });
 
 display_models(makesddl.options[makesddl.selectedIndex].dataset.brand);
+updateOtherBrandVisibility();
 
 mlg = document.getElementById("mileageInput");
 
@@ -125,57 +131,134 @@ unitmiles.addEventListener('change' , () => {
 
 const ft = document.getElementById("fuel_type");
 
-ft.addEventListener('change' , () => {
+const updateFuelOtherVisibility = () => {
     if(ft.value == "Other")
         document.getElementById("other_fuel").style = "display: block";
     else
         document.getElementById("other_fuel").style = "display: none";
-})
+}
+
+ft.addEventListener('change', updateFuelOtherVisibility);
+updateFuelOtherVisibility();
 
 const engc = document.getElementById("engine_config");
 
-engc.addEventListener('change' , () => {
+const updateEngineConfigOtherVisibility = () => {
     if(engc.value == "Other")
         document.getElementById("other_config").style = "display: block";
     else
         document.getElementById("other_config").style = "display: none";
-})
+}
+
+engc.addEventListener('change', updateEngineConfigOtherVisibility);
+updateEngineConfigOtherVisibility();
 
 const dt = document.getElementById("drivetrain");
 
-dt.addEventListener('change' , () => {
+const updateDrivetrainOtherVisibility = () => {
     if(dt.value == "Other")
         document.getElementById("other_drivetrain").style = "display: block";
     else
         document.getElementById("other_drivetrain").style = "display: none";
-})
+}
+
+dt.addEventListener('change', updateDrivetrainOtherVisibility);
+updateDrivetrainOtherVisibility();
 
 const trans = document.getElementById("trans");
 
-trans.addEventListener('change' , () => {
+const updateTransOtherVisibility = () => {
     if(trans.value == "Other")
         document.getElementById("other_trans").style = "display: block";
     else
         document.getElementById("other_trans").style = "display: none";
-})
+}
+
+trans.addEventListener('change', updateTransOtherVisibility);
+updateTransOtherVisibility();
 
 const bs = document.getElementById("bs");
 
-bs.addEventListener('change' , () => {
+const updateBodyStyleOtherVisibility = () => {
     if(bs.value == "Other")
         document.getElementById("other_bs").style = "display: block";
     else
         document.getElementById("other_bs").style = "display: none";
-})
+}
+
+bs.addEventListener('change', updateBodyStyleOtherVisibility);
+updateBodyStyleOtherVisibility();
 
 title_input = document.getElementById("title_box");
 
-title_input.addEventListener("input", () => {
+const updateTitleCounter = () => {
     document.getElementById("char_counter_t").textContent = `${title_input.value.length}/80`
-})
+}
+
+title_input.addEventListener("input", updateTitleCounter);
+updateTitleCounter();
 
 description_input = document.getElementById("descp_box");
 
-description_input.addEventListener("input", () => {
+const updateDescCounter = () => {
     document.getElementById("char_counter_d").textContent = `${description_input.value.length}/1000`
+}
+
+description_input.addEventListener("input", updateDescCounter);
+updateDescCounter();
+
+
+
+cidc = document.getElementById("cover_image_del_checkbox"); 
+cidc.addEventListener('change', () => {
+    if(cidc.checked)
+        document.getElementById("new_cvr").style="display:block";
+    else
+        document.getElementById("new_cvr").style="display:none";
 })
+
+const Checkboxes = document.querySelectorAll('.delete_checkbox');
+const SecImgInput = document.getElementById("sec_img_input");
+const fc = document.getElementById("file_count");
+
+function CountLoadedImages()
+{
+    cnt = 0;
+    document.querySelectorAll('.delete_checkbox').forEach(checkbox => { 
+        if(!checkbox.checked)
+            cnt = cnt + 1;
+    })
+    cnt += SecImgInput.files.length;
+
+    return cnt;
+}
+
+fc.innerText = `${CountLoadedImages()}/11 Images`;
+
+SecImgInput.addEventListener('change', () => {
+
+        const cnt = CountLoadedImages();
+
+        fc.innerText = `${cnt}/11 Images`;
+
+         if(cnt>=11)
+            document.getElementById("new_sec_img").style="display:none";
+        else
+            document.getElementById("new_sec_img").style="display:block"; 
+    });
+
+Checkboxes.forEach(checkbox => {
+    checkbox.addEventListener('change', () => {
+
+        checkbox.closest('.image-item').classList.toggle('marked-for-deletion', checkbox.checked);
+
+        const cnt = CountLoadedImages();
+        fc.innerText = `${cnt}/11 Images`;
+
+        if(cnt>=11)
+            document.getElementById("new_sec_img").style="display:none";
+        else
+            document.getElementById("new_sec_img").style="display:block"; 
+    });
+});
+

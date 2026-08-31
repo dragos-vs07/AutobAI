@@ -208,8 +208,7 @@ def normalise_fuel_efficiency(value , unit):
 
 def save_listing_image(file,is_cover,listing_id):
 
-      
-      ALLOWED = {".jpg", ".jpeg", ".png", ".webp"}
+      ALLOWED = {".jpg", ".jpeg", ".png", ".webp", ".jfif"}
       
       filename = secure_filename(file.filename)
       ext = os.path.splitext(filename)[1].strip().lower()
@@ -217,7 +216,7 @@ def save_listing_image(file,is_cover,listing_id):
       print("here:" , ext)
       if ext not in ALLOWED:
             flash("Invalid image format")
-            return
+            return redirect(url_for("load_make_listing_page"))
       
       img_path = f"static/listings_images/{uuid.uuid4()}{ext}"
       file.save(img_path)
@@ -230,7 +229,7 @@ def save_listing_image(file,is_cover,listing_id):
 
       db.session.add(new_listing_image)
 
-@app.route("/upload_listing" , methods = ["POST"])
+@app.route("/upload_listing", methods = ["POST"])
 def make_listing():
 
      if not session.get("user_id"):
@@ -336,25 +335,26 @@ def make_listing():
 
      car_list = request.files.getlist("carImages")
      if len(car_list) > 10 :
-          flash("Maximum number of photos exceeded")
-          return redirect(url_for("load_make_listing_page"))
-
+                    flash("Maximum number of photos exceeded")
+                    return redirect(url_for("load_make_listing_page"))
+          
      for image in car_list:
-            if image.filename:
-             image.seek(0, os.SEEK_END)
-             size = image.tell()
-             image.seek(0)
-             if size > 5 * 1024 * 1024:
-                  flash("Image size too large")
-                  return redirect(url_for("load_make_listing_page"))
-             save_listing_image(image,False,new_listing.id)
+               if image.filename:
+                    image.seek(0, os.SEEK_END)
+                    size = image.tell()
+                    image.seek(0)
+                    if size > 5 * 1024 * 1024:
+                         flash("Image size too large")
+                         return redirect(url_for("load_make_listing_page"))
+                    save_listing_image(image,False,new_listing.id)
+     
 
      db.session.commit()
 
      flash("Listing uploaded successfuly")
      return redirect(url_for("load_make_listing_page"))
 
-@app.route("/edit_listing")
+@app.route("/edit_listing", methods=["POST"])
 def confirm_edit():
      return 
 
