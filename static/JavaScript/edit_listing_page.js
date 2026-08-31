@@ -219,6 +219,7 @@ cidc.addEventListener('change', () => {
 
 const Checkboxes = document.querySelectorAll('.delete_checkbox');
 const SecImgInput = document.getElementById("sec_img_input");
+const CvrImgInput = document.getElementById("cvr_img_input");
 const fc = document.getElementById("file_count");
 
 function CountLoadedImages()
@@ -229,6 +230,7 @@ function CountLoadedImages()
             cnt = cnt + 1;
     })
     cnt += SecImgInput.files.length;
+    cnt += CvrImgInput.files.length;
 
     return cnt;
 }
@@ -241,11 +243,29 @@ SecImgInput.addEventListener('change', () => {
 
         fc.innerText = `${cnt}/11 Images`;
 
-         if(cnt>=11)
+         if(cnt==11)
             document.getElementById("new_sec_img").style="display:none";
-        else
+         else if(cnt<11)
             document.getElementById("new_sec_img").style="display:block"; 
+        else
+        {
+            alert("You can upload at most 11 images ( 1 cover + 10 secondary )");
+            SecImgInput.value = '';
+            fc.innerText = `${CountLoadedImages()}/11 Images`;
+        }
+
+        if(SecImgInput.files.length > 0)
+            document.getElementById("cancel_sec").style = "display:block;";
+        else
+            document.getElementById("cancel_sec").style = "display:none;";
     });
+
+CvrImgInput.addEventListener('change', () => {
+    if(CvrImgInput.files.length > 0)
+        document.getElementById("cancel_cvr").style="display:block";
+
+    fc.innerText = `${CountLoadedImages()}/11 Images`;
+})
 
 Checkboxes.forEach(checkbox => {
     checkbox.addEventListener('change', () => {
@@ -262,3 +282,20 @@ Checkboxes.forEach(checkbox => {
     });
 });
 
+function clear_sec_input()
+{
+    SecImgInput.value = '';
+    fc.innerText = `${CountLoadedImages()}/11 Images`;
+
+    if(CountLoadedImages() < 11)
+        document.getElementById("new_sec_img").style = "display:block"; 
+
+     document.getElementById("cancel_sec").style = "display:none;";
+}
+function clear_cvr_input()
+{
+    CvrImgInput.value= '';
+    fc.innerText = `${CountLoadedImages()}/11 Images`;
+
+    document.getElementById("cancel_cvr").style = "display:none;";
+}

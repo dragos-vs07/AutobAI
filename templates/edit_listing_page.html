@@ -230,8 +230,9 @@
                         
                      <div id="new_cvr" style="display:none;">
                         <p>Load new cover image</p>
-                        <input type="file" name="carImages" accept="image/png, image/jpeg, image/webp, image/jfif">
+                        <input type="file" name="carImages" accept="image/png, image/jpeg, image/webp, image/jfif" id="cvr_img_input">
                      </div>
+                     <button type="button" id="cancel_cvr" onclick="clear_cvr_input()" class ="btn cancel_btn">Cancel</button>
                 <br>
 
                 <div id="sec_images_area">
@@ -253,8 +254,9 @@
                     <p>Add more images</p>
                     <input type="file" name="carImages" accept="image/png, image/jpeg, image/webp, image/jfif" id="sec_img_input" multiple>
                 </div>
-
+                    <button type="button" id="cancel_sec" onclick="clear_sec_input()" class ="btn cancel_btn">Cancel</button>
                 <p id="file_count"></p>
+
             </div>
 
                 <div id = "text_area" class ="cell">
@@ -300,7 +302,7 @@
 
                 <div style="display: flex; flex-direction: row; gap: 5px;">
                     <button type="submit" class ="btn">Submit changes</button>
-                    <button class ="btn" style="background-color:rgb(86, 3, 0)">Cancel</button>
+                    <button class ="btn cancel_btn">Cancel</button>
                 </div>
         </form>
 
