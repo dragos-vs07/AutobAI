@@ -46,13 +46,6 @@ body{
     border-radius: 15px;
     background-color: rgb(24, 23, 23);
 }
-#title_box{
-    width: 30rem;
-}
-#descp_box{
-    width: 50rem;
-    height: 20rem;
-}
 #title_area{
     display: flex;
     flex-direction: row;
@@ -95,6 +88,7 @@ body{
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     border-radius: 15px;
     border: 2px solid #c9a227;
     padding: 10px;
@@ -108,4 +102,47 @@ body{
 .cancel_btn{
     display: none;
     background-color: rgb(89, 0, 0);
+}
+@media(max-width:1370px){
+    #sec_images_area{
+        grid-template-columns: repeat(4, 2fr);
+    }
+}
+@media(max-width:1128px){
+    #sec_images_area{
+        grid-template-columns: repeat(3, 2fr);
+    }
+}
+@media(max-width:870px){
+    #sec_images_area{
+        grid-template-columns: repeat(2, 2fr);
+    }
+}
+@media(max-width:770px){
+    #image_area{
+        width: 70%;
+    }
+}
+@media(max-width:605px){
+    #image_area{
+        width: 80%;
+    }
+}
+@media(max-width:550px){
+    #image_area{
+        border: none;
+    }
+}
+@media(max-width: 425px)
+{
+    #title_area{
+        flex-direction: column;
+    }
+    #description_area{
+        flex-direction: column;
+    }
+    .listing_form{
+        border-style: none;
+        background-color: transparent;
+    }
 }

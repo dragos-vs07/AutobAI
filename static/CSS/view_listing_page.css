@@ -67,3 +67,6 @@ html , body{
     border-radius: 10px;
     background-color: rgb(13, 101, 177);
 }
+.engine-icon {
+    color: white;
+}

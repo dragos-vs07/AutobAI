@@ -7,7 +7,7 @@
 {% block content %}
  <div class ="content">
 
-        <form action="/edit_listing" class = "listing_form" method="post" enctype="multipart/form-data">
+        <form action="/edit_listing/{{listing.id}}" class = "listing_form" method="post" enctype="multipart/form-data">
 
             <div class ="upper_area">
 
@@ -230,7 +230,7 @@
                         
                      <div id="new_cvr" style="display:none;">
                         <p>Load new cover image</p>
-                        <input type="file" name="carImages" accept="image/png, image/jpeg, image/webp, image/jfif" id="cvr_img_input">
+                        <input type="file" name="coverCarImage" accept="image/png, image/jpeg, image/webp, image/jfif" id="cvr_img_input">
                      </div>
                      <button type="button" id="cancel_cvr" onclick="clear_cvr_input()" class ="btn cancel_btn">Cancel</button>
                 <br>

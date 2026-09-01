@@ -255,14 +255,14 @@ SecImgInput.addEventListener('change', () => {
         }
 
         if(SecImgInput.files.length > 0)
-            document.getElementById("cancel_sec").style = "display:block;";
+            document.getElementById("cancel_sec").style = "display:flex;";
         else
             document.getElementById("cancel_sec").style = "display:none;";
     });
 
 CvrImgInput.addEventListener('change', () => {
     if(CvrImgInput.files.length > 0)
-        document.getElementById("cancel_cvr").style="display:block";
+        document.getElementById("cancel_cvr").style="display:flex";
 
     fc.innerText = `${CountLoadedImages()}/11 Images`;
 })

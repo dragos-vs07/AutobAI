@@ -232,9 +232,13 @@ def save_listing_image(file,is_cover,listing_id):
 @app.route("/upload_listing", methods = ["POST"])
 def make_listing():
 
+     # SECURITY CHECK
+
      if not session.get("user_id"):
           return redirect(url_for("load_home"))
-     
+
+     # TEXT_INPUT
+
      inputs = ["make_id", "model_id", "title", "price", "configuration", "drivetrain", "fuel_type",
                 "transmission", "description", "year", "mileage", "power", "displacement", "fuel_efficiency",
                 "colour", "body_style", "status"  ]
@@ -354,9 +358,105 @@ def make_listing():
      flash("Listing uploaded successfuly")
      return redirect(url_for("load_make_listing_page"))
 
-@app.route("/edit_listing", methods=["POST"])
-def confirm_edit():
-     return 
+
+
+@app.route("/edit_listing/<int:listing_id>", methods=["POST"])
+def confirm_edit(listing_id):
+
+     # SECURITY CHECK
+     listing = Listing.query.filter_by(listing_id=listing_id).first()
+
+     if not session.get("user_id") or not listing:
+           return redirect(url_for("load_home"))
+
+     if listing.seller_id != session.get("user_id"):
+          return redirect(url_for("load_home"))
+
+     # TEXT INPUT 
+
+     inputs = ["make_id", "model_id", "title", "price", "configuration", "drivetrain", "fuel_type",
+                     "transmission", "description", "year", "mileage", "power", "displacement", "fuel_efficiency",
+                     "colour", "body_style", "status"  ]
+     
+     other_option ={"make_id": False, "model_id" : False, "fuel_type" : False, "configuration" : False, "drivetrain" : False}
+     
+     units = ["priceUnit", "MileageUnit", "enginePowerUnit", "engineDisplacementUnit", "fuelEfficiencyUnit"]
+     
+     form_data = []
+     form_units = []
+          
+     for i in inputs:
+               
+               data = request.form.get(i)
+     
+               if not data and not Listing.__table__.columns[i].nullable :
+                    print("here",data)
+                    flash(f"must input required fields{Listing.__table__.columns[i]}")
+                    return(redirect(url_for("load_edit_listing_page")))
+               
+               elif not data and Listing.__table__.columns[i].nullable :
+                       form_data.append(None)
+     
+               else:
+                       if data == "Other":
+                            other = request.form.get(f"other_{i}")
+                            if not other:
+                                 flash(f"must input other {i}")
+                                 return(redirect(url_for("load_edit_listing_page")))
+                            else:
+                                   other_option[i] = True
+                                   form_data.append(other)
+                       else:
+                             form_data.append(data)
+                    
+           
+     for u in units:
+          unit = request.form.get(u)
+          if not unit:
+               flash("must select a unit for measurable inputs")
+               return redirect(url_for("load_edit_listing_page"))
+          form_units.append(unit)
+
+     currency_convert = normalise_currency(form_data[3], form_units[0])
+     
+     if not currency_convert:
+          flash("Conversion from USD to EUR failed , try manual conversion or use EUR until problem is fixed")
+          return redirect(url_for("load_edit_listing_page"))
+     
+     if len(form_data[2]) > 80:
+          flash("Title too long , please shorten the input")
+          return redirect(url_for("load_edit_listing_page"))
+     
+     if form_data[8] and len(form_data[8]) > 1000:
+          flash("Description too long, please shorten the input")
+          return redirect(url_for("load_edit_listing_page"))
+     
+     # IMAGES
+
+     deleted_cvr_image_id = request.form.get("delete_cov_img")
+     deleted_sec_images_ids = request.form.getlist("delete_imgs")
+     new_sec_imgs = request.files.getlist("carImages")
+     new_cvr_img = request.files.get("coverCarImage")
+
+     if deleted_cvr_image_id:
+          img = ListingImages.query.filter_by(id=deleted_cvr_image_id).first()
+          if not img or img.listing_id != listing_id or not img.cover_image:
+               flash("Tried to delete inexistent cover image")
+               return redirect(url_for("load_edit_listing_page"))
+     
+          if img and not new_cvr_img:
+               flash("Must input a cover image")
+               return redirect(url_for("load_edit_listing_page"))
+
+     for img_id in deleted_sec_images_ids:
+           img = ListingImages.query.filter_by(id=img_id).first()
+           if not img or img.listing_id != listing_id:
+               flash("Tried to delete inexistent secondary image")
+               return redirect(url_for("load_edit_listing_page"))
+
+     if 1 + len(new_sec_imgs) - len(deleted_sec_images_ids) > 11:
+           flash("Too many images loaded, max 11 ( 1 cover + 10 secondary )")
+           return redirect(url_for("load_edit_listing_page"))
 
 if __name__ == "__main__":
         app.run()
