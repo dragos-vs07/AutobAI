@@ -535,6 +535,37 @@ def confirm_edit(listing_id):
      db.session.commit()
      flash("Listing edited successfully")
      return redirect(url_for("load_edit_listing_page",listing_id=listing.id))
+
+@app.route("/delete_listing/<int:listing_id>", methods=["POST"])
+def delete_listing(listing_id):
+     if not session.get("user_id") or not listing_id:
+          return jsonify({
+               "status": "fail",
+               "message": "Not authenticated"
+          }), 401
+
+     l = Listing.query.filter_by(id=listing_id).first()
+
+     if not l:
+          return jsonify({
+               "status": "fail",
+               "message": "Listing not found"
+          }), 404
+
+     if l.seller_id != session.get("user_id"):
+          return jsonify({
+               "status": "fail",
+               "message": "Unauthorised delete access for chosen listing"
+          }), 403
+
+     db.session.delete(l)
+     db.session.commit()
+
+     return jsonify({
+           "status": "success",
+           "message": "listing deleted"
+     })
+
      
 if __name__ == "__main__":
         app.run()

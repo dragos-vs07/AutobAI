@@ -9,6 +9,12 @@ body{
     align-items: center;
     justify-content: center;
 }
+#modal_shadow{
+    position:fixed;
+    width:100%;
+    height:100%;
+    display: none;
+}
 .cell{
     display: flex;
     flex-direction: column;
@@ -109,6 +115,17 @@ body{
 .cancel_btn{
     display: none;
     background-color: rgb(89, 0, 0);
+}
+.modal_box{
+    background-color:rgb(24, 23, 23);
+    border: 2px  solid  #c9a227;
+    border-radius: 15px;
+    padding: 15px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
 }
 @media(max-width:1370px){
     #sec_images_area{

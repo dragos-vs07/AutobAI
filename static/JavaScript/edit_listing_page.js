@@ -299,3 +299,30 @@ function clear_cvr_input()
 
     document.getElementById("cancel_cvr").style = "display:none;";
 }
+function close_modal()
+{
+    document.getElementById("delete_modal_box").style="display:none;";
+     document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.0);display: none;"
+}
+
+function show_confirm_delete_listing(listing_id)
+{
+   document.getElementById("delete_modal_box").style="display:flex;flex-direction:column;align-items: center;";
+   document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.7);display: flex;align-items: center;justify-content: center;z-index: 1000;"
+}
+
+document.getElementById("modal_shadow").addEventListener("click",(e)=>{
+    const box = document.getElementById("delete_modal_box");
+    if(!box.contains(e.target))
+        close_modal();
+});
+
+function delete_listing(listing_id)
+{
+    fetch(`/delete_listing/${listing_id}`, { method: "POST"}).then(response => response.json().then(data=>{
+        if(data.status == "success")
+            window.location.href = "/mylistingsp";
+        else
+            alert(`Deleting listing failed, ${response.message}`);
+    }))
+}

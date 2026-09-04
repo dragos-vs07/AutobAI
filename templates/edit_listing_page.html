@@ -5,8 +5,9 @@
 {% endblock %}
 
 {% block content %}
+  
  <div class ="content">
-
+   
         <form action="/edit_listing/{{listing.id}}" class = "listing_form" method="post" enctype="multipart/form-data">
 
             <div class ="upper_area">
@@ -305,13 +306,26 @@
                     <button class ="btn cancel_btn">Cancel</button>
                 </div>
 
-                <p style="color: rgb(93, 93, 93);">All chosen unit options that were made during the original listing publishment were normalised
-                    to metric units. ( $ to €, km to miles, etc.)
-                </p>
-                
-        </form>
+                <br>
 
+                    <button type="button" onclick="show_confirm_delete_listing()" class="btn" style="background-color:rgb(186, 0, 0)">Delete listing</button>
+
+                <p style="color: rgb(93, 93, 93);">All chosen unit options that were made during the original listing publishment were normalised to metric units. ( $ to €, km to miles, etc.)</p>
+                    
+        </form>
+            
         
     </div>
+    <div id="modal_shadow">
+        <div id="delete_modal_box" style="display:none;" class="modal_box">
+                <p>Delete this listing?</p>
+                <p>This action cannot be undone</p>
+                <div style="display:flex;flex-direction:row;gap:3px;">
+                    <button type="button" onclick="delete_listing({{listing.id}})" class="btn" style="background-color:rgb(186, 0, 0)">Delete</button>
+                    <button type="button"onclick="close_modal()" class="btn">Cancel</button>
+                </div>
+        </div>
+    </div>
+
      <script src = "{{ url_for( 'static' , filename = 'JavaScript/edit_listing_page.js')}}" ></script>
 {% endblock %}

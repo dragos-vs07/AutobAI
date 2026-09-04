@@ -63,7 +63,8 @@ class Listing(db.Model):
     status = db.Column(db.String(20), default='private', index=True ) # seller can make the listing private or public 
     creation_date = db.Column(db.DateTime, default=datetime.utcnow)
     images = db.relationship('ListingImages', backref = 'listing', lazy= "dynamic", cascade='all, delete-orphan')
-
+    favorited_by = db.relationship('Favorites', backref='listing', lazy='dynamic', cascade='all, delete-orphan')
+    
 class ListingImages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     listing_id = db.Column(db.Integer , db.ForeignKey('listing.id') , nullable = False)
