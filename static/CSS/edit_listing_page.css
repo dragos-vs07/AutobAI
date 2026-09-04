@@ -99,6 +99,13 @@ body{
     grid-template-columns: repeat(5, 2fr);
     gap: 5px;
 }
+#descp_box{
+    width: 500px;
+    height: 300px;
+}
+#title_box{
+    width: 450px;
+}
 .cancel_btn{
     display: none;
     background-color: rgb(89, 0, 0);
@@ -117,15 +124,44 @@ body{
     #sec_images_area{
         grid-template-columns: repeat(2, 2fr);
     }
+    #descp_box{
+    width: 400px;
+    }
+    #title_box{
+    width: 350px;
+    }
 }
 @media(max-width:770px){
     #image_area{
         width: 70%;
     }
+    #descp_box{
+    width: 300px;
+    }
+    #title_box{
+    font-size: 0.7rem;
+    width: 250px;
+    }
+    #title_area{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #description_area{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
 }
 @media(max-width:605px){
     #image_area{
         width: 80%;
+    }
+    #descp_box{
+    width: 200px;
+    }
+    #title_box{
+    width: 150px;
     }
 }
 @media(max-width:550px){
@@ -135,14 +171,13 @@ body{
 }
 @media(max-width: 425px)
 {
-    #title_area{
-        flex-direction: column;
-    }
-    #description_area{
-        flex-direction: column;
-    }
     .listing_form{
         border-style: none;
         background-color: transparent;
+    }
+    #new_sec_img{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
     }
 }

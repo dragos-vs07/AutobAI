@@ -46,7 +46,8 @@ body{
     background-color: rgb(24, 23, 23);
 }
 #title_box{
-    width: 30rem;
+    font-size: 1rem;
+    width: 400px;
 }
 #descp_box{
     width: 50rem;
@@ -62,10 +63,21 @@ body{
     flex-direction: row;
     gap: 5px;
 }
+#descp_box{
+    width: 500px;
+    height: 300px;
+    
+}
 @media(max-width: 830px)
 {
     .content{
         margin-left: 60px;
+    }
+    #descp_box{
+        width: 400px;
+    }
+    #title_box{
+        width: 300px;
     }
 }
 @media(max-width: 760px)
@@ -73,4 +85,44 @@ body{
     .content{
     margin-left: 90px;
     }
+    #descp_box{
+        width: 300px;
+    }
+    #title_box{
+        font-size: 0.7rem;
+        width: 200px;
+    }
+    #title_area{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    #description_area{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+}
+@media(max-width: 530px)
+{
+    #descp_box{
+        width: 250px;
+    }
+    #title_box{
+        width: 150px;
+    }
+}
+@media(max-width: 470px)
+{
+    .listing_form{
+        border-style: none;
+        background-color: transparent;
+    }
+}
+@media(max-width: 390px)
+{
+    #descp_box{
+        width: 200px;
+    }
+    
 }

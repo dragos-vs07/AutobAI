@@ -275,7 +275,7 @@
 
                         <div id ="description_area">
 
-                        <input type = "text" class ="input_box" id = "descp_box" name = "description" maxlength = "1000" value = "{{ listing.description or '' }}">
+                        <textarea class ="input_box" id = "descp_box" name = "description" maxlength = "1000">{{ listing.description or '' }}</textarea>
                         <p id = "char_counter_d" style = "color:rgb(111, 111, 111)">0/1000</p>
 
                         </div>
@@ -304,6 +304,11 @@
                     <button type="submit" class ="btn">Submit changes</button>
                     <button class ="btn cancel_btn">Cancel</button>
                 </div>
+
+                <p style="color: rgb(93, 93, 93);">All chosen unit options that were made during the original listing publishment were normalised
+                    to metric units. ( $ to €, km to miles, etc.)
+                </p>
+                
         </form>
 
         

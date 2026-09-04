@@ -32,7 +32,7 @@ body{
     gap: 10px;
 }
 .image{
-    width: 17vw; 
+    width: 25vw; 
     height: 17vw;
 }
 @media(max-width:830px){

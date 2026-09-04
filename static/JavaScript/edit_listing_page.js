@@ -235,7 +235,7 @@ function CountLoadedImages()
     return cnt;
 }
 
-fc.innerText = `${CountLoadedImages()}/11 Images`;
+fc.innerText = `${CountLoadedImages()} / 11 Images`;
 
 SecImgInput.addEventListener('change', () => {
 
@@ -251,7 +251,7 @@ SecImgInput.addEventListener('change', () => {
         {
             alert("You can upload at most 11 images ( 1 cover + 10 secondary )");
             SecImgInput.value = '';
-            fc.innerText = `${CountLoadedImages()}/11 Images`;
+            fc.innerText = `${CountLoadedImages()} / 11 Images`;
         }
 
         if(SecImgInput.files.length > 0)
@@ -264,7 +264,7 @@ CvrImgInput.addEventListener('change', () => {
     if(CvrImgInput.files.length > 0)
         document.getElementById("cancel_cvr").style="display:flex";
 
-    fc.innerText = `${CountLoadedImages()}/11 Images`;
+    fc.innerText = `${CountLoadedImages()} / 11 Images`;
 })
 
 Checkboxes.forEach(checkbox => {
@@ -273,7 +273,7 @@ Checkboxes.forEach(checkbox => {
         checkbox.closest('.image-item').classList.toggle('marked-for-deletion', checkbox.checked);
 
         const cnt = CountLoadedImages();
-        fc.innerText = `${cnt}/11 Images`;
+        fc.innerText = `${cnt} / 11 Images`;
 
         if(cnt>=11)
             document.getElementById("new_sec_img").style="display:none";
@@ -285,7 +285,7 @@ Checkboxes.forEach(checkbox => {
 function clear_sec_input()
 {
     SecImgInput.value = '';
-    fc.innerText = `${CountLoadedImages()}/11 Images`;
+    fc.innerText = `${CountLoadedImages()} / 11 Images`;
 
     if(CountLoadedImages() < 11)
         document.getElementById("new_sec_img").style = "display:block"; 

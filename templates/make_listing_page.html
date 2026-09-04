@@ -251,7 +251,7 @@
 
                         <div id ="description_area">
 
-                        <input type = "text" class ="input_box" id = "descp_box" name = "description" maxlength = "1000">
+                        <textarea class ="input_box" id = "descp_box" name = "description" maxlength = "1000"></textarea>
                         <p id = "char_counter_d" style = "color:rgb(111, 111, 111)">0/1000</p>
 
                         </div>
@@ -277,6 +277,10 @@
                 {% endfor %}
 
                 <button type="submit" class ="btn">Submit listing</button>
+
+                <p style="color: rgb(93, 93, 93);">All chosen unit options that are made will be normalised
+                    to metric units. ( $ to €, km to miles, etc.)
+                </p>
         </form>
 
         
