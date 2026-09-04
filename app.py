@@ -113,6 +113,10 @@ def load_predict_page():
 def load_register_page():
     return render_template("register_page.html")
 
+@app.route("/favouritesp")
+def load_favourites_page():
+      return render_template("favourites_page.html")
+
 @app.route("/loginp")
 def load_login_page():
     return render_template("login_page.html")

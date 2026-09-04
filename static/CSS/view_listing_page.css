@@ -50,21 +50,9 @@ html , body{
     gap: 5px;
 }
 #contact_button{
-    cursor: pointer;
-    padding: 5px;
-    color: white;
-    font-weight: bold;
-    border-style: none;
-    border-radius: 10px;
     background-color: rgb(2, 73, 0);
 }
 #evaluate_button{
-    cursor: pointer;
-    padding: 5px;
-    color:white;
-    font-weight: bold;
-    border-style: none;
-    border-radius: 10px;
     background-color: rgb(13, 101, 177);
 }
 .engine-icon {
