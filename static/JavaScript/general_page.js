@@ -14,8 +14,8 @@ fetch("/API/get_listings?page=1&lpp=24")
             const cover_img = document.createElement("img");
 
             cover_img.src = listing.cover_img_path;
-            cover_img.style = "width: 15vw; height: 15vw"
-            
+            cover_img.classList.add("image");
+
             const title = document.createElement("h4");
 
             title.textContent = listing.title;

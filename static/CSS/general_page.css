@@ -67,6 +67,40 @@ svg.is-favourited {
 .fav_icon:hover svg.is-favourited {
     fill: none;
 }
+.image{
+   width: 300px;
+   height: 200px;
+}
+@media(max-width: 1385px){
+    .image{
+        width: 250px;
+        height: 180px;
+    }
+}
+@media(max-width: 1190px){
+    .image{
+        width: 220px;
+        height: 160px;
+    }
+}
+@media(max-width: 1070px){
+    .image{
+        width: 190px;
+        height: 160px;
+    }
+}
+@media(max-width: 945px){
+    .image{
+        width: 170px;
+        height: 150px;
+    }
+}
+@media(max-width: 870px){
+    .image{
+        width: 150px;
+        height: 140px;
+    }
+}
 @media(max-width: 830px){
     #content{
         justify-content: flex-start;  
@@ -74,6 +108,10 @@ svg.is-favourited {
         overflow-y: auto;
         min-height: 0;
         height: 100vh;
+    }
+    .image{
+        width: 150px;
+        height: 120px;
     }
     #search_bar{
         width: 70vw;
@@ -85,7 +123,20 @@ svg.is-favourited {
         grid-template-columns: repeat(3, 1fr); 
     }
 }
-@media(max-width: 680px){
+@media(max-width:820px)
+{
+    .image{
+        width: 130px;
+    }
+}
+@media(max-width:750px)
+{
+    .image{
+        width: 110px;
+        height: 110px;
+    }
+}
+@media(max-width: 715px){
     #listings_area{
         margin-left: 70px;
         grid-template-columns: repeat(2, 1fr); 
@@ -94,8 +145,12 @@ svg.is-favourited {
     #search_bar{
         margin-left: 70px;
     }
+    .image{
+        width: 150px;
+        height: 110px;
+    }
 }
-@media(max-width: 500px)
+@media(max-width: 560px)
 {
     #search_bar{
         margin-left: 80px;
@@ -104,12 +159,29 @@ svg.is-favourited {
         margin-left: 80px;
         grid-template-columns: repeat(1, 1fr); 
     }
+    .image{
+        width: 250px;
+        height: 200px;
+    }
 }
-@media(max-width: 370px)
+@media(max-width: 437px)
+{
+    .image{
+        width: 220px;
+        height: 170px;
+    }
+}
+@media(max-width: 400px)
 {
     #listings_area{
-        margin-left: 90px;
-    }#search_bar{
-        margin-left: 90px;
+        border-style: none;
+        background-color: transparent;
+    }
+}
+@media(max-width:360px)
+{
+    .image{
+        width: 180px; 
+        height: 130px;
     }
 }
