@@ -251,7 +251,7 @@ def make_listing():
                 "transmission", "description", "year", "mileage", "power", "displacement", "fuel_efficiency",
                 "colour", "body_style", "status"  ]
 
-     other_option ={"make_id": False, "model_id" : False, "fuel_type" : False, "configuration" : False, "drivetrain" : False}
+     other_option ={"make_id": False, "model_id" : False, "fuel_type" : False, "configuration" : False, "drivetrain" : False, "transmission" : False}
 
      units = ["priceUnit", "MileageUnit", "enginePowerUnit", "engineDisplacementUnit", "fuelEfficiencyUnit"]
 

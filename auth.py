@@ -46,7 +46,7 @@ def register_account():
      
      session["user_id"] = User.query.filter_by(username = username).first().id
     
-     return(redirect(url_for("load_register_page")))
+     return(redirect(url_for("load_general_page")))
 
 @auth.route("/submit_login" , methods = ["POST"])
 def login_user():
