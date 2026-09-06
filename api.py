@@ -1,6 +1,6 @@
 from flask import Blueprint, request, session, jsonify
 from extensions import db
-from models import CarMake, CarModel, Listing, Favorites
+from models import CarMake, CarModel, Listing, Favorites, User
 
 api = Blueprint("api", __name__, url_prefix="/API")
 
@@ -53,19 +53,23 @@ def find_listings():
     page = request.args.get("page", 1, type=int)
     seller_id = request.args.get("seller_id", -1, type=int)
     listings_per_page = min(request.args.get("lpp", 1, type=int), 50)
+    favourites = request.args.get("favourites",False,type=bool)
 
     listings = []
 
-    if seller_id != -1 and (not session.get("user_id") or session.get("user_id") != seller_id):
-        listings = Listing.query.filter_by(seller_id=seller_id, status="public").offset(
+    if seller_id != -1 and (not session.get("user_id") or session.get("user_id") != seller_id): # get all listings of a user different from the one logged in 
+        listings = Listing.query.filter_by(seller_id=seller_id, status="public").offset(        # ( only public ones )
             (page - 1) * listings_per_page).limit(listings_per_page).all()
 
-    elif seller_id != -1 and session.get("user_id") == seller_id:
-        listings = Listing.query.filter_by(seller_id=seller_id).offset(
-            (page - 1) * listings_per_page).limit(listings_per_page).all()
-
+    elif seller_id != -1 and session.get("user_id") == seller_id: # get all listings of current logged in user
+        if not favourites:
+            listings = Listing.query.filter_by(seller_id=seller_id).offset(
+                        (page - 1) * listings_per_page).limit(listings_per_page).all()
+        else:
+            seller = User.query.filter_by(id=session.get("user_id")).first()
+            listings = [ Listing.query.get(fav.listing_id) for fav in seller.favorites]
     else:
-        listings = Listing.query.filter_by(status="public").offset(
+        listings = Listing.query.filter_by(status="public").offset( # get all listings on the website
             (page - 1) * listings_per_page).limit(listings_per_page).all()
 
     return jsonify([{

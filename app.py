@@ -83,7 +83,8 @@ def load_view_listing_page():
                             brand = CarMake.query.filter_by(id=listing.make_id).first().brand if not listing.other_make else listing.other_make,
                             model = CarModel.query.filter_by(id=listing.model_id).first().model if not listing.other_model else listing.other_model,
                             cover_img_path = listing.images.filter_by(cover_image = True).first().image_path,
-                            images = listing.images.filter_by(cover_image = False).all()
+                            images = listing.images.filter_by(cover_image = False).all(),
+                            is_favourited = "True" if  Favorites.query.filter_by(listing_id=listing_id, user_id=session.get("user_id")).first() else "False"
                             )
 
 @app.route("/mklistp")
@@ -115,6 +116,9 @@ def load_register_page():
 
 @app.route("/favouritesp")
 def load_favourites_page():
+      if not session.get("user_id"):
+          return redirect(url_for("load_home"))
+      
       return render_template("favourites_page.html")
 
 @app.route("/loginp")

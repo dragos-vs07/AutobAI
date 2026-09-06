@@ -22,6 +22,7 @@ body{
     gap: 5px;
 }
 .listing{
+   
     color: white;
     border: 2px solid #c9a227;
     padding: 10px;
@@ -40,7 +41,7 @@ body{
         margin-left: 80px;
     }
     .image{
-        width: 360px; 
+         width: 360px; 
         height: 190px;
     }
 

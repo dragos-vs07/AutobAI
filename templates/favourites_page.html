@@ -2,8 +2,21 @@
 
 {% block head %}
 
+ <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/favourites_page.css') }}" >
+
 {% endblock %}
 
 {% block content %}
+
+    <div id="content">
+
+        <div id = "listings_area">
+            
+        </div>
+
+    </div>
+
+    <script> const userId = {{ session.get("user_id") | tojson }}; </script>
+    <script src = "{{ url_for( 'static' , filename = 'JavaScript/favourites_page.js')}}" ></script>
 
 {% endblock %}

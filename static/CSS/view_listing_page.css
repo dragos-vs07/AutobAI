@@ -58,3 +58,21 @@ html , body{
 .engine-icon {
     color: white;
 }
+
+.fav_icon svg {
+    transition: fill 0.3s ease;
+}
+
+svg.is-not-favourited {
+    fill: none;
+}
+.fav_icon:hover svg.is-not-favourited {
+    fill: rgb(236, 28, 80);
+}
+
+svg.is-favourited {
+    fill: rgb(236, 28, 80);
+}
+.fav_icon:hover svg.is-favourited {
+    fill: none;
+}

@@ -55,7 +55,7 @@ fetch("/API/get_listings?page=1&lpp=24")
                 fav_icon.classList.add("fav_icon");
 
                 if (listing.is_favourite == "True") 
-                 fav_icon.querySelector("svg").classList.add("is-favourited");
+                fav_icon.querySelector("svg").classList.add("is-favourited");
                 else
                 fav_icon.querySelector("svg").classList.add("is-not-favourited");
 
