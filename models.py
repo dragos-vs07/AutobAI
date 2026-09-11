@@ -20,7 +20,7 @@ class CarMake(db.Model):
     id = db.Column(db.Integer,primary_key = True)
     brand = db.Column(db.String(80) , unique = True , nullable = False)
     
-    models = db.relationship('CarModel' , backref = 'make' , lazy = True)
+    models = db.relationship('CarModel' , backref = 'make' , lazy = True, order_by="CarModel.model")
 
 class CarModel(db.Model):
      __tablename__ = 'car_model'

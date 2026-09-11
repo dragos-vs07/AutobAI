@@ -68,8 +68,6 @@ async function display_models(brand)
             const response = await fetch(`/API/get_models/${brand}`);
             const models = await response.json();
 
-            
-
             for (const m of models)
             {
                 const option = document.createElement("option");
