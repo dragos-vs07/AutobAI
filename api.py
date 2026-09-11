@@ -1,9 +1,21 @@
 from flask import Blueprint, request, session, jsonify
 from extensions import db
 from models import CarMake, CarModel, Listing, Favorites, User
+import os
+import lightgbm as lgbm
+import json 
+import pandas as pd
+from datetime import datetime
 
 api = Blueprint("api", __name__, url_prefix="/API")
 
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "ml", "autobay_price_model.txt")
+CATEGORIES_PATH = os.path.join(os.path.dirname(__file__), "ml", "categories.json")
+
+price_model = lgbm.Booster(model_file = MODEL_PATH)
+
+with open(CATEGORIES_PATH) as f:
+    categories = json.load(f)
 
 @api.route("/get_models/<string:brand>")
 def find_models(brand):
@@ -17,6 +29,44 @@ def find_models(brand):
         for model in b.models
     ])
 
+from pandas.api.types import CategoricalDtype
+
+@api.route("/predict_price")
+def make_prediction():
+
+    user_inputs = ["make","model","body_style","transmission","mileage","year"]
+    user_data = []
+
+    for f in user_inputs:
+        user_data.append(request.args.get(f, None))
+
+    if user_data[5]:
+        user_data[5] = datetime.now().year - int(user_data[5])
+
+    input_row = {}
+
+    features = ["make","model","body","transmission","odometer","age"]
+
+    for i, f in enumerate(features):
+        if i <= 3:
+            input_row[f] = user_data[i].lower() if user_data[i] else None
+        else:
+            input_row[f] = float(user_data[i]) if user_data[i] else None
+
+    X = pd.DataFrame([input_row], columns=features)
+
+    print(input_row)
+
+    cat_features = ["make", "model", "body", "transmission"]
+    for f in cat_features:
+        X[f] = X[f].astype(CategoricalDtype(categories=categories[f]))
+
+    prediction = price_model.predict(X)
+
+    return jsonify({
+        "status": "success",
+        "predicted_price": float(prediction[0])
+    })
 
 # 24 listings on one page
 # IMPLEMENT FILTERS

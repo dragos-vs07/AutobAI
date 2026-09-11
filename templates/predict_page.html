@@ -2,8 +2,65 @@
 
 {% block head %}
 
+     <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/predict_page.css') }}" >
+
 {% endblock %}
 
 {% block content %}
 
+<div id="content">
+
+    <h1 id = "main_text">Welcome to the AutobAI price predictor!</h1>
+    <script src = "{{ url_for( 'static' , filename = 'JavaScript/predict_page.js')}}" ></script>
+
+    <h2 class = "sec_text">Present some of the characteristics of your automobile and receive a price prediction made by our model</h2>
+
+    <h2 class = "sec_text">The more information you give the model, the more accurate your result will be</h2>
+
+    <form id="form">
+
+        <p>Brand</p>
+        <select class ="input_box" id ="makes_dropdown_list" name="make">
+
+            {% for b in brands %}
+                <option value="{{b.brand}}" class ="input_box" data-brand = "{{b.brand}}">{{b.brand.title()}}</option>
+            {% endfor %}
+        
+        </select>
+
+        <p>Model</p>
+        <select class ="input_box" id="models_dropdown_list" name = "model" ></select>
+
+        <p>Body style</p>
+
+        <select class="input_box" id = "bs" name = "body_style">
+            {% for bs in body_styles %}
+                <option class="input_box" value="{{bs}}">{{bs}}</option>
+            {% endfor %}
+        </select>
+
+        <p>Model Year</p>
+        <input type="number" min="1800" max ="2026" placeholder = "year" class ="input_box" name = "year">
+
+        <p>Transmission</p>
+
+            <select class ="input_box" id = "trans" name = "transmission">
+                <option class="input_box" value="Manual">Manual</option>
+                <option class="input_box" value="Automatic">Automatic</option>
+                <option class="input_box" value="Semi-Automatic">Semi-Automatic</option>
+                <option class="input_box" value="Other">Other</option>
+                <option class="input_box" value="Unknown">Unknown</option>
+            </select>
+
+        <p>Mileage</p>
+
+        <input type="number" placeholder="km" class="input_box" id="mileageInput" name = "mileage">
+
+        <br>
+
+        <button type="submit" class="btn">Predict</button>
+    </form>
+</div>
+
+<script src = "{{ url_for( 'static' , filename = 'JavaScript/predict_page.js')}}" ></script>
 {% endblock %}

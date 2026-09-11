@@ -1,0 +1,47 @@
+body{
+    color: white;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#content{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    font-size: 2rem;
+}
+@keyframes fade_in{
+
+    from{
+        opacity: 0;
+        transform: translateY(60px);
+    }
+
+    to{
+        opacity: 1;
+        transform: translateY(0px);
+    }
+}
+#main_text{
+    margin-top: 30vh;
+    animation: fade_in 1s;
+}
+#form{
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+.sec_text{
+    animation: fade_in 1s;
+    text-align: center;
+}
+.input_box{
+    border-radius: 10px;
+    background-color:rgb(29, 29, 29);
+    border: 1px solid #c9a227;
+    color: white;
+    padding-left: 6px;
+    padding: 6px;
+}
+

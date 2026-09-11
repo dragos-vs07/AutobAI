@@ -108,7 +108,9 @@ def load_my_listings_page():
 
 @app.route("/predictp")
 def load_predict_page():
-    return render_template("predict_page.html")
+    return render_template("predict_page.html",
+                           brands = CarMake.query.order_by(CarMake.brand).all() ,
+                           body_styles = body_styles)
 
 @app.route("/regp")
 def load_register_page():
@@ -346,6 +348,7 @@ def make_listing():
      save_listing_image(cover_image,True,new_listing.id)
 
      car_list = request.files.getlist("carImages")
+
      if len(car_list) > 10 :
                     flash("Maximum number of photos exceeded")
                     return redirect(url_for("load_make_listing_page"))
@@ -358,6 +361,7 @@ def make_listing():
                     if size > 5 * 1024 * 1024:
                          flash("Image size too large")
                          return redirect(url_for("load_make_listing_page"))
+                    
                     save_listing_image(image,False,new_listing.id)
      
 
