@@ -31,16 +31,21 @@
         <p>Model</p>
         <select class ="input_box" id="models_dropdown_list" name = "model" ></select>
 
-        <p>Body style</p>
+        <p>Fuel type</p>
 
-        <select class="input_box" id = "bs" name = "body_style">
-            {% for bs in body_styles %}
-                <option class="input_box" value="{{bs}}">{{bs}}</option>
-            {% endfor %}
-        </select>
-
-        <p>Model Year</p>
-        <input type="number" min="1800" max ="2026" placeholder = "year" class ="input_box" name = "year">
+        <select class ="input_box" id = "fuel_type" name = "fuel_type">
+                        <option class="input_box" value="CNG">CNG</option>
+                        <option class="input_box" value="Diesel">Diesel</option>
+                        <option class="input_box" value="Electric">Electric</option>
+                        <option class="input_box" value="Electric/Gasoline">Electric/Gasoline</option>
+                        <option class="input_box" value="Electric/Diesel">Electric/Diesel</option>
+                        <option class="input_box" value="Ethanol">Ethanol</option>
+                        <option class="input_box" value="Gasoline">Gasoline(Petrol)</option>
+                        <option class="input_box" value="Hydrogen">Hydrogen</option>
+                        <option class="input_box" value="LPG">LPG</option>
+                        <option class="input_box" value="Other">Other</option>
+                        <option class="input_box" value="Unknown">Unknown</option>
+                    </select>
 
         <p>Transmission</p>
 
@@ -52,11 +57,27 @@
                 <option class="input_box" value="Unknown">Unknown</option>
             </select>
 
-        <p>Mileage</p>
+        <p>Offers</p>
+        <select class ="input_box" id ="offers_dropdown_list" name="offer">
 
+            {% for o in offers %}
+                <option value="{{o}}" class ="input_box" data-offer = "{{o}}">{{o}}</option>
+            {% endfor %}
+        
+        </select>
+
+        <p>Model Year</p>
+        <input type="number" min="1800" max ="2026" placeholder = "year" class ="input_box" name = "year">
+
+        <br>
+
+        <p>Mileage</p>
         <input type="number" placeholder="km" class="input_box" id="mileageInput" name = "mileage">
 
         <br>
+
+        <p>Power</p>
+        <input type="number" min="0" max="2000" placeholder = "hp" class="input_box" name = "power">
 
         <button type="submit" class="btn">Predict</button>
     </form>

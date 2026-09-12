@@ -9,6 +9,54 @@ from datetime import datetime
 
 api = Blueprint("api", __name__, url_prefix="/API")
 
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "ml", "autobay_price_model.txt")
+CATEGORIES_PATH = os.path.join(os.path.dirname(__file__), "ml", "categories.json")
+
+price_model = lgbm.Booster(model_file = MODEL_PATH)
+
+with open(CATEGORIES_PATH) as f:
+    categories = json.load(f)
+
+from pandas.api.types import CategoricalDtype
+
+@api.route("/predict_price")
+def make_prediction():
+
+    user_inputs = ["make","model","fuel_type","transmission","mileage","year","power","offer"]
+    user_data = []
+
+    for f in user_inputs:
+        user_data.append(request.args.get(f, None))
+
+    if user_data[5]:
+        user_data[5] = datetime.now().year - int(user_data[5])
+
+    input_row = {}
+
+    features = ["make","model","fuel","gear","mileage","age","hp","offerType"]
+
+    for i, f in enumerate(features):
+        if i != 4 and i != 5 and i != 6:
+            input_row[f] = user_data[i] if user_data[i] else None
+        else:
+            input_row[f] = float(user_data[i]) if user_data[i] else None
+
+    X = pd.DataFrame([input_row], columns=features)
+
+    print(input_row)
+
+    cat_features = ["make", "model", "fuel", "gear", "offerType"]
+    for f in cat_features:
+        X[f] = X[f].astype(CategoricalDtype(categories=categories[f]))
+
+    prediction = price_model.predict(X)
+
+    print("predicted price: ",prediction)
+    return jsonify({
+        "status": "success",
+        "predicted_price": float(prediction[0])
+    })
+
 @api.route("/get_models/<string:brand>")
 def find_models(brand):
     b = CarMake.query.filter_by(brand=brand).first()
