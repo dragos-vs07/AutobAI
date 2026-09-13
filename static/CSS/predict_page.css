@@ -23,11 +23,16 @@ body{
 
 .input_box{
     border-radius: 10px;
+    font-size: 1.5rem;
     background-color:rgb(29, 29, 29);
     border: 1px solid #c9a227;
     color: white;
     padding-left: 6px;
     padding: 6px;
+}
+.btn2{
+    font-size: 1.5rem;
+    height: 3rem;
 }
 
 .fade_in{
@@ -79,6 +84,7 @@ body{
     text-align: center;
     font-size: 5rem;
     margin: 0;
+    display: block;
 }
 #sec_text{
     text-align: center;
@@ -111,10 +117,22 @@ body{
             font-size: 1.5rem;
     }
 }
+@media(max-width: 750px)
+{
+    .input_box{
+        font-size: 1.2rem;
+    }
+}
 @media(max-width: 650px)
 {
     .info_section{
         width: 230px;
+    }
+    .input_box{
+        font-size: 1rem;
+    }
+    .btn2{
+        height: 2.5rem;
     }
 }
 @media(max-width: 550px)
@@ -125,8 +143,11 @@ body{
     .info_section{
         text-align: center;
     }
+    .btn2{
+        font-size: 1.2rem;
+    }
 }
-@media(max-width: 470px)
+@media(max-width: 500px)
 {
     #main_text{
         font-size: 3rem;

@@ -73,9 +73,6 @@ def find_models(brand):
     ])
 
 
-
-# 24 listings on one page
-# IMPLEMENT FILTERS
 @api.route("/check_favourite")
 def check_fav():
     listing_id = request.args.get("listing_id",-1,type=int)
@@ -110,7 +107,7 @@ def find_listings():
     seller_id = request.args.get("seller_id", -1, type=int)
     listings_per_page = min(request.args.get("lpp", 1, type=int), 50)
     favourites = request.args.get("favourites",False,type=bool)
-
+    user_search_input = request.args.get("ui",'').strip()
     listings = []
 
     if seller_id != -1 and (not session.get("user_id") or session.get("user_id") != seller_id): # get all listings of a user different from the one logged in 
@@ -125,7 +122,27 @@ def find_listings():
             seller = User.query.filter_by(id=session.get("user_id")).first()
             listings = [ Listing.query.get(fav.listing_id) for fav in seller.favorites]
     else:
-        listings = Listing.query.filter_by(status="public").offset( # get all listings on the website
+        if user_search_input:   # searching keywords / input by user
+            query = Listing.query.join(CarMake).join(CarModel).filter(Listing.status=="public")
+
+            tokens = user_search_input.split()
+
+            for t in tokens:    # searching for the keyword t
+                if t.isdigit() and len(t) == 4:
+                    query = query.filter(Listing.year == int(t))
+                else:
+                    query = query.filter(
+                        db.or_(
+                            Listing.title.ilike(f'%{t}%'),
+                            CarMake.brand.ilike(f'%{t}%'),
+                            CarModel.model.ilike(f'%{t}%')
+                        )
+                    )
+            listings = query.offset(
+                        (page - 1) * listings_per_page).limit(listings_per_page).all()
+
+        else:   # no user input means all public listings
+            listings = Listing.query.filter_by(status="public").offset( # get all listings on the website
             (page - 1) * listings_per_page).limit(listings_per_page).all()
 
     return jsonify([{

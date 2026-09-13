@@ -154,13 +154,16 @@
                     <p>Fuel type</p>
 
                     <select class ="input_box" id = "fuel_type" name = "fuel_type">
-                        <option class="input_box" value="Gasoline(Petrol)" {% if listing.fuel_type == "Gasoline(Petrol)" %}selected{% endif %}>Gasoline(Petrol)</option>
+                        <option class="input_box" value="CNG" {% if listing.fuel_type == "CNG" %}selected{% endif %}>CNG</option>
                         <option class="input_box" value="Diesel" {% if listing.fuel_type == "Diesel" %}selected{% endif %}>Diesel</option>
-                        <option class="input_box" value="LPG" {% if listing.fuel_type == "LPG" %}selected{% endif %}>LPG</option>
                         <option class="input_box" value="Electric" {% if listing.fuel_type == "Electric" %}selected{% endif %}>Electric</option>
-                        <option class="input_box" value="Hybrid" {% if listing.fuel_type == "Hybrid" %}selected{% endif %}>Hybrid</option>
-                        <option class="input_box" value="Plug-in Hybrid" {% if listing.fuel_type == "Plug-in Hybrid" %}selected{% endif %}>Plug-in Hybrid</option>
-                        <option class="input_box" value="Other" {% if listing.fuel_type and listing.fuel_type not in ["Gasoline(Petrol)","Diesel","LPG","Electric","Hybrid","Plug-in Hybrid"]  %}selected{% endif %}>Other</option>
+                        <option class="input_box" value="Electric/Gasoline" {% if listing.fuel_type == "Electric/Gasoline" %}selected{% endif %}>Electric/Gasoline</option>
+                        <option class="input_box" value="Electric/Diesel" {% if listing.fuel_type == "Electric/Diesel" %}selected{% endif %}>Electric/Diesel</option>
+                        <option class="input_box" value="Ethanol" {% if listing.fuel_type == "Ethanol" %}selected{% endif %}>Ethanol</option>
+                        <option class="input_box" value="Gasoline" {% if listing.fuel_type == "Gasoline" %}selected{% endif %}>Gasoline(Petrol)</option>
+                        <option class="input_box" value="Hydrogen" {% if listing.fuel_type == "Hydrogen" %}selected{% endif %}>Hydrogen</option>
+                        <option class="input_box" value="LPG" {% if listing.fuel_type == "LPG" %}selected{% endif %}>LPG</option>
+                        <option class="input_box" value="Other" {% if listing.fuel_type and listing.fuel_type not in ["Gasoline","Diesel","LPG","Electric","Electric/Gasoline","Electric/Petrol","Ethanol","Hydrogen"]  %}selected{% endif %}>Other</option>
                         <option class="input_box" value="Unknown" {% if not listing.fuel_type %}selected{% endif %}>Unknown</option>
                     </select>
 
