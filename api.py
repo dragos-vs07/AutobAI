@@ -54,7 +54,7 @@ def make_prediction():
     print("predicted price: ",prediction)
     return jsonify({
         "status": "success",
-        "predicted_price": float(prediction[0])
+        "predicted_price": int(prediction[0])
     })
 
 @api.route("/get_models/<string:brand>")

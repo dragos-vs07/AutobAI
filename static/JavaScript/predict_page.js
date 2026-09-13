@@ -49,5 +49,37 @@ document.getElementById("form").addEventListener("submit",async function(e){
     const response = await fetch(`/API/predict_price?${params}`);
     const data = await response.json();
 
-    console.log(data.predicted_price);
+    document.getElementById("display_pred_box").textContent = `Your car evaluated at a price of ${data.predicted_price}€`
+    document.getElementById("modal").style="display:flex;flex-direction:column;align-items: center;";
+    document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.7);display: flex;align-items: center;justify-content: center;z-index: 1000;"
+
+    requestAnimationFrame(() => {
+        document.getElementById("modal").classList.add("show");
+    });
 })
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) 
+      entry.target.classList.add('visible');
+    else
+        entry.target.classList.remove('visible');
+  });
+}, {
+  threshold: 0.05, // trigger when 15% of the element is visible
+  rootMargin: '0px 0px -50px 0px' // trigger slightly before it fully enters
+});
+
+document.querySelectorAll('.fade_in').forEach(el => observer.observe(el));
+
+function close_modal()
+{
+    document.getElementById("modal").style="display:none;";
+    document.getElementById("modal").classList.remove("show");
+    document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.0);display: none;"
+}
+document.getElementById("modal_shadow").addEventListener("click",(e)=>{
+    const box = document.getElementById("modal");
+    if(!box.contains(e.target))
+        close_modal();
+});

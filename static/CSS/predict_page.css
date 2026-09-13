@@ -1,8 +1,11 @@
 body{
     color: white;
     font-family: Arial, Helvetica, sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 #content{
+    margin-top: 30vh;
     padding: 10px;
     display: flex;
     flex-direction: column;
@@ -10,32 +13,14 @@ body{
     gap: 15px;
     font-size: 2rem;
 }
-@keyframes fade_in{
 
-    from{
-        opacity: 0;
-        transform: translateY(60px);
-    }
-
-    to{
-        opacity: 1;
-        transform: translateY(0px);
-    }
-}
-#main_text{
-    margin-top: 30vh;
-    animation: fade_in 1s;
-}
 #form{
     text-align: center;
     display: flex;
     flex-direction: column;
     gap: 5px;
 }
-.sec_text{
-    animation: fade_in 1s;
-    text-align: center;
-}
+
 .input_box{
     border-radius: 10px;
     background-color:rgb(29, 29, 29);
@@ -44,4 +29,131 @@ body{
     padding-left: 6px;
     padding: 6px;
 }
+
+.fade_in{
+    display: flex;
+    flex-direction:row;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.fade_in.visible{
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#modal_shadow{
+    position:fixed;
+    width:100%;
+    height:100%;
+    display: none;
+}
+
+.modal_box{
+    background-color:rgb(24, 23, 23);
+    border: 2px  solid  #c9a227;
+    border-radius: 15px;
+    padding: 15px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    color: white;
+    display: none;
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.modal_box.show{
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+    }
+
+.info_section{
+    width: 400px;
+}
+
+#main_text{
+    text-align: center;
+    font-size: 5rem;
+    margin: 0;
+}
+#sec_text{
+    text-align: center;
+    font-size: 1.75rem;
+    margin: 0;
+    color:rgb(215, 215, 215);
+
+}
+#inputs_area{
+    display: grid; 
+    grid-template-columns: repeat(2, 2fr);
+}
+.pic2{
+    width: 150px;
+    height: 150px;
+}
+@media(max-width: 830px)
+{
+    #content{
+        margin-top: 10vh;
+        margin-left: 100px;
+    }
+    .info_section{
+        width: 300px;
+    }
+    #main_text{
+        font-size: 4rem;
+    }
+    #sec_text{
+            font-size: 1.5rem;
+    }
+}
+@media(max-width: 650px)
+{
+    .info_section{
+        width: 230px;
+    }
+}
+@media(max-width: 550px)
+{
+    .fade_in{
+        flex-direction: column;
+    }
+    .info_section{
+        text-align: center;
+    }
+}
+@media(max-width: 470px)
+{
+    #main_text{
+        font-size: 3rem;
+    }
+    #sec_text{
+            font-size: 1rem;
+    }
+    .info_section{
+        width: 180px;
+    }
+    #inputs_area{
+        display: flex;
+        flex-direction: column;
+    }
+    .info_section{
+        font-size: x-large;
+    }
+}
+@media(max-width:340px)
+{
+    #main_text{
+        font-size: 2rem;
+    }
+    .pic2{
+    width: 100px;
+    height: 100px;
+}
+}
+
 
