@@ -85,7 +85,7 @@
 
     </div>
 
-    <script>const ListingId = {{ listing.id | tojson }};</script>
+    <script>const listingId = {{ listing.id | tojson }};</script>
     <script>const Isfavourite = {{ is_favourited | tojson }};</script>
     <script src = "{{ url_for( 'static' , filename = 'JavaScript/view_listing_page.js')}}" ></script>
 

@@ -21,7 +21,7 @@
                             <select class ="input_box" id ="makes_dropdown_list" name="make_id">
 
                                 {% for b in brands %}
-                                    <option value="{{b.id}}" class ="input_box" data-brand = "{{b.brand}}" {% if listing.make_id == b.id %}selected{% endif %}>{{b.brand.title()}}</option>
+                                    <option value="{{b.id}}" class ="input_box" data-brand = "{{b.brand}}" {% if listing.make_id == b.id %}selected{% endif %}>{{b.brand}}</option>
                                 {% endfor %}
 
                                 <option class="input_box" value="Other" data-brand = "Other" {% if listing.other_make %}selected{% endif %}>Other</option>
@@ -337,5 +337,6 @@
         </div>
     </div>
 
+     <script>const listingOriginalModelId = {{ listing.model_id | tojson }};</script>
      <script src = "{{ url_for( 'static' , filename = 'JavaScript/edit_listing_page.js')}}" ></script>
 {% endblock %}

@@ -72,9 +72,13 @@ async function display_models(brand)
             for (const m of models)
             {
                 const option = document.createElement("option");
-                option.value = m.id;
+                option.value=m.id;
+
+                if( m.id == listingOriginalModelId)
+                option.selected = true;
                 option.textContent = m.model;
                 option.className = "input_box";
+
                 modelsddl.appendChild(option);
             }
     }
@@ -189,59 +193,59 @@ const updateBodyStyleOtherVisibility = () => {
 bs.addEventListener('change', updateBodyStyleOtherVisibility);
 updateBodyStyleOtherVisibility();
 
-title_input = document.getElementById("title_box");
+titleInput = document.getElementById("title_box");
 
 const updateTitleCounter = () => {
-    document.getElementById("char_counter_t").textContent = `${title_input.value.length}/80`
+    document.getElementById("char_counter_t").textContent = `${titleInput.value.length}/80`
 }
 
-title_input.addEventListener("input", updateTitleCounter);
+titleInput.addEventListener("input", updateTitleCounter);
 updateTitleCounter();
 
-description_input = document.getElementById("descp_box");
+descriptionInput = document.getElementById("descp_box");
 
 const updateDescCounter = () => {
-    document.getElementById("char_counter_d").textContent = `${description_input.value.length}/1000`
+    document.getElementById("char_counter_d").textContent = `${descriptionInput.value.length}/1000`
 }
 
-description_input.addEventListener("input", updateDescCounter);
+descriptionInput.addEventListener("input", updateDescCounter);
 updateDescCounter();
 
 
 
-cidc = document.getElementById("cover_image_del_checkbox"); 
-cidc.addEventListener('change', () => {
-    if(cidc.checked)
+coverImageDeleteCheckbox = document.getElementById("cover_image_del_checkbox"); 
+coverImageDeleteCheckbox.addEventListener('change', () => {
+    if(coverImageDeleteCheckbox.checked)
         document.getElementById("new_cvr").style="display:block";
     else
         document.getElementById("new_cvr").style="display:none";
 })
 
 const Checkboxes = document.querySelectorAll('.delete_checkbox');
-const SecImgInput = document.getElementById("sec_img_input");
-const CvrImgInput = document.getElementById("cvr_img_input");
-const fc = document.getElementById("file_count");
+const secImgInput = document.getElementById("sec_img_input");
+const coverImgInput = document.getElementById("cvr_img_input");
+const fileCount = document.getElementById("file_count");
 
 function CountLoadedImages()
 {
-    cnt = 0;
+    let cnt = 0;
     document.querySelectorAll('.delete_checkbox').forEach(checkbox => { 
         if(!checkbox.checked)
             cnt = cnt + 1;
     })
-    cnt += SecImgInput.files.length;
-    cnt += CvrImgInput.files.length;
+    cnt += secImgInput.files.length;
+    cnt += coverImgInput.files.length;
 
     return cnt;
 }
 
-fc.innerText = `${CountLoadedImages()} / 11 Images`;
+fileCount.innerText = `${CountLoadedImages()} / 11 Images`;
 
-SecImgInput.addEventListener('change', () => {
+secImgInput.addEventListener('change', () => {
 
         const cnt = CountLoadedImages();
 
-        fc.innerText = `${cnt}/11 Images`;
+        fileCount.innerText = `${cnt}/11 Images`;
 
          if(cnt==11)
             document.getElementById("new_sec_img").style="display:none";
@@ -250,21 +254,21 @@ SecImgInput.addEventListener('change', () => {
         else
         {
             alert("You can upload at most 11 images ( 1 cover + 10 secondary )");
-            SecImgInput.value = '';
-            fc.innerText = `${CountLoadedImages()} / 11 Images`;
+            secImgInput.value = '';
+            fileCount.innerText = `${CountLoadedImages()} / 11 Images`;
         }
 
-        if(SecImgInput.files.length > 0)
+        if(secImgInput.files.length > 0)
             document.getElementById("cancel_sec").style = "display:flex;";
         else
             document.getElementById("cancel_sec").style = "display:none;";
     });
 
-CvrImgInput.addEventListener('change', () => {
-    if(CvrImgInput.files.length > 0)
+coverImgInput.addEventListener('change', () => {
+    if(coverImgInput.files.length > 0)
         document.getElementById("cancel_cvr").style="display:flex";
 
-    fc.innerText = `${CountLoadedImages()} / 11 Images`;
+    fileCount.innerText = `${CountLoadedImages()} / 11 Images`;
 })
 
 Checkboxes.forEach(checkbox => {
@@ -273,7 +277,7 @@ Checkboxes.forEach(checkbox => {
         checkbox.closest('.image-item').classList.toggle('marked-for-deletion', checkbox.checked);
 
         const cnt = CountLoadedImages();
-        fc.innerText = `${cnt} / 11 Images`;
+        fileCount.innerText = `${cnt} / 11 Images`;
 
         if(cnt>=11)
             document.getElementById("new_sec_img").style="display:none";
@@ -284,8 +288,8 @@ Checkboxes.forEach(checkbox => {
 
 function clear_sec_input()
 {
-    SecImgInput.value = '';
-    fc.innerText = `${CountLoadedImages()} / 11 Images`;
+    secImgInput.value = '';
+    fileCount.innerText = `${CountLoadedImages()} / 11 Images`;
 
     if(CountLoadedImages() < 11)
         document.getElementById("new_sec_img").style = "display:block"; 
@@ -294,15 +298,15 @@ function clear_sec_input()
 }
 function clear_cvr_input()
 {
-    CvrImgInput.value= '';
-    fc.innerText = `${CountLoadedImages()}/11 Images`;
+    coverImgInput.value= '';
+    fileCount.innerText = `${CountLoadedImages()}/11 Images`;
 
     document.getElementById("cancel_cvr").style = "display:none;";
 }
 function close_modal()
 {
     document.getElementById("delete_modal_box").style="display:none;";
-     document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.0);display: none;"
+    document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.0);display: none;"
 }
 
 function show_confirm_delete_listing(listing_id)
@@ -319,10 +323,14 @@ document.getElementById("modal_shadow").addEventListener("click",(e)=>{
 
 function delete_listing(listing_id)
 {
-    fetch(`/delete_listing/${listing_id}`, { method: "POST"}).then(response => response.json().then(data=>{
-        if(data.status == "success")
+    fetch(`/API/delete_listing/${listing_id}`, { method: "POST"}).then(response => {
+        if(response.ok)
             window.location.href = "/mylistingsp";
         else
-            alert(`Deleting listing failed, ${response.message}`);
-    }))
+        {
+            response.json().then(data => {
+                     alert(`Deleting listing failed, ${data.message}`);
+            })
+        }
+    })
 }

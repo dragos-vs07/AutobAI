@@ -52,8 +52,14 @@ html , body{
 #contact_button{
     background-color: rgb(2, 73, 0);
 }
+#contact_button:hover{
+    background-color: rgb(71, 110, 71);
+}
 #evaluate_button{
     background-color: rgb(13, 101, 177);
+}
+#evaluate_button:hover{
+    background-color: rgb(86, 165, 234);
 }
 .engine-icon {
     color: white;

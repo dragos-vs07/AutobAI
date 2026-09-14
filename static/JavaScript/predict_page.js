@@ -53,6 +53,8 @@ document.getElementById("form").addEventListener("submit",async function(e){
     document.getElementById("modal").style="display:flex;flex-direction:column;align-items: center;";
     document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.7);display: flex;align-items: center;justify-content: center;z-index: 1000;"
 
+    void modal.offsetWidth;
+
     requestAnimationFrame(() => {
         document.getElementById("modal").classList.add("show");
     });

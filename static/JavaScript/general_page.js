@@ -7,18 +7,16 @@ function getAndDisplayListings(pageNumber=1,listingsPerPage=24,userInput='')
         const container = document.getElementById("listings_area");
         container.innerHTML = "";
 
-        console.log("called");
-
         for (const listing of data)
             {
 
                 const cell = document.createElement("div");
                 cell.classList.add("listing");
 
-                const cover_img = document.createElement("img");
+                const coverImg = document.createElement("img");
 
-                cover_img.src = listing.cover_img_path;
-                cover_img.classList.add("image");
+                coverImg.src = listing.cover_img_path;
+                coverImg.classList.add("image");
 
                 const title = document.createElement("h4");
 
@@ -27,26 +25,26 @@ function getAndDisplayListings(pageNumber=1,listingsPerPage=24,userInput='')
                 const price = document.createElement("h4");
                 price.textContent = listing.price + " €";
 
-                const car_def = document.createElement("div");
-                car_def.style = "display:flex; flex-direction:row; gap: 5px;"
+                const carDef = document.createElement("div");
+                carDef.style = "display:flex; flex-direction:row; gap: 5px;"
 
                 const brand = document.createElement("p");
                 brand.textContent = listing.brand;
 
-                car_def.appendChild(brand)
+                carDef.appendChild(brand)
 
                 const model = document.createElement("p");
                 model.textContent = listing.model;
 
-                car_def.appendChild(model)
+                carDef.appendChild(model)
 
                 const mileage = document.createElement("p");
                 mileage.textContent = `${listing.mileage} km`;
 
                 cell.appendChild(title);
-                cell.appendChild(cover_img);
+                cell.appendChild(coverImg);
                 cell.appendChild(price);
-                cell.appendChild(car_def);
+                cell.appendChild(carDef);
                 cell.appendChild(mileage);
 
                 if(userId != null && userId != listing.seller_id)
@@ -72,7 +70,14 @@ function getAndDisplayListings(pageNumber=1,listingsPerPage=24,userInput='')
                     window.location.href = `/viewlisting?listing_id=${listing.listing_id}`;
                 })
                 container.appendChild(cell);
-            } 
+            }
+        if(data.length == 0)
+        {
+            const message = document.createElement("p");
+            message.style = "color: white; text-align: center; font-size: large;"
+            message.innerText = "No listings were found";
+            container.appendChild(message);
+        } 
     })
 }
 
@@ -82,19 +87,24 @@ function checkFavourite(event)
     const svg = event.currentTarget;
     const listingId = svg.dataset.listingId;
 
-    fetch(`/API/check_favourite?listing_id=${listingId}`)
-    .then(response => response.json())
-    .then(data => {
-        if(data.status == "success")
+    fetch(`/API/toggle_favourite?listing_id=${listingId}`)
+    .then(response => {
+        if(response.ok)
         {
-                if(data.favourited == "True")
-                    svg.classList.replace("is-not-favourited","is-favourited");
-                else
-                    svg.classList.replace("is-favourited","is-not-favourited");
+            response.json().then(data=>{
+            if(data.favourited == true)
+                svg.classList.replace("is-not-favourited","is-favourited");
+            else
+                svg.classList.replace("is-favourited","is-not-favourited");
+            })
         }
 
         else
-        console.log("failed_favourite");
+        {
+            response.json().then(data => {
+            alert(`Toggle favourite failed, ${data.message}`);
+            })
+        }
     })
 }
 

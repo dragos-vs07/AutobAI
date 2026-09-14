@@ -10,10 +10,10 @@ fetch(`/API/get_listings?seller_id=${userId}&page=1&lpp=5&favourites=True`)
             const cell = document.createElement("div");
             cell.classList.add("listing");
 
-            const cover_img = document.createElement("img");
+            const coverImg = document.createElement("img");
 
-            cover_img.src = listing.cover_img_path;
-            cover_img.classList.add("image");
+            coverImg.src = listing.cover_img_path;
+            coverImg.classList.add("image");
 
             const title = document.createElement("h4");
 
@@ -22,26 +22,26 @@ fetch(`/API/get_listings?seller_id=${userId}&page=1&lpp=5&favourites=True`)
             const price = document.createElement("h4");
             price.textContent = listing.price + " €";
 
-            const car_def = document.createElement("div");
-            car_def.style = "display:flex; flex-direction:row; gap: 5px;"
+            const carDef = document.createElement("div");
+            carDef.style = "display:flex; flex-direction:row; gap: 5px;"
 
             const brand = document.createElement("p");
             brand.textContent = listing.brand;
 
-            car_def.appendChild(brand)
+            carDef.appendChild(brand)
 
             const model = document.createElement("p");
             model.textContent = listing.model;
 
-            car_def.appendChild(model)
+            carDef.appendChild(model)
 
             const mileage = document.createElement("p");
             mileage.textContent = `${listing.mileage} km`;
 
             cell.appendChild(title);
-            cell.appendChild(cover_img);
+            cell.appendChild(coverImg);
             cell.appendChild(price);
-            cell.appendChild(car_def);
+            cell.appendChild(carDef);
             cell.appendChild(mileage);
             cell.appendChild(document.createElement("br"));
             cell.addEventListener('click',()=>{

@@ -134,6 +134,9 @@ body{
     .btn2{
         height: 2.5rem;
     }
+    .modal_box{
+       margin-left: 60px;
+    }
 }
 @media(max-width: 550px)
 {

@@ -25,7 +25,7 @@
                             <select class ="input_box" id ="makes_dropdown_list" name="make_id">
 
                                 {% for b in brands %}
-                                    <option value="{{b.id}}" class ="input_box" data-brand = "{{b.brand}}">{{b.brand.title()}}</option>
+                                    <option value="{{b.id}}" class ="input_box" data-brand = "{{b.brand}}">{{b.brand}}</option>
                                 {% endfor %}
 
                                 <option class="input_box" value="Other" data-brand = "Other">Other</option>

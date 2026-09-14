@@ -46,16 +46,19 @@ def make_prediction():
     print(input_row)
 
     cat_features = ["make", "model", "fuel", "gear", "offerType"]
+    num_features = ["mileage","age","hp"]
+
     for f in cat_features:
         X[f] = X[f].astype(CategoricalDtype(categories=categories[f]))
 
+    for f in num_features:
+        X[f] = X[f].astype("float64")
+        
     prediction = price_model.predict(X)
 
-    print("predicted price: ",prediction)
     return jsonify({
-        "status": "success",
         "predicted_price": int(prediction[0])
-    })
+    }), 200
 
 @api.route("/get_models/<string:brand>")
 def find_models(brand):
@@ -63,25 +66,41 @@ def find_models(brand):
 
     model_list = b.models
     
-
     return jsonify([
         {
             "id": model.id,
             "model": model.model
         }
         for model in b.models
-    ])
+    ]), 200
 
 
-@api.route("/check_favourite")
-def check_fav():
+@api.route("/toggle_favourite")
+def toggle_fav():
+
+    if not session.get("user_id"):
+        return jsonify({
+                    "message": "not authenticated"
+                }), 401
+    
     listing_id = request.args.get("listing_id",-1,type=int)
+
+    if listing_id == -1:
+        return jsonify({
+            "message": "no listing id provided"
+        }), 400
+    
     listing = Listing.query.filter_by(id=listing_id).first()
 
-    if not listing or not session.get("user_id") or session.get("user_id") == listing.seller_id:
+    if not listing:
         return jsonify({
-            "status": "fail"
-        })
+            "message": "listing not found"
+        }), 404
+    
+    if  session.get("user_id") == listing.seller_id:
+        return jsonify({
+            "message": "user not authorised for this listing"
+        }), 403
 
     row = Favorites.query.filter_by(listing_id=listing_id, user_id=session.get("user_id")).first()
 
@@ -96,9 +115,8 @@ def check_fav():
     db.session.commit()
 
     return jsonify({
-                "status": "success",
-                "favourited": "False" if row else "True"
-            })
+                "favourited": not bool(row)
+            }), 200
 
 @api.route("/get_listings")
 def find_listings():
@@ -115,10 +133,10 @@ def find_listings():
             (page - 1) * listings_per_page).limit(listings_per_page).all()
 
     elif seller_id != -1 and session.get("user_id") == seller_id: # get all listings of current logged in user
-        if not favourites:
+        if not favourites:  # if didnt request favourites simply all listings
             listings = Listing.query.filter_by(seller_id=seller_id).offset(
                         (page - 1) * listings_per_page).limit(listings_per_page).all()
-        else:
+        else:   # else if requested it's favourites
             seller = User.query.filter_by(id=session.get("user_id")).first()
             listings = [ Listing.query.get(fav.listing_id) for fav in seller.favorites]
     else:
@@ -157,5 +175,34 @@ def find_listings():
         "views": l.views,
         "favorites": len(Favorites.query.filter_by(listing_id=l.id).all()),
         "is_favourite": "True" if session.get("user_id") and Favorites.query.filter_by(listing_id=l.id, user_id=session.get("user_id")).first() else "False"
-    } for l in listings])
+    } for l in listings]), 200
+
+
+@api.route("/delete_listing/<int:listing_id>", methods=["POST"])
+def delete_listing(listing_id):
+
+     if not session.get("user_id"):
+          return jsonify({
+               "status": "fail",
+               "message": "Not authenticated"
+          }), 401
+     
+     l = Listing.query.filter_by(id=listing_id).first()
+
+     if not l:
+          return jsonify({
+               "status": "fail",
+               "message": "Listing not found"
+          }), 404
+
+     if l.seller_id != session.get("user_id"):
+          return jsonify({
+               "status": "fail",
+               "message": "Unauthorised access for deleting chosen listing"
+          }), 403
+
+     db.session.delete(l)
+     db.session.commit()
+
+     return '', 204
 

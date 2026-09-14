@@ -1,5 +1,5 @@
 
-let prev_el = null;
+let prevEl = null;
 
 if (Isfavourite == "True")
     document.getElementById("fav_icon").classList.add("is-favourited");
@@ -9,30 +9,33 @@ else
 function viewImage(el)
 {
     document.getElementById("view_img").src = el.src;
-    if(prev_el != null)
-        prev_el.style = "border: 2px,solid,white";
+    if(prevEl != null)
+        prevEl.style = "border: 2px,solid,white";
 
     el.style = "border: 2px,solid,#c9a227";
-    prev_el = el;
+    prevEl = el;
 }
 function checkFavourite(event)
 {
     event.stopPropagation();
     const svg = event.currentTarget;
 
-    fetch(`/API/check_favourite?listing_id=${ListingId}`)
-    .then(response => response.json())
-    .then(data => {
-        if(data.status == "success")
+    fetch(`/API/toggle_favourite?listing_id=${listingId}`)
+    .then(response => {
+        if(response.ok)
         {
-            console.log(data.favourited);
+            response.json().then(data => {
                 if(data.favourited == "True")
                     svg.classList.replace("is-not-favourited","is-favourited");
                 else
                     svg.classList.replace("is-favourited","is-not-favourited");
+            })
         }
-
         else
-        console.log("failed_favourite");
+        {
+            response.json().then(data => {
+            alert(`Toggle favourite failed, ${data.message}`);
+            })
+        }
     })
 }

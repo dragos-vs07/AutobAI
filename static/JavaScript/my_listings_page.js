@@ -11,8 +11,8 @@ fetch(`/API/get_listings?page=1&seller_id=${userId}&lpp=5`)
         img.classList.add("image");
         img.src = l.cover_img_path;
 
-        const text_area = document.createElement("div");
-        text_area.id="text_area";
+        const textArea = document.createElement("div");
+        textArea.id="text_area";
 
         const title = document.createElement("strong");
         title.textContent = l.title;
@@ -20,27 +20,27 @@ fetch(`/API/get_listings?page=1&seller_id=${userId}&lpp=5`)
         const price = document.createElement("strong");
         price.textContent = `${l.price} €`;
 
-        const car_def = document.createElement("strong");
-        car_def.textContent = `${l.brand} ${l.model}`;
+        const carDef = document.createElement("strong");
+        carDef.textContent = `${l.brand} ${l.model}`;
 
         const mileage = document.createElement("strong");
         mileage.textContent = `${l.mileage} km`;
 
         listing.appendChild(img);
-        text_area.appendChild(title);
-        text_area.appendChild(document.createElement("br"));
-        text_area.appendChild(document.createElement("br"));
-        text_area.appendChild(price);
-        text_area.appendChild(document.createElement("br"));
-        text_area.appendChild(document.createElement("br"));
-        text_area.appendChild(car_def);
-        text_area.appendChild(document.createElement("br"));
-        text_area.appendChild(document.createElement("br"));
-        text_area.appendChild(mileage);
-        text_area.appendChild(document.createElement("br"));
-        text_area.appendChild(document.createElement("br"));
-        text_area.appendChild(document.createElement("hr"));
-        text_area.appendChild(document.createElement("br"));
+        textArea.appendChild(title);
+        textArea.appendChild(document.createElement("br"));
+        textArea.appendChild(document.createElement("br"));
+        textArea.appendChild(price);
+        textArea.appendChild(document.createElement("br"));
+        textArea.appendChild(document.createElement("br"));
+        textArea.appendChild(carDef);
+        textArea.appendChild(document.createElement("br"));
+        textArea.appendChild(document.createElement("br"));
+        textArea.appendChild(mileage);
+        textArea.appendChild(document.createElement("br"));
+        textArea.appendChild(document.createElement("br"));
+        textArea.appendChild(document.createElement("hr"));
+        textArea.appendChild(document.createElement("br"));
 
         const info1 = document.createElement("div");
         
@@ -57,20 +57,27 @@ fetch(`/API/get_listings?page=1&seller_id=${userId}&lpp=5`)
                                                 </svg>`;
         info2.style="display: flex; align-items: center; gap: 5px";
         
-        text_area.appendChild(info1);
-        text_area.appendChild(info2);
+        textArea.appendChild(info1);
+        textArea.appendChild(info2);
         
-        const edit_btn = document.createElement("button");
-        edit_btn.innerHTML = "Edit";
-        edit_btn.classList.add("btn");
-        edit_btn.addEventListener("click", ()=>{
+        const editBtn = document.createElement("button");
+        editBtn.innerHTML = "Edit";
+        editBtn.classList.add("btn");
+        editBtn.addEventListener("click", ()=>{
             window.location.href = `/editlistingp?listing_id=${l.listing_id}`;
         })
-        text_area.appendChild(document.createElement("br"))
-        text_area.appendChild(edit_btn)
+        textArea.appendChild(document.createElement("br"))
+        textArea.appendChild(editBtn)
 
-        listing.appendChild(text_area);
+        listing.appendChild(textArea);
 
-        listings_area.appendChild(listing);
+        document.getElementById("listings_area").appendChild(listing);
+    }
+    if(data.length == 0)
+    {
+            const message = document.createElement("p");
+            message.style = "color: white; text-align: center; font-size: large;"
+            message.innerText = "You published no listings";
+            document.getElementById("listings_area").appendChild(message);
     }
 });
