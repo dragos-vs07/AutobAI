@@ -49,7 +49,7 @@ document.getElementById("form").addEventListener("submit",async function(e){
     const response = await fetch(`/API/predict_price?${params}`);
     const data = await response.json();
 
-    document.getElementById("display_pred_box").textContent = `Your car evaluated at a price of ${data.predicted_price}€`
+    document.getElementById("display_pred_box").textContent = `Your car evaluated at a price of ${data.predicted_price} €`
     document.getElementById("modal").style="display:flex;flex-direction:column;align-items: center;";
     document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.7);display: flex;align-items: center;justify-content: center;z-index: 1000;"
 

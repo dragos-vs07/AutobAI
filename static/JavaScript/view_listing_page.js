@@ -1,10 +1,13 @@
 
 let prevEl = null;
 
-if (Isfavourite == "True")
-    document.getElementById("fav_icon").classList.add("is-favourited");
-else
-    document.getElementById("fav_icon").classList.add("is-not-favourited");
+const favIcon = document.getElementById("fav_icon");
+if (favIcon) {
+    if (Isfavourite == "True")
+        favIcon.classList.add("is-favourited");
+    else
+        favIcon.classList.add("is-not-favourited");
+}
 
 function viewImage(el)
 {
@@ -39,3 +42,48 @@ function checkFavourite(event)
         }
     })
 }
+
+function evaluate_auto(brand,model,fuel,gear,mileage,year,power,price)
+{
+
+    // supposing ownership of the car based on mileage since it s not stored in the listing and doesnt
+    //  influence the prediction too meaningfuly  
+
+    let offer = "";
+    if(mileage <= 1000)
+        offer = "New";
+    else
+        offer = "Used";
+
+    fetch(`/API/predict_price?make=${brand}&model=${model}&fuel_type=${fuel}&transmission=${gear}&mileage=${mileage}&year=${year}&power=${power}&offer=${offer}`)
+    .then(response => {
+        if(response.ok)
+        {
+            response.json().then(data => {
+                    if(price >= data.predicted_price)
+                        document.getElementById("display_pred_box").textContent = `The car evaluated at a price of ${data.predicted_price} €, ${price-data.predicted_price} € less than the listed price of ${price} €`
+                    else
+                        document.getElementById("display_pred_box").textContent = `The car evaluated at a price of ${data.predicted_price} €, ${data.predicted_price-price} € more than the listed price of ${price} €`
+                    document.getElementById("modal").style="display:flex;flex-direction:column;align-items: center;";
+                    document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.7);display: flex;align-items: center;justify-content: center"
+
+                    void document.getElementById("modal").offsetWidth;
+
+                    requestAnimationFrame(() => {
+                        document.getElementById("modal").classList.add("show");
+                    });
+            })
+        }
+    })
+}
+function close_modal()
+{
+    document.getElementById("modal").style="display:none;";
+    document.getElementById("modal").classList.remove("show");
+    document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.0);display: none;"
+}
+document.getElementById("modal_shadow").addEventListener("click",(e)=>{
+    console.log("called");
+    if(!document.getElementById("modal").contains(e.target))
+        close_modal();
+})

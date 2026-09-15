@@ -10,79 +10,89 @@
 
     <div id="content">
         
-        <div class="row">
+            <div class="row">
 
-            <div class ="image_area">
+                <div class ="image_area">
 
-                <img src="{{cover_img_path}}" id="view_img" style="border: 2px,solid,white">
+                    <img src="{{cover_img_path}}" id="view_img" style="border: 2px,solid,white">
+                    
+                        <div class ="secondary_images">
+
+                            <img src="{{cover_img_path}}" class="sec_img" onclick="viewImage(this)">
+
+                            {% for img in images %}
+                                <img src = "{{img.image_path}}" class="sec_img" onclick="viewImage(this)">
+                            {% endfor %}
+
+                        </div>
+                </div>
+
+                <div class="description_area">
+
+                    <h3>General information</h4>
+                    <strong>{{brand}}</strong>
+                    <strong>{{model}}</strong>
+                    <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-clock-icon lucide-calendar-clock"><path d="M16 14v2.2l1.6 1"/><path d="M16 2v3"/><path d="M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338"/><path d="M3 9h5.859"/><path d="M8 2v3"/><circle cx="16" cy="16" r="6"/></svg> <strong>{{ listing.year}}</strong></p>
+                    <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-road-icon lucide-road"><path d="M12 17v4"/><path d="M12 5V3"/><path d="M12 9v3"/><path d="M2.077 18.449A2 2 0 0 0 4 21h16a2 2 0 0 0 1.924-2.55l-4-14A2 2 0 0 0 16 3H8a2 2 0 0 0-1.924 1.45z"/></svg> <strong>{{ listing.mileage}} km</strong></p>
+                    
+                </div>
+
+                <div class="description_area">
+
+                    <h3>Engine details</h4>
+                    <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gauge-icon lucide-gauge"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg> <strong> {{ listing.power}} hp</strong></p>
+                    <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cylinder-icon lucide-cylinder"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg> <strong>{{listing.displacement}} l</strong></p>
+                    <p style="display:flex;flex-direction:row;align-items:center;gap:5px"><strong>{{listing.configuration}}</strong></p>
                 
-                    <div class ="secondary_images">
+                </div>
 
-                        <img src="{{cover_img_path}}" class="sec_img" onclick="viewImage(this)">
+                <div class="description_area">
 
-                        {% for img in images %}
-                            <img src = "{{img.image_path}}" class="sec_img" onclick="viewImage(this)">
-                        {% endfor %}
+                    <h3>Transmission and drivetrain</h4>
+                    <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><strong>{{listing.transmission}}</strong></p>
+                    <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><strong>{{listing.drivetrain}}</strong></p>
 
-                    </div>
-            </div>
+                </div>
 
-            <div class="description_area">
-
-                <h3>General information</h4>
-                <strong>{{brand}}</strong>
-                <strong>{{model}}</strong>
-                <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-calendar-clock-icon lucide-calendar-clock"><path d="M16 14v2.2l1.6 1"/><path d="M16 2v3"/><path d="M21 7.338V5a2 2 0 00-2-2H5a2 2 0 00-2 2v14a2 2 0 002 2h2.338"/><path d="M3 9h5.859"/><path d="M8 2v3"/><circle cx="16" cy="16" r="6"/></svg> <strong>{{ listing.year}}</strong></p>
-                <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-road-icon lucide-road"><path d="M12 17v4"/><path d="M12 5V3"/><path d="M12 9v3"/><path d="M2.077 18.449A2 2 0 0 0 4 21h16a2 2 0 0 0 1.924-2.55l-4-14A2 2 0 0 0 16 3H8a2 2 0 0 0-1.924 1.45z"/></svg> <strong>{{ listing.mileage}} km</strong></p>
+                <div class="description_area">
+                    <h3>Fuel information</h4>
+                    <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><strong>{{listing.fuel_type}}</strong></p>
+                    <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fuel-icon lucide-fuel"><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0v-6.998a2 2 0 0 0-.59-1.42L18 5"/><path d="M14 21V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16"/><path d="M2 21h13"/><path d="M3 9h11"/></svg> <strong>{{listing.fuel_efficiency}} l/100km</strong></p>
+                </div>
                 
             </div>
 
-            <div class="description_area">
+        
+        <div>
+            <h1 style="padding-left: 15px;">{{listing.price}} €</h1>
+            <h2 style="padding-left: 15px;">{{brand}} {{model}}</h2>
 
-                <h3>Engine details</h4>
-                <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gauge-icon lucide-gauge"><path d="m12 14 4-4"/><path d="M3.34 19a10 10 0 1 1 17.32 0"/></svg> <strong> {{ listing.power}} hp</strong></p>
-                <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-cylinder-icon lucide-cylinder"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14a9 3 0 0 0 18 0V5"/></svg> <strong>{{listing.displacement}} l</strong></p>
-                <p style="display:flex;flex-direction:row;align-items:center;gap:5px"><strong>{{listing.configuration}}</strong></p>
-               
-            </div>
-
-            <div class="description_area">
-
-                <h3>Transmission and drivetrain</h4>
-                <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><strong>{{listing.transmission}}</strong></p>
-                <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><strong>{{listing.drivetrain}}</strong></p>
-
-            </div>
-
-            <div class="description_area">
-                <h3>Fuel information</h4>
-                <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><strong>{{listing.fuel_type}}</strong></p>
-                <p style="display: flex; flex-direction:row; align-items: center; gap:5px"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-fuel-icon lucide-fuel"><path d="M14 13h2a2 2 0 0 1 2 2v2a2 2 0 0 0 4 0v-6.998a2 2 0 0 0-.59-1.42L18 5"/><path d="M14 21V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v16"/><path d="M2 21h13"/><path d="M3 9h11"/></svg> <strong>{{listing.fuel_efficiency}} l/100km</strong></p>
-            </div>
-                
+            <div class="buttons_area">
+                <button id="contact_button" class="btn">Contact</button>
+                <button id="evaluate_button" class="btn" type="button" onclick="evaluate_auto( '{{brand}}','{{model}}','{{listing.fuel_type}}','{{listing.transmission}}','{{listing.mileage}}','{{listing.year}}','{{listing.power}}','{{listing.price}}' )">Evaluate</button>
+                {% if session.get("user_id") and session.get("user_id") != listing.seller_id %}
+                <svg id="fav_icon" class = "fav_icon pic" onclick = "checkFavourite(event)" style="height: 2rem;" data-listing-id = "${listing.listing_id}" xmlns="http://www.w3.org/2000/svg" class = "pic" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
+                <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                </svg>
+                {% endif %}
             </div>
 
         </div>
 
-        <h1 style="padding-left: 15px;">{{listing.price}} €</h1>
-        <h2 style="padding-left: 15px;">{{brand}} {{model}}</h2>
-
-        <div class="buttons_area" style="display:flex; flex-direction:row; gap:5px; padding-left: 15px; align-items: center">
-            <button id="contact_button" class="btn">Contact</button>
-            <button id="evaluate_button" class="btn">Evaluate</button>
-            {% if session.get("user_id") != listing.seller_id %}
-            <svg id="fav_icon" class = "fav_icon pic" onclick = "checkFavourite(event)" style="height: 2rem;" data-listing-id = "${listing.listing_id}" xmlns="http://www.w3.org/2000/svg" class = "pic" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
-            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-            </svg>
-            {% endif %}
-        </div>
-
-        {% if listing.description %}
         <div class="row" style="display:flex; flex:1;">
-            <p style="border: 2px solid #c9a227;border-radius: 15px; padding:5px; display:flex; flex:1; justify-content: center;">{{listing.description}}</p>
+            <p style="border: 2px solid #c9a227;border-radius: 15px; padding:5px; display:flex; flex:1; justify-content: center;">{% if listing.description %} {{listing.description}} {% else %} This listing has no description {% endif %}</p>
         </div>
-        {% endif %}
+        
 
+    </div>
+
+    <div id="modal_shadow">
+        <div class="modal_box" id="modal">
+                <p id="display_pred_box"></p>
+                <p class ="sec_text" style="text-align: center; font-size:small;">Please note that the predictor does not take into account trims, the car's condition
+                    or additional modifications made to the machine that might influence it's value
+                </p>
+        </div>
     </div>
 
     <script>const listingId = {{ listing.id | tojson }};</script>

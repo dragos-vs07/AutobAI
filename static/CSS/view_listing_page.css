@@ -3,10 +3,11 @@ html , body{
     height: 100%;
     margin: 0;
 }
+
 #content{
     padding: 15px;
     display: flex;
-    flex-direction: row; 
+    flex-direction: column; 
     gap: 15px;
 }
 #view_img{
@@ -29,6 +30,13 @@ html , body{
     flex-direction: column;
     gap: 5px;
     
+}
+.buttons_area{
+    display:flex; 
+    flex-direction:row; 
+    gap:5px; 
+    padding-left: 15px; 
+    align-items: center
 }
 .description_area{
     height: 40vh;
@@ -82,3 +90,116 @@ svg.is-favourited {
 .fav_icon:hover svg.is-favourited {
     fill: none;
 }
+.fade_in{
+    display: flex;
+    flex-direction:row;
+    align-items: center;
+    justify-content: center;
+    gap: 50px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.fade_in.visible{
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#modal_shadow{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    z-index: 1000; 
+}
+
+.modal_box{
+    background-color:rgb(24, 23, 23);
+    border: 2px  solid  #c9a227;
+    border-radius: 15px;
+    padding: 15px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    color: white;
+    display: none;
+    opacity: 0;
+    transform: translate(-50%, -50%) translateY(30px);
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+.modal_box.show{
+    opacity: 1;
+    transform: translate(-50%, -50%) translateY(0);
+    }
+@media(max-width: 830px)
+{
+    #content{
+        margin-left: 200px;
+        flex-direction: column;
+    }
+    .row{
+        flex-direction: column;
+    }
+    .buttons_area{
+        flex-direction: column;
+    }
+    #view_img{
+        width:55vw;
+    }
+    .buttons_area{
+        flex-direction: row;
+    }
+}
+
+@media(max-width: 650px)
+{
+    #content{
+        margin-left: 150px;
+    }
+}
+@media(max-width: 500px)
+{
+    #view_img{
+        height: 250px;
+        width: 250px;
+    }
+    .description_area{
+        height: auto;
+        width: 250px;
+    }
+}
+@media(max-width: 450px)
+{
+    #content{
+        margin-left: 125px;
+    }
+}
+@media(max-width: 415px)
+{
+    #view_img{
+        height: 225px;
+        width: 225px;
+    }
+    .description_area{
+        width: 225px;
+    }
+}
+@media(max-width: 380px)
+{
+    #content{
+        margin-left: 100px;
+    }
+}
+@media(max-width: 355px)
+{
+    #view_img{
+        height: 200px;
+        width: 200px;
+    }
+    .description_area{
+        width: 200px;
+    }
+}
+
