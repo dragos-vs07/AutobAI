@@ -98,14 +98,17 @@ def load_home():
 def load_general_page():
       return render_template("general_page.html",
                               brands = CarMake.query.order_by(CarMake.brand).filter( CarMake.brand != "Other").filter( CarMake.brand != "Unknown").all() ,
-                              body_styles = ["None"] + [b for b in body_styles if b not in ("Other","Unknown")],
-                              engine_configurations = ["None"] + [e for e in engine_configurations if e not in ("Other","Unknown")],
-                              fuel_types = ["None"] + [f for f in fuel_types if f not in ("Other","Unknown")],
-                              drivetrains = ["None"] + [d for d in drivetrains if d not in ("Other","Unknown")],
-                              transmissions = ["None"] + [t for t in transmissions if t not in ("Other","Unknown")],
+                              body_styles = ["Any"] + [b for b in body_styles if b not in ("Other","Unknown")],
+                              engine_configurations = ["Any"] + [e for e in engine_configurations if e not in ("Other","Unknown")],
+                              fuel_types = ["Any"] + [f for f in fuel_types if f not in ("Other","Unknown")],
+                              drivetrains = ["Any"] + [d for d in drivetrains if d not in ("Other","Unknown")],
+                              transmissions = ["Any"] + [t for t in transmissions if t not in ("Other","Unknown")],
                               year_list = ["1950","1960","1970","1980"] + [f"{i}" for i in range(1985,datetime.today().year+1)],
                               hp_list = [f"{i}" for i in range(0,450,50)] + [f"{i}" for i in range(400,1100,100)],
-                              price_list = [f"{i}" for i in range(0,10000,200)] + [f"{i}" for i in range(10000,20000,1000)] + [f"{i}" for i in range(20000,100000,5000)] 
+                              price_list = [f"{i}" for i in range(0,10000,200)] + [f"{i}" for i in range(10000,20000,1000)] 
+                              + [f"{i}" for i in range(20000,105000,5000)] + [f"{i}" for i in range(150000,1050000,50000)],
+                              displacement_list = [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.5, 3.0, 3.5, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0],
+                              fuel_efficiency_list = [1.0,2.0,3.0,4.0,5.5,6.0,6.5,7,7.5,8,8.5,9,9.5,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0]
                               )
                             
 

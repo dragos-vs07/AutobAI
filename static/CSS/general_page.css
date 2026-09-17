@@ -77,14 +77,14 @@
     overflow-y: auto;
     background-color:rgb(29, 29, 29);
     border: 1px solid #ffffff;
-    width: 100px;
+    width: 150px;
 }
 .show_checkbox_list{
-    top: 70%;
+    top: 100%;
     z-index: 100;
     position: absolute;
-    display: block;
-
+    display: flex;
+    flex-direction: column;
 }
 
 svg.is-not-favourited {

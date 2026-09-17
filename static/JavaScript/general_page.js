@@ -121,22 +121,70 @@ searchBar.addEventListener('input', ()=>{
 
 getAndDisplayListings(1,24);
 
+// retrieving and displaying models based on a chosen brand
+
 const modelsCheckboxList = document.getElementById("models_checkbox_list");
+const makesCheckboxList = document.getElementById("makes_checkbox_list");
+
+makesCheckboxList.addEventListener('change', (e)=>{
+    if(!e.target.matches('input[type="checkbox"]')) return;
+    
+    const anyCheckbox = document.getElementById("any_make_checkbox");
+    let checkedMakes = [];
+
+    if(e.target == anyCheckbox) //if the user toggled the checkbox
+    {
+        if(anyCheckbox.checked)  // user just toggled on the any checkbox => all toggled on
+            for(c of document.querySelectorAll(".make_checkbox"))
+                c.checked = true;
+        else if(!anyCheckbox.checked) // user just toggled off the any checkbox => all toggled off
+            for(c of document.querySelectorAll(".make_checkbox"))
+                c.checked = false;
+    }
+    else    //otherwise the user toggled some other singular option
+        if(anyCheckbox.checked) //if the any checkbox was checked, it cant be now because the user muts've unchecked something
+            anyCheckbox.checked = false;
+
+    checkedMakes = Array.from(
+    document.querySelectorAll('#makes_checkbox_list input:checked:not(#any_make_checkbox)')
+    ).map(cb => cb.dataset.brand);
+
+    modelsCheckboxList.innerHTML="";
+
+    console.log(checkedMakes);
+
+    for (brand of checkedMakes)
+    addModels(brand);
+})
 
 function addModels(brand)
 {
     fetch(`/API/get_models/${brand}`).then( response => {
         if(response.ok)
         {
+            let label = document.createElement("label");
+            label.style="display: block";
+            const modelOption = document.createElement("input");
+            modelOption.type = "checkbox";
+            modelOption.classList.add("input_box");
+            modelOption.name = "model";
+            modelOption.value = "Any";
+            modelOption.checked = true;
+            modelOption.dataset.model = "Any";
+            label.appendChild(modelOption);
+            label.appendChild(document.createTextNode("Any"));
+            modelsCheckboxList.appendChild(label);
+
             response.json().then(data =>{
                     for (model of data)
                     {
-                        const label = document.createElement("label");
+                        label = document.createElement("label");
                         label.style="display: block";
                         const modelOption = document.createElement("input");
                         modelOption.type = "checkbox";
                         modelOption.classList.add("input_box");
                         modelOption.name = "model";
+                        modelOption.checked = true;
                         modelOption.value = model.id;
                         modelOption.dataset.model = model.model;
                         label.appendChild(modelOption);
@@ -152,60 +200,108 @@ function addModels(brand)
         
     })
         
-    
 }
 
-const makeInput = document.getElementById("make_input");
-const makesCheckboxList = document.getElementById("makes_checkbox_list");
+// end of model displaying
 
-makeInput.addEventListener('input',()=>{
+// dynamic searching in the filter options
 
-    if(makeInput.value.length)
-    {
-        for(const c of makesCheckboxList.children)
-        {
-            if( ! c.querySelector('input').dataset.brand.toLowerCase().includes(makeInput.value.toLowerCase()) )
-                c.style.display = "none";
-            else
+for(const ipt of document.querySelectorAll(".filter_input"))
+{
+    ipt.addEventListener('input',()=>{
+        if(ipt.value.length)
+            for(const c of document.getElementById(ipt.dataset.cblist).children)
+            {
+                let value = "";
+
+                if(c.querySelector('input').dataset.brand)
+                    value = c.querySelector('input').dataset.brand;
+                else
+                    value = c.querySelector('input').value;
+
+                    if( ! value.toLowerCase().includes(ipt.value.toLowerCase()) )
+                        c.style.display = "none";
+                    else
+                        c.style.display = "block";
+
+            }
+        else
+            for(const c of document.getElementById(ipt.dataset.cblist).children)
                 c.style.display = "block";
-        }
-        makesCheckboxList.classList.add("show_checkbox_list");
-    }
-    else
-        makesCheckboxList.classList.remove("show_checkbox_list");
+    })
+}
 
-    
-})
+// displaying / hiding the dropdown lists on filter options
 
-makesCheckboxList.addEventListener('change', (e)=>{
-    if(!e.target.matches('input[type="checkbox"]')) return;
-    
-     const checkedMakeIds = Array.from(
-        document.querySelectorAll('#makes_checkbox_list input:checked')
-    ).map(cb => cb.dataset.brand);
+document.addEventListener("click",(e)=>{
 
-    modelsCheckboxList.innerHTML="";
-
-    for (brand of checkedMakeIds)
-    addModels(brand);
-})
-
-const modelInput = document.getElementById("model_input");
-
-modelInput.addEventListener('input',()=>{
-
-    if(modelInput.value.length)
+    for( ipt of document.querySelectorAll(".filter_input"))
     {
-        for(const c of modelsCheckboxList.children)
-        {
-            if( ! c.querySelector('input').dataset.model.toLowerCase().includes(modelInput.value.toLowerCase()) )
-                c.style.display = "none";
-            else
-                c.style.display = "block";
-        }
-        modelsCheckboxList.classList.add("show_checkbox_list");
+        const checkboxList = document.getElementById(ipt.dataset.cblist);
+        if(ipt.contains(e.target))
+            checkboxList.classList.add("show_checkbox_list");
+        else if(!checkboxList.contains(e.target))
+            checkboxList.classList.remove("show_checkbox_list");
     }
-    else
-        modelsCheckboxList.classList.remove("show_checkbox_list");
-
 })
+
+for(const ddl of document.querySelectorAll(".dropdown_checkbox_list"))
+{
+    if(ddl.id != "makes_checkbox_list")
+    ddl.addEventListener("click",(e)=>{
+        for(const label of ddl.children)
+            {
+                
+                const c = label.querySelector('input');
+                if(c.value == "Any" && e.target === c)   //if the any checkbox was clicked
+                    {
+                        
+
+                        if(c.checked)   // if it was toggled on
+                            for(const label2 of ddl.children)
+                            {
+                                const c2 = label2.querySelector('input');
+                                c2.checked = true;  //all checked
+                            }
+                        else    //else if it was toggled off
+                            for(const label2 of ddl.children)
+                            {
+                                const c2 = label2.querySelector('input');
+                                c2.checked = false; // all unchecked
+                            }
+                    }  
+            }
+    })
+}
+
+for( const minInput of document.querySelectorAll(".min_input"))
+{
+    const maxInput = document.getElementById(minInput.dataset.max);
+
+    minInput.addEventListener("change",()=>{
+        if(minInput.value > maxInput.value)
+            maxInput.value = minInput.value;
+    })
+
+    maxInput.addEventListener("change",()=>{
+        if(minInput.value > maxInput.value)
+            maxInput.value = minInput.value;
+    })
+}
+
+// DE COMPLETAT
+
+function apply_filters()
+{
+    const categoricalFilterOptions = ["make","model","body_style","fuel_type","engine_config","transmission","drivetrain"]
+    const numericalFilterOptions = ["power","year","price","displacement","fuel_ef"]
+
+    /*for(const c of categoricalFilterOptions)
+    {
+        const chosenValues = Array.from(
+        document.querySelectorAll(`input[name="${c}"]:checked`)
+        ).map(cb => cb.value);
+    }
+        ASA IAU OPTIUNILE ALESE
+    */  
+}

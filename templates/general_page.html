@@ -22,12 +22,12 @@
 
             <div class = "filter_option_area" style="position:relative;">
 
-                    <input id="make_input" placeholder="Brand" class="input_box">
+                    <input id="make_input" placeholder="Brand" class="input_box filter_input" data-cblist = "makes_checkbox_list">
 
                     <div class="dropdown_checkbox_list" id="makes_checkbox_list">
-
+                            <label><input type="checkbox" value="Any" class ="input_box make_checkbox" data-brand = "Any" name="make" id="any_make_checkbox" checked>Any</label>
                         {% for b in brands %}
-                            <label><input type="checkbox" value="{{b.id}}" class ="input_box" data-brand = "{{b.brand}}" name="brand">{{b.brand}}</label>
+                            <label><input type="checkbox" value="{{b.id}}" class ="input_box make_checkbox" data-brand = "{{b.brand}}" name="make" checked>{{b.brand}}</label>
                         {% endfor %}
 
                     </div>
@@ -36,129 +36,189 @@
 
             <div class = "filter_option_area" style="position:relative;">
                     
-                    <input id="model_input" placeholder="Model" class="input_box">
+                    <input id="model_input" placeholder="Model" class="input_box filter_input" data-cblist = "models_checkbox_list">
 
                     <div class="dropdown_checkbox_list" id="models_checkbox_list">   </div>
             </div>
 
-            <div class = "filter_option_area">
-                    <label>Body style</label>
-                    <select class="input_box" id = "bs" name = "body_style">
-                        {% for bs in body_styles %}
-                            <option class="input_box" value="{{bs}}">{{bs}}</option>
+            <div class = "filter_option_area" style="position:relative;">
+                    <input id="body_style_input" placeholder="Body style" class="input_box filter_input" data-cblist = "body_styles_checkbox_list">
+
+                    <div class="dropdown_checkbox_list" id="body_styles_checkbox_list">
+
+                        {% for b in body_styles %}
+                            <label><input type="checkbox" value="{{b}}" class ="input_box"  name="body_style" checked>{{b}}</label>
                         {% endfor %}
-                    </select>
+
+                    </div>
             </div>
 
-            <div class = "filter_option_area">
-                    <label>Fuel type</label>
-                    <select class ="input_box" id = "fuel_type" name = "fuel_type">
+            
+
+            <div class = "filter_option_area" style="position:relative;">
+                    <input id="fuel_type_input" placeholder="Fuel type" class="input_box filter_input" data-cblist = "fuel_types_checkbox_list">
+
+                    <div class="dropdown_checkbox_list" id="fuel_types_checkbox_list">
+
                         {% for f in fuel_types %}
-                            <option class="input_box" value="{{f}}">{{f}}</option>
+                            <label><input type="checkbox" value="{{f}}" class ="input_box"  name="fuel_type" checked>{{f}}</label>
                         {% endfor %}
-                    </select>
+
+                    </div>
             </div>
 
-            <div class = "filter_option_area">
-                    <label>Engine configuration</label>
-                    <select class ="input_box" id = "engine_config" name = "configuration">
+           <div class = "filter_option_area" style="position:relative;">
+                    <input id="engine_config_input" placeholder="Engine configuration" class="input_box filter_input" data-cblist = "engine_configs_checkbox_list">
+
+                    <div class="dropdown_checkbox_list" id="engine_configs_checkbox_list">
+
                         {% for e in engine_configurations %}
-                            <option class="input_box" value="{{e}}">{{e}}</option>
+                            <label><input type="checkbox" value="{{e}}" class ="input_box"  name="engine_config" checked>{{e}}</label>
                         {% endfor %}
-                    </select>
+
+                    </div>
             </div>
 
-            <div class = "filter_option_area">
-                    <label>Transmission</label>
-                    <select class ="input_box" id = "trans" name = "transmission">
+            <div class = "filter_option_area" style="position:relative;">
+                    <input id="transmission_input" placeholder="Transmission" class="input_box filter_input" data-cblist = "transmissions_checkbox_list">
+
+                    <div class="dropdown_checkbox_list" id="transmissions_checkbox_list">
+
                         {% for t in transmissions %}
-                            <option class="input_box" value="{{t}}">{{t}}</option>
+                            <label><input type="checkbox" value="{{t}}" class ="input_box"  name="transmission" checked>{{t}}</label>
                         {% endfor %}
-                    </select>
+
+                    </div>
             </div>
 
-            <div class = "filter_option_area">
-                    <label>Drivetrain</label>
-                    <select class ="input_box" id = "drivetrain" name = "drivetrain">
+            <div class = "filter_option_area" style="position:relative;">
+                    <input id="drivetrain_input" placeholder="Drivetrain" class="input_box filter_input" data-cblist = "drivetrains_checkbox_list">
+
+                    <div class="dropdown_checkbox_list" id="drivetrains_checkbox_list">
+
                         {% for d in drivetrains %}
-                            <option class="input_box" value="{{d}}">{{d}}</option>
+                            <label><input type="checkbox" value="{{d}}" class ="input_box"  name="drivetrain" checked>{{d}}</label>
                         {% endfor %}
-                    </select>
+
+                    </div>
             </div>
 
             <div class = "filter_option_area">
                     <label>Power</label>
 
-                    <div class = "filter_option_area">
-                        <p class="small_filter_text">Min</p>
-                        <select class ="small_input_box" id = "min_power" name = "min_power">
-                            {% for hp in hp_list %}
-                                <option class="input_box" value="{{hp}}">{{hp}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class = "filter_option_area">
-                        <p class="small_filter_text">Max</p>
-                        <select class ="small_input_box" id = "max_power" name = "max_power">
-                            {% for hp in hp_list %}
-                                <option class="input_box" value="{{hp}}">{{hp}}</option>
-                            {% endfor %}
-                        </select>
+                    <div style="display:flex;flex-direction:row;gap: 3px;">
+                        <div class = "filter_option_area">
+                            <p class="small_filter_text">Min</p>
+                            <select class ="small_input_box min_input" data-max = "max_power" id = "min_power" name = "min_power">
+                                {% for hp in hp_list %}
+                                    <option class="input_box" value="{{hp}}">{{hp}} hp</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class = "filter_option_area">
+                            <p class="small_filter_text">Max</p>
+                            <select class ="small_input_box" id = "max_power" name = "max_power">
+                                {% for hp in hp_list %}
+                                    <option class="input_box" value="{{hp}}"  {% if hp == "1000" %}selected{% endif %}>{{hp}} hp</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
             </div>
 
             <div class = "filter_option_area">
                     <label>Year</label>
 
-                    <div class = "filter_option_area">
-                        <p class="small_filter_text">From</p>
-                        <select class ="small_input_box" id = "from_year" name = "from_year">
-                            {% for y in year_list %}
-                                <option class="input_box" value="{{y}}">{{y}}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class = "filter_option_area">
-                        <p class="small_filter_text">To</p>
-                        <select class ="small_input_box" id = "to_year" name = "to_year">
-                            {% for y in year_list %}
-                                <option class="input_box" value="{{y}}">{{y}}</option>
-                            {% endfor %}
-                        </select>
+                    <div style="display:flex;flex-direction:row;gap: 3px;">
+                        <div class = "filter_option_area">
+                            <p class="small_filter_text">From</p>
+                            <select class ="small_input_box min_input" data-max = "to_year" id = "from_year" name = "from_year">
+                                {% for y in year_list %}
+                                    <option class="input_box" value="{{y}}">{{y}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class = "filter_option_area">
+                            <p class="small_filter_text">To</p>
+                            <select class ="small_input_box" id = "to_year" name = "to_year">
+                                {% for y in year_list %}
+                                    <option class="input_box" value="{{y}}" {% if loop.index == year_list | length  %}selected{% endif %}>{{y}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
             </div>
 
             <div class = "filter_option_area">
                     <label>Price</label>
 
-                    <div class = "filter_option_area">
-                        <p class="small_filter_text">From</p>
-                        <select class ="small_input_box" id = "min_price" name = "min_price">
-                            {% for p in price_list %}
-                                <option class="input_box" value="{{p}}">{{p}} €</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    
-                    <div class = "filter_option_area">
-                        <p class="small_filter_text">To</p>
-                        <select class ="small_input_box" id = "max_price" name = "max_price">
-                            {% for p in price_list %}
-                                <option class="input_box" value="{{p}}">{{p}} €</option>
-                            {% endfor %}
-                        </select>
+                    <div style="display:flex;flex-direction:row;gap: 3px;">
+                        <div class = "filter_option_area">
+                            <p class="small_filter_text">From</p>
+                            <select class ="small_input_box min_input" data-max = "max_price" id = "min_price" name = "min_price">
+                                {% for p in price_list %}
+                                    <option class="input_box" value="{{p}}">{{p}} €</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class = "filter_option_area">
+                            <p class="small_filter_text">To</p>
+                            <select class ="small_input_box" id = "max_price" name = "max_price">
+                                {% for p in price_list %}
+                                    <option class="input_box" value="{{p}}" {% if p == "1000000" %}selected{% endif %}>{{p}} €</option>
+                                {% endfor %}
+                            </select>
+                        </div>
                     </div>
             </div>
 
-    </div>
+            <div class = "filter_option_area">
+                    <label>Engine displacement</label>
 
-    <br>
+                    <div style="display:flex;flex-direction:row;gap: 3px;">
+                        <div class = "filter_option_area">
+                            <p class="small_filter_text">From</p>
+                            <select class ="small_input_box min_input" data-max = "max_displacement" id = "min_displacement" name = "min_displacement">
+                                {% for d in displacement_list %}
+                                    <option class="input_box" value="{{d}}" >{{d}} l</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class = "filter_option_area">
+                            <p class="small_filter_text">To</p>
+                            <select class ="small_input_box" id = "max_displacement" name = "max_displacement">
+                                {% for d in displacement_list %}
+                                    <option class="input_box" value="{{d}}" {% if d == 20.0 %}selected{% endif %}>{{d}} l</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+            </div>
 
-    <div id = "listings_area">
+            <div class = "filter_option_area">
+                        <label>Max Consumption</label>
+                        <select class ="small_input_box" id = "max_fuel_ef" name = "max_fuel_ef">
+                            {% for fe in fuel_efficiency_list %}
+                                <option class="input_box" value="{{fe}}" {% if fe == 20.0 %}selected{% endif %}>{{fe}} l/100km</option>
+                            {% endfor %}
+                        </select>
+            </div>
+
+        </div>
+
+        <br>
+
+        <button type="button" class ="btn" onclick="apply_filters()">Apply filters</button>
+
+        <br>
+
+        <div id = "listings_area">
             
-    </div>
+        </div>
 
 </div>
     <script> const userId = {{ session.get("user_id") | tojson }}; </script>
