@@ -40,8 +40,7 @@
                         <br>
 
                         <p>Model</p>
-                        <select class ="input_box" id="models_dropdown_list" name = "model_id" >
-                        </select>
+                        <select class ="input_box" id="models_dropdown_list" name = "model_id" ></select>
 
                          <br>
 
@@ -154,18 +153,10 @@
                     <p>Fuel type</p>
 
                     <select class ="input_box" id = "fuel_type" name = "fuel_type">
-                        <option class="input_box" value="CNG">CNG</option>
-                        <option class="input_box" value="Diesel">Diesel</option>
-                        <option class="input_box" value="Electric">Electric</option>
-                        <option class="input_box" value="Electric/Gasoline">Electric/Gasoline</option>
-                        <option class="input_box" value="Electric/Diesel">Electric/Diesel</option>
-                        <option class="input_box" value="Ethanol">Ethanol</option>
-                        <option class="input_box" value="Gasoline">Gasoline(Petrol)</option>
-                        <option class="input_box" value="Hydrogen">Hydrogen</option>
-                        <option class="input_box" value="LPG">LPG</option>
-                        <option class="input_box" value="Other">Other</option>
-                        <option class="input_box" value="Unknown">Unknown</option>
-                    </select>
+                        {% for f in fuel_types %}
+                            <option class="input_box" value="{{f}}">{{f}}</option>
+                        {% endfor %}
+                     </select>
 
                     <br>
 
@@ -190,12 +181,9 @@
                     <p>Drivetrain</p>
 
                     <select class ="input_box" id = "drivetrain" name = "drivetrain">
-                        <option class="input_box" value="FWD">FWD</option>
-                        <option class="input_box" value="RWD">RWD</option>
-                        <option class="input_box" value="AWD">AWD</option>
-                        <option class="input_box" value="4WD">4WD</option>
-                        <option class="input_box" value="Other">Other</option>
-                        <option class="input_box" value="Unknown">Unknown</option>
+                        {% for d in drivetrains %}
+                            <option class="input_box" value="{{d}}">{{d}}</option>
+                        {% endfor %}
                     </select>
 
                     <br>
@@ -205,11 +193,9 @@
                     <p>Transmission</p>
 
                     <select class ="input_box" id = "trans" name = "transmission">
-                        <option class="input_box" value="Manual">Manual</option>
-                        <option class="input_box" value="Automatic">Automatic</option>
-                        <option class="input_box" value="Semi-Automatic">Semi-Automatic</option>
-                        <option class="input_box" value="Other">Other</option>
-                        <option class="input_box" value="Unknown">Unknown</option>
+                        {% for t in transmissions %}
+                            <option class="input_box" value="{{t}}">{{t}}</option>
+                        {% endfor %}
                     </select>
 
                     <br>

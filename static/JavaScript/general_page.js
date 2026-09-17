@@ -120,3 +120,92 @@ searchBar.addEventListener('input', ()=>{
 })
 
 getAndDisplayListings(1,24);
+
+const modelsCheckboxList = document.getElementById("models_checkbox_list");
+
+function addModels(brand)
+{
+    fetch(`/API/get_models/${brand}`).then( response => {
+        if(response.ok)
+        {
+            response.json().then(data =>{
+                    for (model of data)
+                    {
+                        const label = document.createElement("label");
+                        label.style="display: block";
+                        const modelOption = document.createElement("input");
+                        modelOption.type = "checkbox";
+                        modelOption.classList.add("input_box");
+                        modelOption.name = "model";
+                        modelOption.value = model.id;
+                        modelOption.dataset.model = model.model;
+                        label.appendChild(modelOption);
+                        label.appendChild(document.createTextNode(model.model));
+                        modelsCheckboxList.appendChild(label);
+                    } 
+            })
+        }
+        else
+        response.json().then(data => {
+            alert(`Model retrieval failed, ${data.message}`);
+            })
+        
+    })
+        
+    
+}
+
+const makeInput = document.getElementById("make_input");
+const makesCheckboxList = document.getElementById("makes_checkbox_list");
+
+makeInput.addEventListener('input',()=>{
+
+    if(makeInput.value.length)
+    {
+        for(const c of makesCheckboxList.children)
+        {
+            if( ! c.querySelector('input').dataset.brand.toLowerCase().includes(makeInput.value.toLowerCase()) )
+                c.style.display = "none";
+            else
+                c.style.display = "block";
+        }
+        makesCheckboxList.classList.add("show_checkbox_list");
+    }
+    else
+        makesCheckboxList.classList.remove("show_checkbox_list");
+
+    
+})
+
+makesCheckboxList.addEventListener('change', (e)=>{
+    if(!e.target.matches('input[type="checkbox"]')) return;
+    
+     const checkedMakeIds = Array.from(
+        document.querySelectorAll('#makes_checkbox_list input:checked')
+    ).map(cb => cb.dataset.brand);
+
+    modelsCheckboxList.innerHTML="";
+
+    for (brand of checkedMakeIds)
+    addModels(brand);
+})
+
+const modelInput = document.getElementById("model_input");
+
+modelInput.addEventListener('input',()=>{
+
+    if(modelInput.value.length)
+    {
+        for(const c of modelsCheckboxList.children)
+        {
+            if( ! c.querySelector('input').dataset.model.toLowerCase().includes(modelInput.value.toLowerCase()) )
+                c.style.display = "none";
+            else
+                c.style.display = "block";
+        }
+        modelsCheckboxList.classList.add("show_checkbox_list");
+    }
+    else
+        modelsCheckboxList.classList.remove("show_checkbox_list");
+
+})

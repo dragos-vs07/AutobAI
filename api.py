@@ -64,6 +64,11 @@ def make_prediction():
 def find_models(brand):
     b = CarMake.query.filter_by(brand=brand).first()
 
+    if not b:
+        return jsonify([{
+            "message": "No such brand found"
+        }]), 404;
+    
     model_list = b.models
     
     return jsonify([

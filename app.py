@@ -8,6 +8,7 @@ import os
 import requests
 import pandas as pd
 import uuid
+from datetime import datetime
 
 app = Flask(__name__)
 app.config.from_object("config.Config")
@@ -58,13 +59,55 @@ engine_configurations = [
      "Unknown"
      ]
 
+fuel_types = [
+    "CNG",
+    "Diesel",
+    "Electric",
+    "Electric/Gasoline",
+    "Electric/Diesel",
+    "Ethanol",
+    "Gasoline",
+    "Hydrogen",
+    "LPG",
+    "Other",
+    "Unknown",
+]
+
+drivetrains = [
+    "FWD",
+    "RWD",
+    "AWD",
+    "4WD",
+    "Other",
+    "Unknown",
+]
+
+transmissions = [
+    "Manual",
+    "Automatic",
+    "Semi-Automatic",
+    "Other",
+    "Unknown",
+]
+
 @app.route("/")
 def load_home():
     return render_template("index.html")
 
 @app.route("/genp")
 def load_general_page():
-      return render_template("general_page.html")
+      return render_template("general_page.html",
+                              brands = CarMake.query.order_by(CarMake.brand).filter( CarMake.brand != "Other").filter( CarMake.brand != "Unknown").all() ,
+                              body_styles = ["None"] + [b for b in body_styles if b not in ("Other","Unknown")],
+                              engine_configurations = ["None"] + [e for e in engine_configurations if e not in ("Other","Unknown")],
+                              fuel_types = ["None"] + [f for f in fuel_types if f not in ("Other","Unknown")],
+                              drivetrains = ["None"] + [d for d in drivetrains if d not in ("Other","Unknown")],
+                              transmissions = ["None"] + [t for t in transmissions if t not in ("Other","Unknown")],
+                              year_list = ["1950","1960","1970","1980"] + [f"{i}" for i in range(1985,datetime.today().year+1)],
+                              hp_list = [f"{i}" for i in range(0,450,50)] + [f"{i}" for i in range(400,1100,100)],
+                              price_list = [f"{i}" for i in range(0,10000,200)] + [f"{i}" for i in range(10000,20000,1000)] + [f"{i}" for i in range(20000,100000,5000)] 
+                              )
+                            
 
 @app.route("/viewlisting")
 def load_view_listing_page():
@@ -93,9 +136,12 @@ def load_make_listing_page():
           return redirect(url_for("load_home"))
 
     return render_template("make_listing_page.html" ,
-                           brands = CarMake.query.order_by(CarMake.brand).all() ,
-                           engine_configurations = engine_configurations , 
-                           body_styles = body_styles
+                         brands = CarMake.query.order_by(CarMake.brand).all() , 
+                         body_styles = body_styles, 
+                         engine_configurations = engine_configurations,
+                         fuel_types = fuel_types,
+                         drivetrains = drivetrains,
+                         transmissions = transmissions
                         )
 
 @app.route("/mylistingsp")
