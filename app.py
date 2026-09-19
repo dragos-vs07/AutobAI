@@ -23,7 +23,7 @@ app.register_blueprint(auth)
 
 from models import User, CarMake, CarModel, Listing, ListingImages,  Conversations, Messages, Favorites
 
-
+ALLOWED_EXT = {".jpg", ".jpeg", ".png", ".webp", ".jfif"}
 
 @app.route("/")
 def load_home():
@@ -228,6 +228,8 @@ def save_listing_image(file,is_cover,listing_id):
       file.save(img_path)
       db.session.add(ListingImages(listing_id=listing_id, image_path=img_path, cover_image=is_cover))
 
+      return img_path
+
 @app.route("/upload_listing", methods = ["POST"])
 def make_listing():
 
@@ -237,9 +239,6 @@ def make_listing():
           return redirect(url_for("load_home"))
 
      # TEXT_INPUT
-
-     ALLOWED_EXT = {".jpg", ".jpeg", ".png", ".webp", ".jfif"}
-
      
      inputs = ["make_id", "model_id", "title", "price", "configuration", "drivetrain", "fuel_type",
                 "transmission", "description", "year", "mileage", "power", "displacement", "fuel_efficiency",
@@ -385,21 +384,29 @@ def make_listing():
            status = form_data[16]
       )
 
+     saved_images_paths = []
+
      try:
           db.session.add(new_listing)
           db.session.flush()
 
-          save_listing_image(cover_image, True, new_listing.id)
+          saved_images_paths.append(save_listing_image(cover_image, True, new_listing.id))
 
           for image in car_list:
                if image.filename:
-                    save_listing_image(image, False, new_listing.id)
+                    saved_images_paths.append(save_listing_image(image, False, new_listing.id))
 
           db.session.commit()
 
      except Exception:
           db.session.rollback()
-          # delete files that were already written
+          for path in saved_images_paths:
+               try:
+                    os.remove(path)
+               except OSError:
+                    pass
+
+          saved_images_paths = []
           raise
 
      flash("Listing uploaded successfuly")
@@ -436,7 +443,6 @@ def confirm_edit(listing_id):
                data = request.form.get(i)
      
                if not data and not Listing.__table__.columns[i].nullable :
-                    print("here",data)
                     flash(f"must input required fields{Listing.__table__.columns[i]}")
                     return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
                
@@ -506,7 +512,9 @@ def confirm_edit(listing_id):
                return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
           deleted_sec_images.append(img)
 
-     if 1 + len(new_sec_imgs) - len(deleted_sec_images_ids) > 11:
+     current_img_count = ListingImages.query.filter_by(listing_id=listing_id,cover_image=False).count()
+
+     if 1 + current_img_count + len(new_sec_imgs) - len(deleted_sec_images_ids) > 11:
            flash("Too many images loaded, max 11 ( 1 cover + 10 secondary )")
            return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
 
@@ -522,6 +530,13 @@ def confirm_edit(listing_id):
                     flash("Image size too large")
                     return redirect(url_for("load_edit_listing_page", listing_id=listing_id))  
 
+               filename = secure_filename(image.filename)
+               ext = get_ext(filename)
+
+               if not ext in ALLOWED_EXT :
+                    flash("Invalid image format")
+                    return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
+
      if deleted_cvr_image:
           new_cvr_img.seek(0, os.SEEK_END)
           size = new_cvr_img.tell()
@@ -531,32 +546,13 @@ def confirm_edit(listing_id):
                return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
 
      if deleted_cvr_image_id:
-          ALLOWED = {".jpg", ".jpeg", ".png", ".webp", ".jfif"}
                 
           filename = secure_filename(new_cvr_img.filename)
-          ext = os.path.splitext(filename)[1].strip().lower()
+          ext = get_ext(filename)
           
-          print("here:" , ext)
           if ext not in ALLOWED:
                flash("Invalid image format")
                return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
-
-          img_path = f"static/listings_images/{uuid.uuid4()}{ext}"
-          new_cvr_img.save(img_path)
-
-          if os.path.exists(deleted_cvr_image.image_path):
-               os.remove(deleted_cvr_image.image_path)
-
-          deleted_cvr_image.image_path = img_path
-
-     for img in deleted_sec_images:
-          if os.path.exists(img.image_path):
-               os.remove(img.image_path)
-          db.session.delete(img)
-         
-     for image in new_sec_imgs:
-          if image.filename:
-               save_listing_image(image,False,listing.id)
 
      listing.make_id = int(form_data[0]) if form_data[0] and not other_option["make_id"] else None
      listing.model_id = int(form_data[1]) if form_data[1] and not other_option["model_id"] else None
@@ -578,7 +574,57 @@ def confirm_edit(listing_id):
      listing.body_style = form_data[15]
      listing.status = form_data[16]
 
-     db.session.commit()
+     new_images_paths = []
+     new_cvr_img_path = ''
+     old_cvr_img_path = ''
+
+     if deleted_cvr_image_id:
+          new_cvr_img_path = f"static/listings_images/{uuid.uuid4()}{ext}"
+          new_cvr_img.save(new_cvr_img_path)
+          old_cvr_img_path = deleted_cvr_image.image_path
+          deleted_cvr_image.image_path = new_cvr_img_path
+
+     try:
+
+          for image in new_sec_imgs:
+               if image.filename:
+                    new_images_paths.append(save_listing_image(image,False,listing.id))
+
+          for img in deleted_sec_images:
+               db.session.delete(img)
+
+          db.session.commit()
+
+     except Exception:
+
+          db.session.rollback()
+          # erase new saved images for a reset if an error occurs
+
+          for path in new_images_paths:
+               try:
+                    os.remove(path)
+               except OSError:
+                    pass
+
+          if deleted_cvr_image_id:
+               try:
+                    os.remove(new_cvr_img_path)
+               except OSError:
+                    pass
+
+          
+
+          raise
+
+     # if saving and comitting to db worked fine we permanently erase from storage the deleted images 
+     if deleted_cvr_image_id :
+          if os.path.exists(old_cvr_img_path):
+                os.remove(old_cvr_img_path)
+
+     for img in deleted_sec_images:
+          if os.path.exists(img.image_path):
+               os.remove(img.image_path)
+
      flash("Listing edited successfully")
      return redirect(url_for("load_edit_listing_page",listing_id=listing.id))
 

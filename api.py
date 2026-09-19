@@ -41,8 +41,10 @@ def make_prediction():
                 "message" : "Evaluation not authorised"
             }), 403
 
-        user_data.append(CarMake.query.filter_by(l.make_id).first().brand)
-        user_data.append(CarModel.query.filter_by(l.model_id).first().model) 
+
+
+        user_data.append(CarMake.query.filter_by(id = l.make_id).first().brand if l.make_id else l.other_make)
+        user_data.append(CarModel.query.filter_by(id = l.model_id).first().model if l.model_id else l.other_model) 
         user_data.append(l.fuel_type)
         user_data.append(l.transmission)
         user_data.append(l.mileage)

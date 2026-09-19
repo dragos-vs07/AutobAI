@@ -43,7 +43,7 @@ function checkFavourite(event)
     })
 }
 
-function evaluate_auto(listingId)
+function evaluate_auto(listingId,price)
 {
     fetch(`/API/predict_price?listing_id=${listingId}`)
     .then(response => {
