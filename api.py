@@ -26,8 +26,37 @@ def make_prediction():
     user_inputs = ["make","model","fuel_type","transmission","mileage","year","power","offer"]
     user_data = []
 
-    for f in user_inputs:
-        user_data.append(request.args.get(f, None))
+    listing_id = request.args.get("listing_id",None)
+
+    if listing_id:  # prediction is made for a chosen listing from the database
+        l = Listing.query.filter_by(id = listing_id).first()
+        if not l:
+            return jsonify({
+                "message" : "Listing not found"
+            }), 404
+
+        # listing must either pe public or the user_id and seller_id must coincide
+        if l.status == "private" and session.get("user_id") != l.seller_id:
+            return jsonify({
+                "message" : "Evaluation not authorised"
+            }), 403
+
+        user_data.append(CarMake.query.filter_by(l.make_id).first().brand)
+        user_data.append(CarModel.query.filter_by(l.model_id).first().model) 
+        user_data.append(l.fuel_type)
+        user_data.append(l.transmission)
+        user_data.append(l.mileage)
+        user_data.append(l.year)
+        user_data.append(l.power)
+
+        if not l.mileage or ( l.mileage and l.mileage > 5000 ):
+            user_data.append("Used")
+        else:
+            user_data.append("New") 
+
+    else:  
+        for f in user_inputs:
+            user_data.append(request.args.get(f, None))
 
     if user_data[5]:
         user_data[5] = datetime.now().year - int(user_data[5])
@@ -43,8 +72,6 @@ def make_prediction():
             input_row[f] = float(user_data[i]) if user_data[i] else None
 
     X = pd.DataFrame([input_row], columns=features)
-
-    print(input_row)
 
     cat_features = ["make", "model", "fuel", "gear", "offerType"]
     num_features = ["mileage","age","hp"]

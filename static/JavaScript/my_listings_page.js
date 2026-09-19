@@ -2,7 +2,7 @@ fetch(`/API/get_listings?page=1&seller_id=${userId}&lpp=5`)
 .then( response => response.json())
 .then( data => {
 
-    for (const l of data)
+    for (const l of data.listings )
     {
         const listing = document.createElement("div");
         listing.classList.add("listing");

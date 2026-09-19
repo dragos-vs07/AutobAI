@@ -43,19 +43,9 @@ function checkFavourite(event)
     })
 }
 
-function evaluate_auto(brand,model,fuel,gear,mileage,year,power,price)
+function evaluate_auto(listingId)
 {
-
-    // supposing ownership of the car based on mileage since it s not stored in the listing and doesnt
-    //  influence the prediction too meaningfuly  
-
-    let offer = "";
-    if(mileage <= 1000)
-        offer = "New";
-    else
-        offer = "Used";
-
-    fetch(`/API/predict_price?make=${brand}&model=${model}&fuel_type=${fuel}&transmission=${gear}&mileage=${mileage}&year=${year}&power=${power}&offer=${offer}`)
+    fetch(`/API/predict_price?listing_id=${listingId}`)
     .then(response => {
         if(response.ok)
         {

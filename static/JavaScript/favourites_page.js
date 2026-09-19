@@ -4,7 +4,7 @@ fetch(`/API/get_listings?seller_id=${userId}&page=1&lpp=5&favourites=True`)
     const container = document.getElementById("listings_area");
     container.innerHTML = "";
 
-    for (const listing of data)
+    for (const listing of data.listings )
         {
 
             const cell = document.createElement("div");

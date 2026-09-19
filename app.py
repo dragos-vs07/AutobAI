@@ -121,8 +121,18 @@ def load_edit_listing_page():
      if not listing_id :
           return redirect(url_for("load_my_listings_page"))
 
+     l = Listing.query.filter_by( id = listing_id ).first()
+
+     if not l:
+          flash("Listing not found")
+          return redirect(url_for("load_my_listings_page"))
+
+     if l.seller_id != session.get("user_id"):
+          flash("Not authorised to edit this listing")
+          return redirect(url_for("load_my_listings_page"))
+     
      return render_template("edit_listing_page.html",
-                           listing = Listing.query.filter_by( id = listing_id ).first(),
+                           listing = l,
                            brands = CarMake.query.order_by(CarMake.brand).all() ,
                            engine_configurations = engine_configurations , 
                            body_styles = body_styles,
@@ -201,28 +211,22 @@ def normalise_fuel_efficiency(value , unit):
      return float(value)
 
 
+import math
+
+def is_float(string):
+    try:
+        return math.isfinite(float(string)) and float(string) >= 0
+    except (TypeError, ValueError):
+        return False
+    
+def get_ext(f):
+    return os.path.splitext(f.filename)[1].strip().lower()
+
 def save_listing_image(file,is_cover,listing_id):
-
-      ALLOWED = {".jpg", ".jpeg", ".png", ".webp", ".jfif"}
       
-      filename = secure_filename(file.filename)
-      ext = os.path.splitext(filename)[1].strip().lower()
-
-      print("here:" , ext)
-      if ext not in ALLOWED:
-            flash("Invalid image format")
-            return redirect(url_for("load_make_listing_page"))
-      
-      img_path = f"static/listings_images/{uuid.uuid4()}{ext}"
+      img_path = f"static/listings_images/{uuid.uuid4()}{get_ext(file)}"
       file.save(img_path)
-     
-      new_listing_image = ListingImages(
-                 listing_id = listing_id,
-                 image_path = img_path,
-                 cover_image = is_cover
-                )
-
-      db.session.add(new_listing_image)
+      db.session.add(ListingImages(listing_id=listing_id, image_path=img_path, cover_image=is_cover))
 
 @app.route("/upload_listing", methods = ["POST"])
 def make_listing():
@@ -234,9 +238,14 @@ def make_listing():
 
      # TEXT_INPUT
 
+     ALLOWED_EXT = {".jpg", ".jpeg", ".png", ".webp", ".jfif"}
+
+     
      inputs = ["make_id", "model_id", "title", "price", "configuration", "drivetrain", "fuel_type",
                 "transmission", "description", "year", "mileage", "power", "displacement", "fuel_efficiency",
                 "colour", "body_style", "status"  ]
+
+     numerical_inputs = ["price","year","mileage","power","displacement","fuel_efficiency"]
 
      other_option ={"make_id": False, "model_id" : False, "fuel_type" : False, "configuration" : False, "drivetrain" : False, "transmission" : False}
 
@@ -250,7 +259,6 @@ def make_listing():
           data = request.form.get(i)
 
           if not data and not Listing.__table__.columns[i].nullable :
-               print("here",data)
                flash(f"must input required fields{Listing.__table__.columns[i]}")
                return(redirect(url_for("load_make_listing_page")))
           
@@ -258,31 +266,59 @@ def make_listing():
                   form_data.append(None)
 
           else:
-                  if data == "Other":
-                       other = request.form.get(f"other_{i}")
-                       if not other:
-                            flash(f"must input other {i}")
-                            return(redirect(url_for("load_make_listing_page")))
-                       else:
-                              other_option[i] = True
-                              form_data.append(other)
-                  else:
-                        form_data.append(data)
+               if data == "Other":
+                    other = request.form.get(f"other_{i}")
+                    if not other:
+                         flash(f"must input other {i}")
+                         return(redirect(url_for("load_make_listing_page")))
+                    else:
+                         other_option[i] = True
+                         form_data.append(other)
+                         if i in numerical_inputs and not is_float(other):
+                              flash(f"invalid {i} input")
+                              return(redirect(url_for("load_make_listing_page")))
+               elif data == "Unknown" and i in ("make_id", "model_id"):
+                    other_option[i] = True
+                    form_data.append("Unknown")
+               else:
+                    form_data.append(data)
+                    if i in numerical_inputs and not is_float(data):
+                         flash(f"invalid {i} input")
+                         return(redirect(url_for("load_make_listing_page")))
                
-      
+     year = form_data[9]
+     if year is not None and not (year.isascii() and year.isdigit() and 1886 <= int(year) <= datetime.now().year + 1):
+          flash("Invalid year input")
+          return redirect(url_for("load_make_listing_page"))
+     
+     if form_data[16] not in ("public","private"):
+          flash("Status must be either public or private")
+          return(redirect(url_for("load_make_listing_page")))
+
+     if not form_data[0]:
+          flash("Make required")
+          return(redirect(url_for("load_make_listing_page")))
+
+     if not form_data[1]:
+          flash("Model required")
+          return(redirect(url_for("load_make_listing_page")))
+
      for u in units:
             unit = request.form.get(u)
             if not unit:
                   flash("must select a unit for measurable inputs")
                   return redirect(url_for("load_make_listing_page"))
             form_units.append(unit)
-          
-
+           
      cover_image = request.files.get("coverCarImage")
      if not cover_image or not cover_image.filename :
             flash("Must submit a cover image")
             return redirect(url_for("load_make_listing_page"))
 
+     if os.path.splitext(cover_image.filename)[1].strip().lower() not in ALLOWED_EXT:
+          flash("Invalid image format")
+          return redirect(url_for("load_make_listing_page"))
+     
      cover_image.seek(0, os.SEEK_END)
      size = cover_image.tell()
      cover_image.seek(0)
@@ -292,7 +328,7 @@ def make_listing():
      
      currency_convert = normalise_currency(form_data[3], form_units[0])
 
-     if not currency_convert:
+     if currency_convert is None:
           flash("Conversion from USD to EUR failed , try manual conversion or use EUR until problem is fixed")
           return redirect(url_for("load_make_listing_page"))
 
@@ -303,7 +339,29 @@ def make_listing():
      if form_data[8] and len(form_data[8]) > 1000:
           flash("Description too long, please shorten the input")
           return redirect(url_for("load_make_listing_page"))
+
+     car_list = request.files.getlist("carImages")
      
+     if len(car_list) > 10 :
+          flash("Maximum number of photos exceeded")
+          return redirect(url_for("load_make_listing_page"))
+
+     if form_data[13] is not None and form_units[4] == "mpg" and float(form_data[13]) == 0:
+          flash("Invalid fuel efficiency input")
+          return redirect(url_for("load_make_listing_page"))
+     
+     for image in car_list:
+          if image.filename:
+               image.seek(0, os.SEEK_END)
+               size = image.tell()
+               image.seek(0)
+               if size > 5 * 1024 * 1024:
+                    flash("Image size too large")
+                    return redirect(url_for("load_make_listing_page"))
+               if get_ext(image) not in ALLOWED_EXT:
+                         flash("Invalid image format")
+                         return redirect(url_for("load_make_listing_page"))
+                 
      new_listing = Listing(
            seller_id = session.get("user_id") ,
            make_id = int(form_data[0]) if form_data[0] and not other_option["make_id"] else None,
@@ -327,34 +385,25 @@ def make_listing():
            status = form_data[16]
       )
 
-     db.session.add(new_listing)
-     db.session.commit()
+     try:
+          db.session.add(new_listing)
+          db.session.flush()
 
-     save_listing_image(cover_image,True,new_listing.id)
+          save_listing_image(cover_image, True, new_listing.id)
 
-     car_list = request.files.getlist("carImages")
-
-     if len(car_list) > 10 :
-                    flash("Maximum number of photos exceeded")
-                    return redirect(url_for("load_make_listing_page"))
-          
-     for image in car_list:
+          for image in car_list:
                if image.filename:
-                    image.seek(0, os.SEEK_END)
-                    size = image.tell()
-                    image.seek(0)
-                    if size > 5 * 1024 * 1024:
-                         flash("Image size too large")
-                         return redirect(url_for("load_make_listing_page"))
-                    
-                    save_listing_image(image,False,new_listing.id)
-     
+                    save_listing_image(image, False, new_listing.id)
 
-     db.session.commit()
+          db.session.commit()
+
+     except Exception:
+          db.session.rollback()
+          # delete files that were already written
+          raise
 
      flash("Listing uploaded successfuly")
      return redirect(url_for("load_make_listing_page"))
-
 
 
 @app.route("/edit_listing/<int:listing_id>", methods=["POST"])
@@ -416,7 +465,7 @@ def confirm_edit(listing_id):
 
      currency_convert = normalise_currency(form_data[3], form_units[0])
      
-     if not currency_convert:
+     if currency_convert is None:
           flash("Conversion from USD to EUR failed , try manual conversion or use EUR until problem is fixed")
           return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
      
@@ -528,8 +577,6 @@ def confirm_edit(listing_id):
      listing.colour = form_data[14]
      listing.body_style = form_data[15]
      listing.status = form_data[16]
-
-     print(listing.model_id)
 
      db.session.commit()
      flash("Listing edited successfully")
