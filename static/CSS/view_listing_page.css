@@ -23,7 +23,7 @@ html , body{
     width: 35px;
     height: 35px;
     cursor: pointer;
-    border: 2px,solid,white;
+    border: 2px solid white;
 }
 .image_area{
     display: flex;

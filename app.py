@@ -100,7 +100,12 @@ def load_my_listings_page():
 def load_predict_page():
     return render_template("predict_page.html",
                            brands = CarMake.query.order_by(CarMake.brand).all(),
-                           offers = ['Demonstration', "Employee's car", 'New', 'Pre-registered', 'Used'] )
+                           offers = ['Demonstration', "Employee's car", 'New', 'Pre-registered', 'Used'],
+                           fuel_types = fuel_types,
+                           drivetrains = drivetrains,
+                           transmissions = transmissions,
+                           engine_configurations = engine_configurations , 
+                           body_styles = body_styles )
 
 @app.route("/regp")
 def load_register_page():

@@ -1,6 +1,6 @@
 
-makesddl = document.getElementById("makes_dropdown_list");
-modelsddl = document.getElementById("models_dropdown_list");
+const makesddl = document.getElementById("makes_dropdown_list");
+const modelsddl = document.getElementById("models_dropdown_list");
 
 async function display_models(brand)
 {

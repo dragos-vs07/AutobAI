@@ -46,12 +46,15 @@ def make_prediction():
         user_data.append(CarMake.query.filter_by(id = l.make_id).first().brand if l.make_id else l.other_make)
         user_data.append(CarModel.query.filter_by(id = l.model_id).first().model if l.model_id else l.other_model) 
         user_data.append(l.fuel_type)
-        user_data.append(l.transmission)
+        if l.transmission == "Semi-Automatic" :
+            user_data.append("Semi-automatic")
+        else:
+            user_data.append(l.transmission)
         user_data.append(l.mileage)
         user_data.append(l.year)
         user_data.append(l.power)
 
-        if not l.mileage or ( l.mileage and l.mileage > 5000 ):
+        if l.mileage is None or ( l.mileage and l.mileage > 5000 ):
             user_data.append("Used")
         else:
             user_data.append("New") 
@@ -310,28 +313,33 @@ def find_listings():
 @api.route("/delete_listing/<int:listing_id>", methods=["POST"])
 def delete_listing(listing_id):
 
-     if not session.get("user_id"):
+    if not session.get("user_id"):
           return jsonify({
                "status": "fail",
                "message": "Not authenticated"
           }), 401
      
-     l = Listing.query.filter_by(id=listing_id).first()
+    l = Listing.query.filter_by(id=listing_id).first()
 
-     if not l:
+    if not l:
           return jsonify({
                "status": "fail",
                "message": "Listing not found"
           }), 404
 
-     if l.seller_id != session.get("user_id"):
+    if l.seller_id != session.get("user_id"):
           return jsonify({
                "status": "fail",
                "message": "Unauthorised access for deleting chosen listing"
           }), 403
 
-     db.session.delete(l)
-     db.session.commit()
 
-     return '', 204
+    for img in l.images:
+        if os.path.exists(img.image_path):
+            os.remove(img.image_path)
+
+    db.session.delete(l)
+    db.session.commit()
+    
+    return '', 204
 
