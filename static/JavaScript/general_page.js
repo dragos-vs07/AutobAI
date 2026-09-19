@@ -1,84 +1,185 @@
+const CATEGORICAL_FILTERS = ["make", "model", "body_style", "fuel_type", "engine_config", "transmission", "drivetrain"];
+const NUMERICAL_FILTERS = ["power", "year", "price", "mileage", "displacement", "fuel_ef"];
 
-function getAndDisplayListings(pageNumber=1,listingsPerPage=24,userInput='')
+let savedFilterOptions = {};
+let timeoutId;
+let currentTotal;
+let currentPage = 1;
+
+const searchBar = document.getElementById("search_bar");
+const sortSelect = document.getElementById("sort_listings_select");
+const modelsCheckboxList = document.getElementById("models_checkbox_list");
+const makesCheckboxList = document.getElementById("makes_checkbox_list");
+const LPP = 24;
+
+function createListingElements(data)
 {
-    fetch(`/API/get_listings?page=${pageNumber}&lpp=${listingsPerPage}&ui=${userInput}`)
-    .then( response => response.json())
-    .then(data => {
-        const container = document.getElementById("listings_area");
-        container.innerHTML = "";
+    const container = document.getElementById("listings_area");
+    container.innerHTML = "";
 
-        for (const listing of data)
-            {
+    for (const listing of data)
+    {
+        const cell = document.createElement("div");
+        cell.classList.add("listing");
 
-                const cell = document.createElement("div");
-                cell.classList.add("listing");
+        const coverImg = document.createElement("img");
+        coverImg.src = listing.cover_img_path;
+        coverImg.classList.add("image");
 
-                const coverImg = document.createElement("img");
+        const title = document.createElement("h4");
+        title.textContent = listing.title;
 
-                coverImg.src = listing.cover_img_path;
-                coverImg.classList.add("image");
+        const price = document.createElement("h4");
+        price.textContent = listing.price + " €";
 
-                const title = document.createElement("h4");
+        const carDef = document.createElement("div");
+        carDef.style = "display:flex; flex-direction:row; gap: 5px;";
 
-                title.textContent = listing.title;
+        const brand = document.createElement("p");
+        brand.textContent = listing.brand;
+        carDef.appendChild(brand);
 
-                const price = document.createElement("h4");
-                price.textContent = listing.price + " €";
+        const model = document.createElement("p");
+        model.textContent = listing.model;
+        carDef.appendChild(model);
 
-                const carDef = document.createElement("div");
-                carDef.style = "display:flex; flex-direction:row; gap: 5px;"
+        const mileage = document.createElement("p");
+        mileage.textContent = `${listing.mileage} km`;
 
-                const brand = document.createElement("p");
-                brand.textContent = listing.brand;
+        cell.appendChild(title);
+        cell.appendChild(coverImg);
+        cell.appendChild(price);
+        cell.appendChild(carDef);
+        cell.appendChild(mileage);
 
-                carDef.appendChild(brand)
-
-                const model = document.createElement("p");
-                model.textContent = listing.model;
-
-                carDef.appendChild(model)
-
-                const mileage = document.createElement("p");
-                mileage.textContent = `${listing.mileage} km`;
-
-                cell.appendChild(title);
-                cell.appendChild(coverImg);
-                cell.appendChild(price);
-                cell.appendChild(carDef);
-                cell.appendChild(mileage);
-
-                if(userId != null && userId != listing.seller_id)
-                {
-                    
-                    const fav_icon = document.createElement("div");
-                    fav_icon.innerHTML = `<svg onclick = "checkFavourite(event)" data-listing-id = "${listing.listing_id}" xmlns="http://www.w3.org/2000/svg" class = "pic" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                            </svg>`;
-                    fav_icon.classList.add("fav_icon");
-
-                    if (listing.is_favourite == "True") 
-                    fav_icon.querySelector("svg").classList.add("is-favourited");
-                    else
-                    fav_icon.querySelector("svg").classList.add("is-not-favourited");
-
-                    cell.appendChild(fav_icon);
-                }
-
-                
-                cell.appendChild(document.createElement("br"));
-                cell.addEventListener('click',()=>{
-                    window.location.href = `/viewlisting?listing_id=${listing.listing_id}`;
-                })
-                container.appendChild(cell);
-            }
-        if(data.length == 0)
+        if (userId != null && userId != listing.seller_id)
         {
-            const message = document.createElement("p");
-            message.style = "color: white; text-align: center; font-size: large;"
-            message.innerText = "No listings were found";
-            container.appendChild(message);
-        } 
-    })
+            const fav_icon = document.createElement("div");
+            fav_icon.innerHTML = `<svg onclick="checkFavourite(event)" data-listing-id="${listing.listing_id}" xmlns="http://www.w3.org/2000/svg" class="pic" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+                    </svg>`;
+            fav_icon.classList.add("fav_icon");
+
+            fav_icon.querySelector("svg").classList.add(
+                listing.is_favourite == "True" ? "is-favourited" : "is-not-favourited"
+            );
+
+            cell.appendChild(fav_icon);
+        }
+
+        cell.appendChild(document.createElement("br"));
+        cell.addEventListener('click', () => {
+            window.location.href = `/viewlisting?listing_id=${listing.listing_id}`;
+        });
+        container.appendChild(cell);
+    }
+
+    if (data.length == 0)
+    {
+        const message = document.createElement("p");
+        message.style = "color: white; text-align: center; font-size: large;";
+        message.innerText = "No listings were found";
+        container.appendChild(message);
+    }
+}
+
+function getAndDisplayListings(pageNumber = 1, listingsPerPage = LPP, userInput = '', filterInput = {})
+{
+    const params = new URLSearchParams({
+        page: pageNumber,
+        lpp: listingsPerPage,
+        ui: userInput,
+        sort: sortSelect.value
+    });
+
+    for (const [key, values] of Object.entries(filterInput))
+    {
+        if (NUMERICAL_FILTERS.includes(key))
+        {
+            const [min, max] = values;
+            if (min !== null) params.append(`min_${key}`, min);
+            if (max !== null) params.append(`max_${key}`, max);
+        }
+        else
+        {
+            for (const v of values)
+                params.append(key, v);
+        }
+    }
+
+    fetch(`/API/get_listings?${params}`)
+        .then(response => response.json())
+        .then(data =>{ 
+            createListingElements(data.listings);
+            currentTotal = data.total;
+            currentPage = pageNumber;
+
+            document.getElementById("current_page").textContent = pageNumber;
+
+            if(currentPage * LPP >= currentTotal) // it means there can be a next page
+                document.getElementById("next_page_btn").classList.add("hide_button");
+            else
+                 document.getElementById("next_page_btn").classList.remove("hide_button");
+
+            if(currentPage == 1)
+                document.getElementById("previous_page_btn").classList.add("hide_button");
+            else
+                 document.getElementById("previous_page_btn").classList.remove("hide_button");
+        });
+}
+
+function apply_filters()
+{
+    const filterOptions = {};
+
+    for (const c of CATEGORICAL_FILTERS)
+    {
+        const chosen = Array.from(document.querySelectorAll(`input[name="${c}"]:checked`))
+            .map(cb => cb.value)
+            .filter(v => v !== "Any");
+
+        if (chosen.length > 0)
+            filterOptions[c] = chosen;
+    }
+
+    for (const c of NUMERICAL_FILTERS)
+    {
+        const minSel = document.querySelector(`[name="min_${c}"]`);   // doesn't exist for fuel_ef
+        const maxSel = document.querySelector(`[name="max_${c}"]`);
+
+        const min = minSel ? Number(minSel.value) : null;
+        const max = maxSel ? Number(maxSel.value) : null;
+
+        filterOptions[c] = [min, max];
+    }
+
+    savedFilterOptions = filterOptions;
+    currentPage = 1;
+    getAndDisplayListings(currentPage, LPP, searchBar.value, filterOptions);  // reset to page 1 when filters applied
+}
+
+function clear_filters()
+{
+    for (const cb of document.querySelectorAll('#filter_area input[type="checkbox"]'))
+        cb.checked = true;
+
+    // clear the text typed in the dropdown search boxes and un-hide options
+    for (const ipt of document.querySelectorAll(".filter_input"))
+        ipt.value = "";
+    for (const label of document.querySelectorAll(".dropdown_checkbox_list > label"))
+        label.style.display = "block";
+
+    for (const nf of NUMERICAL_FILTERS)
+    {
+        const minSel = document.querySelector(`[name="min_${nf}"]`);
+        const maxSel = document.querySelector(`[name="max_${nf}"]`);
+
+        if (minSel) minSel.selectedIndex = 0;
+        if (maxSel) maxSel.selectedIndex = maxSel.options.length - 1;
+    }
+
+    // rebuild the model list, and only apply once every model checkbox exists
+    refreshModels().then(apply_filters);
 }
 
 function checkFavourite(event)
@@ -89,219 +190,171 @@ function checkFavourite(event)
 
     fetch(`/API/toggle_favourite?listing_id=${listingId}`)
     .then(response => {
-        if(response.ok)
+        if (response.ok)
         {
-            response.json().then(data=>{
-            if(data.favourited == true)
-                svg.classList.replace("is-not-favourited","is-favourited");
-            else
-                svg.classList.replace("is-favourited","is-not-favourited");
-            })
+            response.json().then(data => {
+                if (data.favourited == true)
+                    svg.classList.replace("is-not-favourited", "is-favourited");
+                else
+                    svg.classList.replace("is-favourited", "is-not-favourited");
+            });
         }
-
         else
         {
             response.json().then(data => {
-            alert(`Toggle favourite failed, ${data.message}`);
-            })
+                alert(`Toggle favourite failed, ${data.message}`);
+            });
         }
-    })
+    });
 }
 
-let timeoutId;
-
-const searchBar = document.getElementById("search_bar");
-searchBar.addEventListener('input', ()=>{
+searchBar.addEventListener('input', () => {
     clearTimeout(timeoutId);
     timeoutId = setTimeout(() => {
-        getAndDisplayListings(1,24,searchBar.value);   // searches after 1s after the user made the last change to input
+        currentPage = 1;
+        getAndDisplayListings(currentPage, LPP, searchBar.value, savedFilterOptions);
     }, 1000);
+});
 
-})
+sortSelect.addEventListener('change', () => {
+    currentPage = 1;
+    getAndDisplayListings(currentPage, LPP, searchBar.value, savedFilterOptions);
+});
 
-getAndDisplayListings(1,24);
+// ---------- models list ----------
 
-// retrieving and displaying models based on a chosen brand
+function makeModelCheckbox(value, text)
+{
+    const label = document.createElement("label");
+    label.style = "display: block";
+    const cb = document.createElement("input");
+    cb.type = "checkbox";
+    cb.classList.add("input_box");
+    cb.name = "model";
+    cb.value = value;
+    cb.checked = true;
+    label.appendChild(cb);
+    label.appendChild(document.createTextNode(text));
+    return label;
+}
 
-const modelsCheckboxList = document.getElementById("models_checkbox_list");
-const makesCheckboxList = document.getElementById("makes_checkbox_list");
+function refreshModels()
+{
+    const checkedMakes = Array.from(
+        document.querySelectorAll('#makes_checkbox_list input:checked:not(#any_make_checkbox)')
+    ).map(cb => cb.value);
 
-makesCheckboxList.addEventListener('change', (e)=>{
-    if(!e.target.matches('input[type="checkbox"]')) return;
-    
-    const anyCheckbox = document.getElementById("any_make_checkbox");
-    let checkedMakes = [];
+    modelsCheckboxList.innerHTML = "";
 
-    if(e.target == anyCheckbox) //if the user toggled the checkbox
-    {
-        if(anyCheckbox.checked)  // user just toggled on the any checkbox => all toggled on
-            for(c of document.querySelectorAll(".make_checkbox"))
-                c.checked = true;
-        else if(!anyCheckbox.checked) // user just toggled off the any checkbox => all toggled off
-            for(c of document.querySelectorAll(".make_checkbox"))
-                c.checked = false;
-    }
-    else    //otherwise the user toggled some other singular option
-        if(anyCheckbox.checked) //if the any checkbox was checked, it cant be now because the user muts've unchecked something
-            anyCheckbox.checked = false;
+    modelsCheckboxList.appendChild(makeModelCheckbox("Any", "Any"));
+    modelsCheckboxList.appendChild(makeModelCheckbox("Other", "Other"));
 
-    checkedMakes = Array.from(
-    document.querySelectorAll('#makes_checkbox_list input:checked:not(#any_make_checkbox)')
-    ).map(cb => cb.dataset.brand);
-
-    modelsCheckboxList.innerHTML="";
-
-    console.log(checkedMakes);
-
-    for (brand of checkedMakes)
-    addModels(brand);
-})
+    return Promise.all(checkedMakes.map(brand => addModels(brand)));
+}
 
 function addModels(brand)
 {
-    fetch(`/API/get_models/${brand}`).then( response => {
-        if(response.ok)
+    if (brand == "Other")
+        return Promise.resolve();
+
+    return fetch(`/API/get_models/${encodeURIComponent(brand)}`).then(response => {
+        if (response.ok)
         {
-            let label = document.createElement("label");
-            label.style="display: block";
-            const modelOption = document.createElement("input");
-            modelOption.type = "checkbox";
-            modelOption.classList.add("input_box");
-            modelOption.name = "model";
-            modelOption.value = "Any";
-            modelOption.checked = true;
-            modelOption.dataset.model = "Any";
-            label.appendChild(modelOption);
-            label.appendChild(document.createTextNode("Any"));
-            modelsCheckboxList.appendChild(label);
-
-            response.json().then(data =>{
-                    for (model of data)
-                    {
-                        label = document.createElement("label");
-                        label.style="display: block";
-                        const modelOption = document.createElement("input");
-                        modelOption.type = "checkbox";
-                        modelOption.classList.add("input_box");
-                        modelOption.name = "model";
-                        modelOption.checked = true;
-                        modelOption.value = model.id;
-                        modelOption.dataset.model = model.model;
-                        label.appendChild(modelOption);
-                        label.appendChild(document.createTextNode(model.model));
-                        modelsCheckboxList.appendChild(label);
-                    } 
-            })
+            return response.json().then(data => {
+                for (const m of data)
+                    modelsCheckboxList.appendChild(makeModelCheckbox(m.model, m.model));
+            });
         }
-        else
-        response.json().then(data => {
-            alert(`Model retrieval failed, ${data.message}`);
-            })
-        
-    })
-        
+
+        return response.json().then(data => {
+            alert(`Models retrieval failed, ${data.message}`);
+        });
+    });
 }
 
-// end of model displaying
+makesCheckboxList.addEventListener('change', (e) => {
+    if (!e.target.matches('input[type="checkbox"]')) return;
 
-// dynamic searching in the filter options
+    const anyCheckbox = document.getElementById("any_make_checkbox");
 
-for(const ipt of document.querySelectorAll(".filter_input"))
+    if (e.target == anyCheckbox)
+    {
+        for (const c of document.querySelectorAll(".make_checkbox"))
+            c.checked = anyCheckbox.checked;
+    }
+    else if (anyCheckbox.checked)
+        anyCheckbox.checked = false;
+
+    refreshModels();
+});
+
+function nextpage()
 {
-    ipt.addEventListener('input',()=>{
-        if(ipt.value.length)
-            for(const c of document.getElementById(ipt.dataset.cblist).children)
-            {
-                let value = "";
-
-                if(c.querySelector('input').dataset.brand)
-                    value = c.querySelector('input').dataset.brand;
-                else
-                    value = c.querySelector('input').value;
-
-                    if( ! value.toLowerCase().includes(ipt.value.toLowerCase()) )
-                        c.style.display = "none";
-                    else
-                        c.style.display = "block";
-
-            }
-        else
-            for(const c of document.getElementById(ipt.dataset.cblist).children)
-                c.style.display = "block";
-    })
+    const totalPages = Math.max(1, Math.ceil(currentTotal / LPP));
+    if (currentPage >= totalPages) return;
+    getAndDisplayListings(currentPage + 1, LPP, searchBar.value, savedFilterOptions);
+    window.scrollTo(0, 0);
 }
 
-// displaying / hiding the dropdown lists on filter options
+function previouspage()
+{
+    getAndDisplayListings(Math.max(1,currentPage - 1), LPP, searchBar.value, savedFilterOptions);
+    window.scrollTo(0, 0);
+}
 
-document.addEventListener("click",(e)=>{
+// ---------- dropdown behaviour ----------
 
-    for( ipt of document.querySelectorAll(".filter_input"))
+for (const ipt of document.querySelectorAll(".filter_input"))
+{
+    ipt.addEventListener('input', () => {
+        const needle = ipt.value.toLowerCase();
+        for (const c of document.getElementById(ipt.dataset.cblist).children)
+        {
+            const value = c.querySelector('input').value.toLowerCase();
+            c.style.display = value.includes(needle) ? "block" : "none";
+        }
+    });
+}
+
+document.addEventListener("click", (e) => {
+    for (const ipt of document.querySelectorAll(".filter_input"))
     {
         const checkboxList = document.getElementById(ipt.dataset.cblist);
-        if(ipt.contains(e.target))
+        if (ipt.contains(e.target))
             checkboxList.classList.add("show_checkbox_list");
-        else if(!checkboxList.contains(e.target))
+        else if (!checkboxList.contains(e.target))
             checkboxList.classList.remove("show_checkbox_list");
     }
-})
+});
 
-for(const ddl of document.querySelectorAll(".dropdown_checkbox_list"))
+for (const ddl of document.querySelectorAll(".dropdown_checkbox_list"))
 {
-    if(ddl.id != "makes_checkbox_list")
-    ddl.addEventListener("click",(e)=>{
-        for(const label of ddl.children)
-            {
-                
-                const c = label.querySelector('input');
-                if(c.value == "Any" && e.target === c)   //if the any checkbox was clicked
-                    {
-                        
+    if (ddl.id == "makes_checkbox_list") continue;
 
-                        if(c.checked)   // if it was toggled on
-                            for(const label2 of ddl.children)
-                            {
-                                const c2 = label2.querySelector('input');
-                                c2.checked = true;  //all checked
-                            }
-                        else    //else if it was toggled off
-                            for(const label2 of ddl.children)
-                            {
-                                const c2 = label2.querySelector('input');
-                                c2.checked = false; // all unchecked
-                            }
-                    }  
-            }
-    })
+    ddl.addEventListener("click", (e) => {
+        const c = e.target;
+        if (!c.matches('input[type="checkbox"]') || c.value != "Any") return;
+
+        for (const cb of ddl.querySelectorAll('input[type="checkbox"]'))
+            cb.checked = c.checked;
+    });
 }
 
-for( const minInput of document.querySelectorAll(".min_input"))
+for (const minInput of document.querySelectorAll(".min_input"))
 {
     const maxInput = document.getElementById(minInput.dataset.max);
 
-    minInput.addEventListener("change",()=>{
-        if(minInput.value > maxInput.value)
+    const sync = () => {
+        if (Number(minInput.value) > Number(maxInput.value))
             maxInput.value = minInput.value;
-    })
+    };
 
-    maxInput.addEventListener("change",()=>{
-        if(minInput.value > maxInput.value)
-            maxInput.value = minInput.value;
-    })
+    minInput.addEventListener("change", sync);
+    maxInput.addEventListener("change", sync);
 }
 
-// DE COMPLETAT
 
-function apply_filters()
-{
-    const categoricalFilterOptions = ["make","model","body_style","fuel_type","engine_config","transmission","drivetrain"]
-    const numericalFilterOptions = ["power","year","price","displacement","fuel_ef"]
+// ---------- initial load ----------
 
-    /*for(const c of categoricalFilterOptions)
-    {
-        const chosenValues = Array.from(
-        document.querySelectorAll(`input[name="${c}"]:checked`)
-        ).map(cb => cb.value);
-    }
-        ASA IAU OPTIUNILE ALESE
-    */  
-}
+refreshModels();
+getAndDisplayListings(currentPage, LPP);

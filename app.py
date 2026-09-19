@@ -9,6 +9,7 @@ import requests
 import pandas as pd
 import uuid
 from datetime import datetime
+from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions
 
 app = Flask(__name__)
 app.config.from_object("config.Config")
@@ -22,73 +23,7 @@ app.register_blueprint(auth)
 
 from models import User, CarMake, CarModel, Listing, ListingImages,  Conversations, Messages, Favorites
 
-body_styles = [
-    "Sedan",
-    "Hatchback",
-    "Coupe",
-    "Convertible",
-    "Roadster",
-    "Station Wagon",
-    "SUV",
-    "Crossover",
-    "Pickup Truck",
-    "Van",
-    "Minivan",
-    "Liftback",
-    "Fastback",
-    "Limousine",
-    "Other",
-    "Unknown"
-]
 
-engine_configurations = [
-     "Inline-3 (I3)",
-     "Inline-4 (I4)",
-     "Inline-5 (I5)",
-     "Inline-6 (I6)",
-     "V6",
-     "V8",
-     "V10",
-     "V12",
-     "Flat-4 (Boxer)",
-     "Flat-6 (Boxer)",
-     "W12",
-     "W16",
-     "Rotary",
-     "Other",
-     "Unknown"
-     ]
-
-fuel_types = [
-    "CNG",
-    "Diesel",
-    "Electric",
-    "Electric/Gasoline",
-    "Electric/Diesel",
-    "Ethanol",
-    "Gasoline",
-    "Hydrogen",
-    "LPG",
-    "Other",
-    "Unknown",
-]
-
-drivetrains = [
-    "FWD",
-    "RWD",
-    "AWD",
-    "4WD",
-    "Other",
-    "Unknown",
-]
-
-transmissions = [
-    "Manual",
-    "Automatic",
-    "Semi-Automatic",
-    "Other",
-    "Unknown",
-]
 
 @app.route("/")
 def load_home():
@@ -97,18 +32,19 @@ def load_home():
 @app.route("/genp")
 def load_general_page():
       return render_template("general_page.html",
-                              brands = CarMake.query.order_by(CarMake.brand).filter( CarMake.brand != "Other").filter( CarMake.brand != "Unknown").all() ,
-                              body_styles = ["Any"] + [b for b in body_styles if b not in ("Other","Unknown")],
-                              engine_configurations = ["Any"] + [e for e in engine_configurations if e not in ("Other","Unknown")],
-                              fuel_types = ["Any"] + [f for f in fuel_types if f not in ("Other","Unknown")],
-                              drivetrains = ["Any"] + [d for d in drivetrains if d not in ("Other","Unknown")],
-                              transmissions = ["Any"] + [t for t in transmissions if t not in ("Other","Unknown")],
+                              brands = CarMake.query.order_by(CarMake.brand).filter( CarMake.brand != "Unknown").all() ,
+                              body_styles = ["Any"] + [b for b in body_styles if b not in ("Unknown")],
+                              engine_configurations = ["Any"] + [e for e in engine_configurations if e not in ("Unknown")],
+                              fuel_types = ["Any"] + [f for f in fuel_types if f not in ("Unknown")],
+                              drivetrains = ["Any"] + [d for d in drivetrains if d not in ("Unknown")],
+                              transmissions = ["Any"] + [t for t in transmissions if t not in ("Unknown")],
                               year_list = ["1950","1960","1970","1980"] + [f"{i}" for i in range(1985,datetime.today().year+1)],
                               hp_list = [f"{i}" for i in range(0,450,50)] + [f"{i}" for i in range(400,1100,100)],
                               price_list = [f"{i}" for i in range(0,10000,200)] + [f"{i}" for i in range(10000,20000,1000)] 
                               + [f"{i}" for i in range(20000,105000,5000)] + [f"{i}" for i in range(150000,1050000,50000)],
                               displacement_list = [1.0, 1.2, 1.4, 1.6, 1.8, 2.0, 2.2, 2.5, 3.0, 3.5, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 15.0, 20.0],
-                              fuel_efficiency_list = [1.0,2.0,3.0,4.0,5.5,6.0,6.5,7,7.5,8,8.5,9,9.5,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0]
+                              fuel_efficiency_list = [1.0,2.0,3.0,4.0,5.5,6.0,6.5,7,7.5,8,8.5,9,9.5,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0],
+                              mileage_list = [0,1000,2000,3000,4000,5000,10000,15000,20000,30000,40000,50000,60000,70000,80000,90000,100000] + [ f"{i}" for i in range(150000,550000,50000)] + [ f"{i}" for i in range(600000,1100000,100000)]
                               )
                             
 

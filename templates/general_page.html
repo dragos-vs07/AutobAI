@@ -25,9 +25,10 @@
                     <input id="make_input" placeholder="Brand" class="input_box filter_input" data-cblist = "makes_checkbox_list">
 
                     <div class="dropdown_checkbox_list" id="makes_checkbox_list">
-                            <label><input type="checkbox" value="Any" class ="input_box make_checkbox" data-brand = "Any" name="make" id="any_make_checkbox" checked>Any</label>
+                            <label><input type="checkbox" value="Any" class ="input_box make_checkbox" name="make" id="any_make_checkbox" checked>Any</label>
+                             <label><input type="checkbox" value="Other" class ="input_box make_checkbox" name="make" id="other_make_checkbox" checked>Other</label>
                         {% for b in brands %}
-                            <label><input type="checkbox" value="{{b.id}}" class ="input_box make_checkbox" data-brand = "{{b.brand}}" name="make" checked>{{b.brand}}</label>
+                            <label><input type="checkbox" value="{{b.brand}}" class ="input_box make_checkbox" name="make" checked>{{b.brand}}</label>
                         {% endfor %}
 
                     </div>
@@ -133,7 +134,7 @@
                     <div style="display:flex;flex-direction:row;gap: 3px;">
                         <div class = "filter_option_area">
                             <p class="small_filter_text">From</p>
-                            <select class ="small_input_box min_input" data-max = "to_year" id = "from_year" name = "from_year">
+                            <select class ="small_input_box min_input" data-max = "max_year" id = "min_year" name = "min_year">
                                 {% for y in year_list %}
                                     <option class="input_box" value="{{y}}">{{y}}</option>
                                 {% endfor %}
@@ -142,7 +143,7 @@
                         
                         <div class = "filter_option_area">
                             <p class="small_filter_text">To</p>
-                            <select class ="small_input_box" id = "to_year" name = "to_year">
+                            <select class ="small_input_box" id = "max_year" name = "max_year">
                                 {% for y in year_list %}
                                     <option class="input_box" value="{{y}}" {% if loop.index == year_list | length  %}selected{% endif %}>{{y}}</option>
                                 {% endfor %}
@@ -199,6 +200,30 @@
                     </div>
             </div>
 
+             <div class = "filter_option_area">
+                    <label>Mileage</label>
+
+                    <div style="display:flex;flex-direction:row;gap: 3px;">
+                        <div class = "filter_option_area">
+                            <p class="small_filter_text">From</p>
+                            <select class ="small_input_box min_input" data-max = "max_mileage" id = "min_mileage" name = "min_mileage">
+                                {% for m in mileage_list %}
+                                    <option class="input_box" value="{{m}}">{{m}} km</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                        
+                        <div class = "filter_option_area">
+                            <p class="small_filter_text">To</p>
+                            <select class ="small_input_box" id = "max_mileage" name = "max_mileage">
+                                {% for m in mileage_list %}
+                                    <option class="input_box" value="{{m}}" {% if m == "1000000" %}selected{% endif %}>{{m}} km</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+            </div>
+
             <div class = "filter_option_area">
                         <label>Max Consumption</label>
                         <select class ="small_input_box" id = "max_fuel_ef" name = "max_fuel_ef">
@@ -212,7 +237,22 @@
 
         <br>
 
-        <button type="button" class ="btn" onclick="apply_filters()">Apply filters</button>
+        <div style="display:flex; flex-direction:row;gap: 5px;">
+            <button type="button" class ="btn" onclick="apply_filters()">Apply filters</button>
+            <button type="button" class ="btn" onclick="clear_filters()">Clear filters</button>
+        </div>
+
+        <br>
+
+        <select class="input_box" id="sort_listings_select">
+            <option value="newest">Newest listings</option>
+            <option value="price_asc">Price: ascending</option>
+            <option value="price_desc">Price: descending</option>
+            <option value="mileage_asc">Mileage: ascending</option>
+            <option value="mileage_desc">Mileage: descending</option>
+            <option value="year_desc">Age: ascending </option>
+            <option value="year_asc">Age: descending </option>
+        </select>
 
         <br>
 
@@ -220,6 +260,11 @@
             
         </div>
 
+        <div style="display:flex; flex-direction:row;gap: 5px; align-items: center;justify-content: center;">
+                <button type="button" class="pag_btn" id = "previous_page_btn" onclick="previouspage()" > < </button>
+                <p id="current_page" class="input_box"></p>
+                <button type="button" class="pag_btn" id = "next_page_btn" onclick="nextpage()" > > </button>
+        </div>
 </div>
     <script> const userId = {{ session.get("user_id") | tojson }}; </script>
     <script src = "{{ url_for( 'static' , filename = 'JavaScript/general_page.js')}}" ></script>

@@ -6,6 +6,7 @@ import lightgbm as lgbm
 import json 
 import pandas as pd
 from datetime import datetime
+from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions
 
 api = Blueprint("api", __name__, url_prefix="/API")
 
@@ -123,52 +124,141 @@ def toggle_fav():
                 "favourited": not bool(row)
             }), 200
 
+NUMERIC_COLUMNS = {
+    "power": "power", "year": "year", "price": "price",
+    "displacement": "displacement", "mileage": "mileage",
+    "fuel_ef": "fuel_efficiency",
+}
+
+CATEGORICAL_COLUMNS = {
+    "body_style": "body_style",
+    "fuel_type": "fuel_type",
+    "engine_config": "configuration",
+    "transmission": "transmission",
+    "drivetrain": "drivetrain",
+}
+
+KNOWN_VALUES = {
+    "body_style":    body_styles,             # use the same lists your template gets
+    "fuel_type":     fuel_types,
+    "engine_config": engine_configurations,
+    "transmission":  transmissions,
+    "drivetrain":    drivetrains,
+}
+
+SORT_OPTIONS = {
+    "newest":       Listing.id.desc(),
+    "price_asc":    Listing.price.asc(),
+    "price_desc":   Listing.price.desc(),
+    "mileage_asc":  Listing.mileage.asc(),
+    "mileage_desc": Listing.mileage.desc(),
+    "year_desc":    Listing.year.desc(),
+    "year_asc":     Listing.year.asc(),
+}
+
+def in_or_other(col, values, other_cond):
+    known = [v for v in values if v != "Other"]
+    conds = []
+    if known:
+        conds.append(col.in_(known))      # the checked fixed options
+    if "Other" in values:
+        conds.append(other_cond)          # the "Other" condition passed in
+    return db.or_(*conds)
+
 @api.route("/get_listings")
 def find_listings():
-
-    page = request.args.get("page", 1, type=int)
+    page = max(1, request.args.get("page", 1, type=int))
     seller_id = request.args.get("seller_id", -1, type=int)
-    listings_per_page = min(request.args.get("lpp", 1, type=int), 50)
-    favourites = request.args.get("favourites",False,type=bool)
-    user_search_input = request.args.get("ui",'').strip()
-    listings = []
+    listings_per_page = min(request.args.get("lpp", 24, type=int), 50)
+    favourites = request.args.get("favourites") == "true"
+    user_search_input = request.args.get("ui", '').strip()
+    current_user = session.get("user_id")
 
-    if seller_id != -1 and (not session.get("user_id") or session.get("user_id") != seller_id): # get all listings of a user different from the one logged in 
-        listings = Listing.query.filter_by(seller_id=seller_id, status="public").offset(        # ( only public ones )
-            (page - 1) * listings_per_page).limit(listings_per_page).all()
+    listings = (Listing.query
+                .outerjoin(CarMake, Listing.make_id == CarMake.id)
+                .outerjoin(CarModel, Listing.model_id == CarModel.id))
 
-    elif seller_id != -1 and session.get("user_id") == seller_id: # get all listings of current logged in user
-        if not favourites:  # if didnt request favourites simply all listings
-            listings = Listing.query.filter_by(seller_id=seller_id).offset(
-                        (page - 1) * listings_per_page).limit(listings_per_page).all()
-        else:   # else if requested it's favourites
-            seller = User.query.filter_by(id=session.get("user_id")).first()
-            listings = [ Listing.query.get(fav.listing_id) for fav in seller.favorites]
-    else:
-        if user_search_input:   # searching keywords / input by user
-            query = Listing.query.join(CarMake).join(CarModel).filter(Listing.status=="public")
+    
+    if current_user != seller_id:
+        listings = listings.filter(Listing.status == "public")  # all listings for a user getting his own listings, just public otherwise
 
-            tokens = user_search_input.split()
+    if seller_id != -1:
+        listings = listings.filter(Listing.seller_id == seller_id) # if a certain seller's listings are sought
 
-            for t in tokens:    # searching for the keyword t
-                if t.isdigit() and len(t) == 4:
-                    query = query.filter(Listing.year == int(t))
-                else:
-                    query = query.filter(
-                        db.or_(
-                            Listing.title.ilike(f'%{t}%'),
-                            CarMake.brand.ilike(f'%{t}%'),
-                            CarModel.model.ilike(f'%{t}%')
-                        )
-                    )
-            listings = query.offset(
-                        (page - 1) * listings_per_page).limit(listings_per_page).all()
+    if favourites:  # if favourites are sought
+        if not current_user:    # only those of the logged in user
+            return jsonify({"total": 0, "listings": []}), 200
+        listings = (listings
+                    .join(Favorites, Favorites.listing_id == Listing.id)
+                    .filter(Favorites.user_id == current_user))
 
-        else:   # no user input means all public listings
-            listings = Listing.query.filter_by(status="public").offset( # get all listings on the website
-            (page - 1) * listings_per_page).limit(listings_per_page).all()
+    # keyword search 
+    for t in user_search_input.split():
+        if t.isdigit() and len(t) == 4:
+            listings = listings.filter(Listing.year == int(t))
+        else:
+            listings = listings.filter(db.or_(
+                Listing.title.ilike(f'%{t}%'),
+                CarMake.brand.ilike(f'%{t}%'),
+                CarModel.model.ilike(f'%{t}%'),
+                Listing.other_make.ilike(f'%{t}%'),
+                Listing.other_model.ilike(f'%{t}%'),
+            ))
 
-    return jsonify([{
+    
+    makes = request.args.getlist("make")
+    if makes:
+        other_make_cond = db.or_(
+        Listing.make_id.is_(None),
+        CarMake.brand == "Unknown",
+        db.and_(Listing.other_make.isnot(None), Listing.other_make != ""),
+    )
+        listings = listings.filter(in_or_other(CarMake.brand, makes, other_make_cond))
+
+    models = request.args.getlist("model")
+    if models:
+        other_model_cond = db.or_(
+        Listing.model_id.is_(None),
+        CarModel.model == "Unknown",
+        db.and_(Listing.other_model.isnot(None), Listing.other_model != ""),
+    )
+        listings = listings.filter(in_or_other(CarModel.model, models, other_model_cond))
+
+    for param, column in CATEGORICAL_COLUMNS.items():
+        values = request.args.getlist(param)
+        if values:
+            col = getattr(Listing, column)
+            other_cond = db.or_(
+                col.is_(None),
+                col == "",
+                col == "Unknown",                 
+                col.notin_(KNOWN_VALUES[param]),  # custom text typed by the seller
+            )
+            listings = listings.filter(in_or_other(col, values, other_cond))
+
+    for param, column in NUMERIC_COLUMNS.items():
+        lo = request.args.get(f"min_{param}", type=float)
+        hi = request.args.get(f"max_{param}", type=float)
+        col = getattr(Listing, column)
+        if lo is not None:
+            listings = listings.filter(db.or_(col >= lo, col.is_(None)))
+        if hi is not None:
+            listings = listings.filter(db.or_(col <= hi, col.is_(None)))
+
+    order = SORT_OPTIONS.get(request.args.get("sort", "newest"), SORT_OPTIONS["newest"])
+
+    total = listings.count()
+
+    listings = (listings.order_by(order, Listing.id.desc())
+                        .offset((page - 1) * listings_per_page)
+                        .limit(listings_per_page)
+                        .all())
+
+    
+
+    return jsonify({
+    "total": total,
+    "listings": [{
         "listing_id": l.id,
         "seller_id": l.seller_id,
         "title": l.title,
@@ -180,7 +270,8 @@ def find_listings():
         "views": l.views,
         "favorites": len(Favorites.query.filter_by(listing_id=l.id).all()),
         "is_favourite": "True" if session.get("user_id") and Favorites.query.filter_by(listing_id=l.id, user_id=session.get("user_id")).first() else "False"
-    } for l in listings]), 200
+    } for l in listings]
+}), 200
 
 
 @api.route("/delete_listing/<int:listing_id>", methods=["POST"])

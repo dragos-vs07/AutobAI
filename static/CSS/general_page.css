@@ -86,7 +86,9 @@
     display: flex;
     flex-direction: column;
 }
-
+.hide_button{
+    display: none
+}
 svg.is-not-favourited {
     fill: none;
 }
@@ -117,7 +119,20 @@ svg.is-favourited {
     align-items: center;
     gap: 1px;
 }
-
+.pag_btn{
+    text-align: center;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 6px;
+    background-color:rgb(29, 29, 29);
+    border: 1px solid #c9a227;
+    color: white;
+    cursor: pointer;
+}
+.pag_btn:hover{
+    transition: background-color 0.3s ease;
+    background-color: rgb(68, 65, 65);
+}
 @media(max-width: 1385px){
     .image{
         width: 250px;
