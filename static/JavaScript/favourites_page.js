@@ -1,4 +1,4 @@
-fetch(`/API/get_listings?seller_id=${userId}&page=1&lpp=5&favourites=True`)
+fetch(`/API/get_listings?page=1&lpp=5&favourites=True`)
 .then( response => response.json())
 .then(data => {
     const container = document.getElementById("listings_area");

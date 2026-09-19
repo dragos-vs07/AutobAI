@@ -13,7 +13,7 @@ from constants import body_styles, engine_configurations, fuel_types, drivetrain
 
 app = Flask(__name__)
 app.config.from_object("config.Config")
-app.config["MAX_CONTENT_LENGTH"] = 30 * 1024 * 1024
+app.config["MAX_CONTENT_LENGTH"] = 60 * 1024 * 1024
 
 db.init_app(app)
 migrate.init_app(app, db)
@@ -50,12 +50,17 @@ def load_general_page():
 
 @app.route("/viewlisting")
 def load_view_listing_page():
+
      listing_id = request.args.get("listing_id" , -1 , type=int)
      listing = Listing.query.filter_by(id = listing_id).first()
 
      if not listing :
           return redirect(url_for("load_general_page"))
 
+     if session.get("user_id") != listing.seller_id and listing.status == "private":
+          flash("Unauthorised viewying of this listing")
+          return redirect(url_for("load_general_page"))
+     
      if session.get("user_id") != listing.seller_id:
           listing.views = listing.views + 1
           db.session.commit()
@@ -134,6 +139,9 @@ def load_edit_listing_page():
      return render_template("edit_listing_page.html",
                            listing = l,
                            brands = CarMake.query.order_by(CarMake.brand).all() ,
+                           fuel_types = fuel_types,
+                           drivetrains = drivetrains,
+                           transmissions = transmissions,
                            engine_configurations = engine_configurations , 
                            body_styles = body_styles,
                            )
@@ -358,8 +366,8 @@ def make_listing():
                     flash("Image size too large")
                     return redirect(url_for("load_make_listing_page"))
                if get_ext(image) not in ALLOWED_EXT:
-                         flash("Invalid image format")
-                         return redirect(url_for("load_make_listing_page"))
+                    flash("Invalid image format")
+                    return redirect(url_for("load_make_listing_page"))
                  
      new_listing = Listing(
            seller_id = session.get("user_id") ,
@@ -430,6 +438,8 @@ def confirm_edit(listing_id):
      inputs = ["make_id", "model_id", "title", "price", "configuration", "drivetrain", "fuel_type",
                      "transmission", "description", "year", "mileage", "power", "displacement", "fuel_efficiency",
                      "colour", "body_style", "status"  ]
+
+     numerical_inputs = ["price","year","mileage","power","displacement","fuel_efficiency"]
      
      other_option ={"make_id": False, "model_id" : False, "fuel_type" : False, "configuration" : False, "drivetrain" : False}
      
@@ -451,6 +461,9 @@ def confirm_edit(listing_id):
      
                else:
                        if data == "Other":
+                            if i in numerical_inputs:
+                                 flash('This field does not support the choice "other" ')
+                                 return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
                             other = request.form.get(f"other_{i}")
                             if not other:
                                  flash(f"must input other {i}")
@@ -458,10 +471,34 @@ def confirm_edit(listing_id):
                             else:
                                    other_option[i] = True
                                    form_data.append(other)
+                       elif data == "Unknown" and i in ("make_id", "model_id"):
+                              other_option[i] = True
+                              form_data.append("Unknown")
                        else:
+                             if i in numerical_inputs and not is_float(data):
+                                  flash(f"invalid {i} input")
+                                  return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
+                             
                              form_data.append(data)
                     
-           
+
+     year = form_data[9]
+     if year is not None and not (year.isascii() and year.isdigit() and 1886 <= int(year) <= datetime.now().year + 1):
+          flash("Invalid year input")
+          return redirect(url_for("load_make_listing_page"))
+          
+     if form_data[16] not in ("public","private"):
+          flash("Status must be either public or private")
+          return(redirect(url_for("load_make_listing_page")))
+     
+     if not form_data[0]:
+          flash("Make required")
+          return(redirect(url_for("load_make_listing_page")))
+     
+     if not form_data[1]:
+          flash("Model required")
+          return(redirect(url_for("load_make_listing_page")))
+     
      for u in units:
           unit = request.form.get(u)
           if not unit:
@@ -529,9 +566,8 @@ def confirm_edit(listing_id):
                if size > 5 * 1024 * 1024:
                     flash("Image size too large")
                     return redirect(url_for("load_edit_listing_page", listing_id=listing_id))  
-
-               filename = secure_filename(image.filename)
-               ext = get_ext(filename)
+               
+               ext = get_ext(image)
 
                if not ext in ALLOWED_EXT :
                     flash("Invalid image format")
@@ -547,10 +583,9 @@ def confirm_edit(listing_id):
 
      if deleted_cvr_image_id:
                 
-          filename = secure_filename(new_cvr_img.filename)
-          ext = get_ext(filename)
+          ext = get_ext(new_cvr_img)
           
-          if ext not in ALLOWED:
+          if ext not in ALLOWED_EXT:
                flash("Invalid image format")
                return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
 

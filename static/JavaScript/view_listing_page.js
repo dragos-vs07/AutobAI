@@ -28,7 +28,7 @@ function checkFavourite(event)
         if(response.ok)
         {
             response.json().then(data => {
-                if(data.favourited == "True")
+                if(data.favourited)
                     svg.classList.replace("is-not-favourited","is-favourited");
                 else
                     svg.classList.replace("is-favourited","is-not-favourited");

@@ -69,7 +69,7 @@ def make_prediction():
 
     for i, f in enumerate(features):
         if i != 4 and i != 5 and i != 6:
-            input_row[f] = user_data[i] if user_data[i] else None
+            input_row[f] = user_data[i] if user_data[i] and user_data[i] != "Unknown" else None
         else:
             input_row[f] = float(user_data[i]) if user_data[i] else None
 
@@ -199,27 +199,30 @@ def find_listings():
     page = max(1, request.args.get("page", 1, type=int))
     seller_id = request.args.get("seller_id", -1, type=int)
     listings_per_page = min(request.args.get("lpp", 24, type=int), 50)
-    favourites = request.args.get("favourites") == "true"
+    favourites = request.args.get("favourites")
     user_search_input = request.args.get("ui", '').strip()
-    current_user = session.get("user_id")
+    current_user_id = session.get("user_id")
+
+    if favourites:
+        favourites = favourites.lower() == "true"
 
     listings = (Listing.query
                 .outerjoin(CarMake, Listing.make_id == CarMake.id)
                 .outerjoin(CarModel, Listing.model_id == CarModel.id))
 
     
-    if current_user != seller_id:
+    if current_user_id != seller_id:
         listings = listings.filter(Listing.status == "public")  # all listings for a user getting his own listings, just public otherwise
 
     if seller_id != -1:
         listings = listings.filter(Listing.seller_id == seller_id) # if a certain seller's listings are sought
 
     if favourites:  # if favourites are sought
-        if not current_user:    # only those of the logged in user
+        if not current_user_id:    # if the user isnt logged in we just return empty
             return jsonify({"total": 0, "listings": []}), 200
         listings = (listings
                     .join(Favorites, Favorites.listing_id == Listing.id)
-                    .filter(Favorites.user_id == current_user))
+                    .filter(Favorites.user_id == current_user_id))
 
     # keyword search 
     for t in user_search_input.split():
@@ -236,6 +239,7 @@ def find_listings():
 
     
     makes = request.args.getlist("make")
+    
     if makes:
         other_make_cond = db.or_(
         Listing.make_id.is_(None),

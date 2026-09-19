@@ -36,7 +36,9 @@
                         <br>
 
                         <p>Model</p>
+
                         <select class ="input_box" id="models_dropdown_list" name = "model_id" >
+
                         </select>
 
                          <br>
@@ -154,22 +156,17 @@
                     <p>Fuel type</p>
 
                     <select class ="input_box" id = "fuel_type" name = "fuel_type">
-                        <option class="input_box" value="CNG" {% if listing.fuel_type == "CNG" %}selected{% endif %}>CNG</option>
-                        <option class="input_box" value="Diesel" {% if listing.fuel_type == "Diesel" %}selected{% endif %}>Diesel</option>
-                        <option class="input_box" value="Electric" {% if listing.fuel_type == "Electric" %}selected{% endif %}>Electric</option>
-                        <option class="input_box" value="Electric/Gasoline" {% if listing.fuel_type == "Electric/Gasoline" %}selected{% endif %}>Electric/Gasoline</option>
-                        <option class="input_box" value="Electric/Diesel" {% if listing.fuel_type == "Electric/Diesel" %}selected{% endif %}>Electric/Diesel</option>
-                        <option class="input_box" value="Ethanol" {% if listing.fuel_type == "Ethanol" %}selected{% endif %}>Ethanol</option>
-                        <option class="input_box" value="Gasoline" {% if listing.fuel_type == "Gasoline" %}selected{% endif %}>Gasoline(Petrol)</option>
-                        <option class="input_box" value="Hydrogen" {% if listing.fuel_type == "Hydrogen" %}selected{% endif %}>Hydrogen</option>
-                        <option class="input_box" value="LPG" {% if listing.fuel_type == "LPG" %}selected{% endif %}>LPG</option>
-                        <option class="input_box" value="Other" {% if listing.fuel_type and listing.fuel_type not in ["Gasoline","Diesel","LPG","Electric","Electric/Gasoline","Electric/Petrol","Ethanol","Hydrogen"]  %}selected{% endif %}>Other</option>
-                        <option class="input_box" value="Unknown" {% if not listing.fuel_type %}selected{% endif %}>Unknown</option>
+                        {% for f in fuel_types %}
+                            <option class="input_box" value="{{f}}" 
+                                {% if listing.configuration == f or (f == "Other" and listing.fuel_type and listing.fuel_type not in fuel_types) %}selected{% endif %}>
+                                {{f}}
+                            </option>
+                        {% endfor %}
                     </select>
 
                     <br>
 
-                    <input type="text" class ="input_box" style="display: none" id = "other_fuel"  placeholder ="other fuel type" name = "other_fuel_type" {% if listing.fuel_type and listing.fuel_type not in ["Gasoline(Petrol)","Diesel","LPG","Electric","Hybrid","Plug-in Hybrid"]  %}value="{{listing.fuel_type}}"{% endif %}>
+                    <input type="text" class ="input_box" style="display: none" id = "other_fuel"  placeholder ="other fuel type" name = "other_fuel_type" {% if listing.fuel_type and listing.fuel_type not in fuel_types  %}value="{{listing.fuel_type}}"{% endif %}>
 
                     <br>
 
@@ -193,31 +190,32 @@
                     <p>Drivetrain</p>
 
                     <select class ="input_box" id = "drivetrain" name = "drivetrain">
-                        <option class="input_box" value="FWD" {% if listing.drivetrain == "FWD" %}selected{% endif %}>FWD</option>
-                        <option class="input_box" value="RWD" {% if listing.drivetrain == "RWD" %}selected{% endif %}>RWD</option>
-                        <option class="input_box" value="AWD" {% if listing.drivetrain == "AWD" %}selected{% endif %}>AWD</option>
-                        <option class="input_box" value="4WD" {% if listing.drivetrain == "4WD" %}selected{% endif %}>4WD</option>
-                        <option class="input_box" value="Other" {% if listing.drivetrain and listing.drivetrain not in ["FWD","RWD","AWD","4WD"] %}selected{% endif %}>Other</option>
-                        <option class="input_box" value="Unknown" {% if not listing.drivetrain %}selected{% endif %}>Unknown</option>
+                        {% for d in drivetrains %}
+                            <option class="input_box" value="{{d}}" 
+                                {% if listing.drivetrain == d or (d == "Other" and listing.drivetrain and listing.drivetrain not in drivetrains) %}selected{% endif %}>
+                                {{d}}
+                            </option>
+                        {% endfor %}
                     </select>
 
                     <br>
 
-                    <input type="text" {% if listing.drivetrain and listing.drivetrain not in ["FWD","RWD","AWD","4WD"] %} value="{{listing.drivetrain}}"{% endif %} class ="input_box" style="display: none" id = "other_drivetrain" placeholder ="other drivetrain" name = "other_drivetrain">
+                    <input type="text" {% if listing.drivetrain and listing.drivetrain not in drivetrains %} value="{{listing.drivetrain}}"{% endif %} class ="input_box" style="display: none" id = "other_drivetrain" placeholder ="other drivetrain" name = "other_drivetrain">
 
                     <p>Transmission</p>
 
                     <select class ="input_box" id = "trans" name = "transmission">
-                        <option class="input_box" value="Manual" {% if listing.transmission == "Manual" %}selected{% endif %}>Manual</option>
-                        <option class="input_box" value="Automatic" {% if listing.transmission == "Automatic" %}selected{% endif %}>Automatic</option>
-                        <option class="input_box" value="Semi-Automatic" {% if listing.transmission == "Semi-Automatic" %}selected{% endif %}>Semi-Automatic</option>
-                        <option class="input_box" value="Other" {% if listing.transmission and listing.transmission not in ["Manual","Automatic","Semi-Automatic"]  %}selected{% endif %}>Other</option>
-                        <option class="input_box" value="Unknown" {% if not listing.transmission %}selected{% endif %}>Unknown</option>
+                        {% for t in transmissions %}
+                            <option class="input_box" value="{{t}}" 
+                                {% if listing.transmission == t or (t == "Other" and listing.transmission and listing.transmission not in transmissions) %}selected{% endif %}>
+                                {{t}}
+                            </option>
+                        {% endfor %}
                     </select>
 
                     <br>
 
-                    <input type="text" {% if listing.transmission and listing.transmission not in ["Manual","Automatic","Semi-Automatic"]  %}value="{{listing.transmission}}"{% endif %} class ="input_box" name="other_transmission" style="display: none" id = "other_trans" placeholder ="other transmission">
+                    <input type="text" {% if listing.transmission and listing.transmission not in transmissions  %}value="{{listing.transmission}}"{% endif %} class ="input_box" name="other_transmission" style="display: none" id = "other_trans" placeholder ="other transmission">
 
                 </div>
                 
@@ -338,5 +336,6 @@
     </div>
 
      <script>const listingOriginalModelId = {{ listing.model_id | tojson }};</script>
+     <script>const listingOtherModel = {{ listing.other_model | tojson }};</script>
      <script src = "{{ url_for( 'static' , filename = 'JavaScript/edit_listing_page.js')}}" ></script>
 {% endblock %}
