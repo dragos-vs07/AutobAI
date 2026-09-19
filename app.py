@@ -58,11 +58,10 @@ def load_view_listing_page():
           return redirect(url_for("load_general_page"))
 
      if session.get("user_id") != listing.seller_id and listing.status == "private":
-          flash("Unauthorised viewying of this listing")
           return redirect(url_for("load_general_page"))
      
      if session.get("user_id") != listing.seller_id:
-          listing.views = listing.views + 1
+          listing.views = (listing.views or 0) + 1
           db.session.commit()
      
      return render_template("view_listing_page.html",
@@ -490,19 +489,19 @@ def confirm_edit(listing_id):
      year = form_data[9]
      if year is not None and not (year.isascii() and year.isdigit() and 1886 <= int(year) <= datetime.now().year + 1):
           flash("Invalid year input")
-          return redirect(url_for("load_make_listing_page"))
+          return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
           
      if form_data[16] not in ("public","private"):
           flash("Status must be either public or private")
-          return(redirect(url_for("load_make_listing_page")))
+          return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
      
      if not form_data[0]:
           flash("Make required")
-          return(redirect(url_for("load_make_listing_page")))
+          return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
      
      if not form_data[1]:
           flash("Model required")
-          return(redirect(url_for("load_make_listing_page")))
+          return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
      
      for u in units:
           unit = request.form.get(u)
@@ -511,6 +510,11 @@ def confirm_edit(listing_id):
                return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
           form_units.append(unit)
 
+     
+     if form_data[13] is not None and form_units[4] == "mpg" and float(form_data[13]) == 0:
+               flash("Invalid fuel efficiency input")
+               return redirect(url_for("load_edit_listing_page", listing_id=listing_id))
+     
      currency_convert = normalise_currency(form_data[3], form_units[0])
      
      if currency_convert is None:

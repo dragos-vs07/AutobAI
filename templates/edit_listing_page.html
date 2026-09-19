@@ -25,7 +25,7 @@
                                 {% endfor %}
 
                                 <option class="input_box" value="Other" data-brand = "Other" {% if listing.other_make %}selected{% endif %}>Other</option>
-                                <option class="input_box" value="Unknown" {% if not listing.make_id and not listing.other_make %}selected{% endif %}>Unknown</option>
+                                <option class="input_box" value="Unknown" data-brand = "Unknown" {% if not listing.make_id and not listing.other_make %}selected{% endif %}>Unknown</option>
 
                             </select>
 
@@ -48,7 +48,7 @@
                         <br>
 
                         <p>Model Year</p>
-                        <input type="number" min="1800" max ="2026" value = "{{ listing.year or '' }}" class ="input_box" name = "year">
+                        <input type="number" min="1800" max ="2026"  {% if listing.year is not none %} value = "{{ listing.year}}" {% endif %} class ="input_box" name = "year">
 
                         <br>
                         
@@ -73,7 +73,7 @@
                         <p>Mileage</p>
 
                         <div>
-                            <input type="number" value="{{ listing.mileage or '' }}" class="input_box" id="mileageInput" name = "mileage">
+                            <input type="number" {% if listing.mileage is not none %} value="{{ listing.mileage}}" {% endif %} class="input_box" id="mileageInput" name = "mileage">
 
                             <input type="radio" id="unitkm" name="MileageUnit" checked="true"value="km">
                             <label for="unitkm">km</label>
@@ -112,7 +112,7 @@
 
                     <div>
 
-                        <input type="number" min="0" value = "{{ listing.power or '' }}" placeholder = "hp" class ="input_box" id = "ep" name = "power">
+                        <input type="number" min="0" {% if listing.power is not none %} value = "{{ listing.power }}" {% endif %} placeholder = "hp" class ="input_box" id = "ep" name = "power">
                         <input type="radio" id="unithp" name="enginePowerUnit" checked value = "hp">
                         <label for="unithp">hp(PS)</label>
 
@@ -126,7 +126,7 @@
                     <p>Engine displacement</p>
 
                     <div>
-                        <input type="number" step="any" min="0" value = "{{ listing.displacement or '' }}" placeholder = "L"  class ="input_box" id = "ed" name = "displacement">
+                        <input type="number" step="any" min="0" {% if listing.displacement is not none %} value = "{{ listing.displacement }}" {% endif %} placeholder = "L"  class ="input_box" id = "ed" name = "displacement">
 
                         <input type="radio" id="unitL" name="engineDisplacementUnit" checked value="L">
                         <label for="unitL">L</label>
@@ -142,7 +142,7 @@
 
                     <div>
 
-                        <input type="number" min="0" step="any" value = "{{ listing.fuel_efficiency or '' }}" placeholder = "l/100km"   class ="input_box" id="fe" name = "fuel_efficiency">
+                        <input type="number" min="0" step="any" {% if listing.fuel_efficiency is not none %} value = "{{ listing.fuel_efficiency}}" {% endif %} placeholder = "l/100km"   class ="input_box" id="fe" name = "fuel_efficiency">
                         
                         <input type="radio" id="unitLkm" name="fuelEfficiencyUnit"  checked value="l/100km">
                         <label for="unitLkm">l/100km</label>
@@ -158,7 +158,7 @@
                     <select class ="input_box" id = "fuel_type" name = "fuel_type">
                         {% for f in fuel_types %}
                             <option class="input_box" value="{{f}}" 
-                                {% if listing.configuration == f or (f == "Other" and listing.fuel_type and listing.fuel_type not in fuel_types) %}selected{% endif %}>
+                                {% if listing.fuel_type == f or (f == "Other" and listing.fuel_type and listing.fuel_type not in fuel_types) %}selected{% endif %}>
                                 {{f}}
                             </option>
                         {% endfor %}

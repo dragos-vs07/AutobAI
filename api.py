@@ -46,10 +46,7 @@ def make_prediction():
         user_data.append(CarMake.query.filter_by(id = l.make_id).first().brand if l.make_id else l.other_make)
         user_data.append(CarModel.query.filter_by(id = l.model_id).first().model if l.model_id else l.other_model) 
         user_data.append(l.fuel_type)
-        if l.transmission == "Semi-Automatic" :
-            user_data.append("Semi-automatic")
-        else:
-            user_data.append(l.transmission)
+        user_data.append(l.transmission)
         user_data.append(l.mileage)
         user_data.append(l.year)
         user_data.append(l.power)
@@ -63,6 +60,12 @@ def make_prediction():
         for f in user_inputs:
             user_data.append(request.args.get(f, None))
 
+    if user_data[2] == "Other":
+        user_data[2] = "Others"
+
+    if user_data[3] == "Semi-Automatic":
+        user_data[3] = "Semi-automatic";
+    
     if user_data[5]:
         user_data[5] = datetime.now().year - int(user_data[5])
 
