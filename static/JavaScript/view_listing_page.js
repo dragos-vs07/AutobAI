@@ -23,7 +23,7 @@ function checkFavourite(event)
     event.stopPropagation();
     const svg = event.currentTarget;
 
-    fetch(`/API/toggle_favourite?listing_id=${listingId}`)
+    fetch(`/API/toggle_favourite?listing_id=${listingId}`, {method: 'POST'})
     .then(response => {
         if(response.ok)
         {

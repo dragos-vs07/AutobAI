@@ -188,7 +188,7 @@ function checkFavourite(event)
     const svg = event.currentTarget;
     const listingId = svg.dataset.listingId;
 
-    fetch(`/API/toggle_favourite?listing_id=${listingId}`)
+    fetch(`/API/toggle_favourite?listing_id=${listingId}`, {method: 'POST'})
     .then(response => {
         if (response.ok)
         {

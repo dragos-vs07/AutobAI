@@ -1,10 +1,10 @@
+from models import CarMake, CarModel, Listing, Favorites
 from flask import Blueprint, request, session, jsonify
 from extensions import db
-from models import CarMake, CarModel, Listing, Favorites, User
 import os
-import lightgbm as lgbm
 import json 
 import pandas as pd
+import lightgbm as lgbm
 from datetime import datetime
 from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions
 
@@ -116,7 +116,7 @@ def find_models(brand):
     ]), 200
 
 
-@api.route("/toggle_favourite")
+@api.route("/toggle_favourite", methods = ["POST"])
 def toggle_fav():
 
     if not session.get("user_id"):
@@ -243,7 +243,6 @@ def find_listings():
                 Listing.other_model.ilike(f'%{t}%'),
             ))
 
-    
     makes = request.args.getlist("make")
     
     if makes:
@@ -293,8 +292,6 @@ def find_listings():
                         .limit(listings_per_page)
                         .all())
 
-    
-
     return jsonify({
     "total": total,
     "listings": [{
@@ -337,12 +334,20 @@ def delete_listing(listing_id):
           }), 403
 
 
-    for img in l.images:
-        if os.path.exists(img.image_path):
-            os.remove(img.image_path)
+    paths = [img.image_path for img in l.images]
 
-    db.session.delete(l)
-    db.session.commit()
-    
+    try:
+        db.session.delete(l)
+        db.session.commit()
+    except Exception:
+        db.session.rollback()
+        return jsonify({"status": "fail", "message": "Could not delete listing"}), 500
+
+    for path in paths:
+        try:
+            os.remove(path)
+        except OSError:
+            pass
+
     return '', 204
 
