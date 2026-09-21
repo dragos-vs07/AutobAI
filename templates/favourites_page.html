@@ -2,7 +2,7 @@
 
 {% block head %}
 
- <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/favourites_page.css') }}" >
+    <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/favourites_page.css') }}" >
 
 {% endblock %}
 
@@ -14,7 +14,15 @@
             
         </div>
 
+        <div style="display:flex; flex-direction:row;gap: 5px; align-items: center;justify-content: center;">
+                <button type="button" class="pag_btn" id = "previous_page_btn" onclick="previouspage()" > < </button>
+                <p id="current_page" class="input_box"></p>
+                <button type="button" class="pag_btn" id = "next_page_btn" onclick="nextpage()" > > </button>
+        </div>
+
     </div>
+
+
 
     <script> const userId = {{ session.get("user_id") | tojson }}; </script>
     <script src = "{{ url_for( 'static' , filename = 'JavaScript/favourites_page.js')}}" ></script>

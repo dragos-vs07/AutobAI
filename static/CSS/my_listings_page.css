@@ -4,7 +4,8 @@ body{
 #content{
     padding: 15px;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
+    gap: 5px;
 }
 #listings_area{
     display: flex;
@@ -14,6 +15,9 @@ body{
     padding: 15px;
     border-radius: 15px;
     border: 2px solid white;
+}
+.hide_button{
+    display: none
 }
 .info{
     display: flex;
@@ -32,9 +36,31 @@ body{
     align-items: center;
     gap: 10px;
 }
+.input_box{
+    border-radius: 10px;
+    background-color:rgb(29, 29, 29);
+    border: 1px solid #c9a227;
+    color: white;
+    padding-left: 6px;
+    padding: 6px;
+}
 .image{
     width: 420px; 
     height: 250px;
+}
+.pag_btn{
+    text-align: center;
+    font-weight: bold;
+    border-radius: 8px;
+    padding: 6px;
+    background-color:rgb(29, 29, 29);
+    border: 1px solid #c9a227;
+    color: white;
+    cursor: pointer;
+}
+.pag_btn:hover{
+    transition: background-color 0.3s ease;
+    background-color: rgb(68, 65, 65);
 }
 @media(max-width:830px){
     #listings_area{

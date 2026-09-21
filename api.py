@@ -204,7 +204,7 @@ def in_or_other(col, values, other_cond):
 def find_listings():
     page = max(1, request.args.get("page", 1, type=int))
     seller_id = request.args.get("seller_id", -1, type=int)
-    listings_per_page = min(request.args.get("lpp", 24, type=int), 50)
+    listings_per_page = max(1, min(request.args.get("lpp", 24, type=int), 50))
     favourites = request.args.get("favourites")
     user_search_input = request.args.get("ui", '').strip()
     current_user_id = session.get("user_id")
@@ -304,7 +304,7 @@ def find_listings():
         "mileage": l.mileage,
         "cover_img_path": l.images.filter_by(cover_image=True).first().image_path,
         "views": l.views,
-        "favorites": len(Favorites.query.filter_by(listing_id=l.id).all()),
+        "favorites": Favorites.query.filter_by(listing_id=l.id).count(),
         "is_favourite": "True" if session.get("user_id") and Favorites.query.filter_by(listing_id=l.id, user_id=session.get("user_id")).first() else "False"
     } for l in listings]
 }), 200
