@@ -68,6 +68,6 @@ transmissions = [
     "Unknown",
 ]
 
-user_types = ['Individual','Dealership','Company','Manufacturer']
+user_types = ['Individual','Dealership','Company','Manufacturer',"Other"]
 
-countries = [c.name for c in countries]
+countries = ["Other"] + [c.name for c in countries]

@@ -111,7 +111,12 @@ body{
     transform: translate(-50%, -50%);
     color: white;
 }
-
+.mandatory_field_div{
+    display:flex;
+    flex-direction:row;
+    width: 70%;
+    gap: 3px;
+}
 @media(max-width:1370px){
     #sec_images_area{
         grid-template-columns: repeat(4, 2fr);

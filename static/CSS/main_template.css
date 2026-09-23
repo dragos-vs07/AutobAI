@@ -74,7 +74,9 @@ body{
 #part{
     color: #c9a227;
 }
-
+.astk{
+    margin: 0;
+}
 @media(max-width: 830px)
 {
     body{

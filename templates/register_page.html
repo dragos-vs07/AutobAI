@@ -18,23 +18,31 @@
                     <br>
 
                     <h3>Username</h3>
-                    <input type="text" class ="input_box" name = "username" required required minlength="5" maxlength="20">
-
+                        <div class="mandatory_field_div">
+                        <input type="text" class ="input_box" name = "username" required required minlength="5" maxlength="20">
+                        <p style="color:red" class="astk">*</p>
+                    </div>
                     <br>
 
                     <h3>Email</h3>
-                    <input type="text" class ="input_box" name = "email" required >
-
+                    <div class="mandatory_field_div">
+                        <input type="text" class ="input_box" name = "email" required >
+                        <p style="color:red" class="astk">*</p>
+                    </div>
                     <br>
                     
                     <h3>Password</h3>
-                    <input type="password" class ="input_box" name = "password" required required minlength="5" maxlength="20">
-
+                    <div class="mandatory_field_div">
+                        <input type="password" class ="input_box" name = "password" required required minlength="5" maxlength="20">
+                        <p style="color:red" class="astk">*</p>
+                    </div>
                     <br>
                     
                     <h3>Confirm password</h3>
-                    <input type="password" class ="input_box" name = "cpassword" required required minlength="5" maxlength="20">
-                    
+                    <div class="mandatory_field_div">
+                        <input type="password" class ="input_box" name = "cpassword" required required minlength="5" maxlength="20">
+                        <p style="color:red" class="astk">*</p>
+                    </div>
                     <br>
 
                     <h2>Public information</h2>
@@ -65,13 +73,15 @@
 
                         <div style="display:flex; flex-direction:row; gap:10px;">
 
-                            <select name="country" class = "input_box" style="text-align: center">
+                            <select name="country" class = "input_box" style="text-align: center" id = "country_select">
                                     {% for c in countries %}
-                                        <option value="{{c}}"> {{c}} </option>
+                                        <option value="{{c}}"> {% if c != "Other" %} {{c}} {% else %} Other / Unspecified {% endif %} </option>
                                     {% endfor %}
                             </select>
 
-                            <input type="text" name="city" class = "input_box" placeholder="City" style="text-align: center">
+           
+                                <input type="text" name="city" class = "input_box" placeholder="City" style="text-align: center">
+                                
 
                         </div>
 
@@ -93,4 +103,5 @@
 
     </div> 
         
+    <script src = "{{ url_for( 'static' , filename = 'JavaScript/register_page.js')}}" ></script>
 {% endblock %}

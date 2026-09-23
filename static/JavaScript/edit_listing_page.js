@@ -1,3 +1,4 @@
+
 pb = document.getElementById("PriceRange");
 pn = document.getElementById("PriceNumber");
 

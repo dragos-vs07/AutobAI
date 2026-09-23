@@ -215,7 +215,10 @@
                         <h2>Add images</h2>
 
                         <p>Cover image</p>
-                         <input type="file" name="coverCarImage" accept="image/png, image/jpeg, image/webp, image/jfif"  required>
+                        <div class="mandatory_field_div">
+                            <input type="file" name="coverCarImage" accept="image/png, image/jpeg, image/webp, image/jfif"  required>
+                            <p style="color:red" class="astk">*</p>
+                        </div>
 
                         <p>Additional images</p>
                          <input type="file" name="carImages" accept="image/png, image/jpeg, image/webp, image/jfif" multiple>
@@ -230,6 +233,7 @@
                         <div id = "title_area">
 
                         <input type = "text" class ="input_box" id = "title_box" name = "title" required  maxlength = "80">
+                        <p style="color:red" class="astk">*</p>
                         <p id = "char_counter_t" style = "color:rgb(111, 111, 111)">0/80</p>
 
                         </div>
@@ -241,6 +245,7 @@
                         <div id ="description_area">
 
                         <textarea class ="input_box" id = "descp_box" name = "description" maxlength = "1000"></textarea>
+                        <p style="color:red" class="astk">*</p>
                         <p id = "char_counter_d" style = "color:rgb(111, 111, 111)">0/1000</p>
 
                         </div>
@@ -251,13 +256,15 @@
 
                 <div style="display:flex; flex-direction:row; gap:10px;">
 
-                    <select name="country" class = "input_box" style="text-align: center">
+                    <select name="country" class = "input_box" style="text-align: center" id = "country_select">
                             {% for c in countries %}
                                 <option value="{{c}}"> {{c}} </option>
                             {% endfor %}
                     </select>
 
-                    <input type="text" name="city" class = "input_box" placeholder="City" style="text-align: center">
+                    
+                        <input type="text" name="city" class = "input_box" placeholder="City" style="text-align: center">
+                        
 
                 </div>               
 

@@ -239,7 +239,10 @@
                         
                      <div id="new_cvr" style="display:none;">
                         <p>Load new cover image</p>
-                        <input type="file" name="coverCarImage" accept="image/png, image/jpeg, image/webp, image/jfif" id="cvr_img_input">
+                        <div class="mandatory_field_div">
+                            <input type="file" name="coverCarImage" accept="image/png, image/jpeg, image/webp, image/jfif" id="cvr_img_input">
+                            <p style="color:red" class="astk">*</p>
+                        </div>
                      </div>
                      <button type="button" id="cancel_cvr" onclick="clear_cvr_input()" class ="btn cancel_btn">Cancel</button>
                 <br>
@@ -274,6 +277,7 @@
                         <div id = "title_area">
 
                         <input type = "text" class ="input_box" id = "title_box" name = "title" required  maxlength = "80" value = "{{ listing.title or '' }}">
+                        <p style="color:red" class="astk">*</p>
                         <p id = "char_counter_t" style = "color:rgb(111, 111, 111)">0/80</p>
 
                         </div>
@@ -285,8 +289,9 @@
                         <div id ="description_area">
 
                         <textarea class ="input_box" id = "descp_box" name = "description" maxlength = "1000">{{ listing.description or '' }}</textarea>
+                        <p style="color:red" class="astk">*</p>
                         <p id = "char_counter_d" style = "color:rgb(111, 111, 111)">0/1000</p>
-
+                        
                         </div>
                 </div>
 
@@ -295,14 +300,15 @@
                 
                 <div style="display:flex; flex-direction:row; gap:10px;">
 
-                    <select name="country" class = "input_box" style="text-align: center">
+                    <select name="country" class = "input_box" style="text-align: center" id="country_select">
                             {% for c in countries %}
                                 <option value="{{c}}"> {{c}} {% if listing.country == c %}selected{% endif %} </option>
                             {% endfor %}
                     </select>
 
-                    <input type="text" name="city" class = "input_box" placeholder="City" style="text-align: center" {% if listing.city == c %}value="{{listing.city}}"{% endif %}>
-
+                    
+                        <input type="text" name="city" class = "input_box" placeholder="City" style="text-align: center">
+                        
                 </div>               
 
                 <br>

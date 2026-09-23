@@ -180,7 +180,7 @@ KNOWN_VALUES = {
     "engine_config": engine_configurations,
     "transmission":  transmissions,
     "drivetrain":    drivetrains,
-    "country": countries
+    "country": countries 
 }
 
 SORT_OPTIONS = {

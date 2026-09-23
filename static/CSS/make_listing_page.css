@@ -14,7 +14,12 @@ body{
     align-items: center;
     justify-content: center;
 }
-
+.mandatory_field_div{
+    display:flex;
+    flex-direction:row;
+    width: 70%;
+    gap: 3px;
+}
 .input_box{
     border-radius: 10px;
     background-color:rgb(29, 29, 29);
