@@ -1,3 +1,5 @@
+from pycountry import countries
+
 body_styles = [
     "Sedan",
     "Hatchback",
@@ -65,3 +67,7 @@ transmissions = [
     "Other",
     "Unknown",
 ]
+
+user_types = ['Individual','Dealership','Company','Manufacturer']
+
+countries = [c.name for c in countries]

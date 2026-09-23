@@ -2,51 +2,87 @@ from flask import Blueprint, request, flash, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from extensions import db
 from models import User
+from constants import user_types, countries
+import validators
+
 auth = Blueprint("auth", __name__)
 
 @auth.route("/submit_registration" , methods = ["POST"])
 def register_account():
      
-     username = request.form.get("username","")
-     email = request.form.get("email","")
-     password = request.form.get("password","")
-     cpassword = request.form.get("cpassword","")
+      username = request.form.get("username","")
+      email = request.form.get("email","")
+      password = request.form.get("password","")
+      cpassword = request.form.get("cpassword","")
+      phone_number = request.form.get("phone","")
+      website_url = request.form.get("website_url","")
+      user_type = request.form.get("user_type","")
+      country = request.form.get("country","")
+      city = request.form.get("city","")
+      street = request.form.get("street","")
 
-     if not username or not email or not password or not cpassword:
-          flash("Please fill in all the fields")
-          return(redirect(url_for("load_register_page")))
+      if not username or not email or not password or not cpassword:
+            flash("Please fill in all the required fields")
+            return(redirect(url_for("load_register_page")))
 
-     if any(char.isspace() for char in username) or any(char.isspace() for char in email) or any(char.isspace() for char in password) or any(char.isspace() for char in cpassword):
-      flash("No whitespaces allowed in input")
-      return(redirect(url_for("load_register_page")))
+      if any(char.isspace() for char in username) or any(char.isspace() for char in email) or any(char.isspace() for char in password) or any(char.isspace() for char in cpassword):
+            flash("No whitespaces allowed in required fields input")
+            return(redirect(url_for("load_register_page")))
 
-     if len(username) < 5 or len(password) < 5 or len(email) < 5 or len(cpassword) < 5:
-           flash("All inputs must have at least 5 characters")
-           return(redirect(url_for("load_register_page")))
+      if len(username) < 5 or len(password) < 5 or len(email) < 5 or len(cpassword) < 5:
+            flash("All required fields inputs must have at least 5 characters")
+            return(redirect(url_for("load_register_page")))
      
-     if User.query.filter_by(username = username).first() :
-           flash("Account with entered username already registered" , "nuquser")
-           return(redirect(url_for("load_register_page")))
+      if User.query.filter_by(username = username).first() :
+            flash("Account with entered username already registered" , "nuquser")
+            return(redirect(url_for("load_register_page")))
      
-     if User.query.filter_by(email = email).first() :
-                flash("Account with entered email already registered" , "nuqemail")
-                return(redirect(url_for("load_register_page")))
+      if User.query.filter_by(email = email).first() :
+            flash("Account with entered email already registered" , "nuqemail")
+            return(redirect(url_for("load_register_page")))
 
-     if password != cpassword:
-           flash("Confirmed password not the same" , "dpass")
-           return(redirect(url_for("load_register_page")))
-           
-     db.session.add(User(
-           username = username , 
-           email = email ,
-           password_hash = generate_password_hash(password)
+      if password != cpassword:
+            flash("Confirmed password not the same" , "dpass")
+            return(redirect(url_for("load_register_page")))
+
+      if website_url:
+            if not validators.url(website_url):
+                  flash("Website url not valid")
+                  return(redirect(url_for("load_register_page")))
+
+      if user_type not in user_types:
+            flash("Invalid user type")
+            return(redirect(url_for("load_register_page")))
+
+      if country not in countries:
+            flash("Country not found")
+            return(redirect(url_for("load_register_page")))
+
+      if len(city > 30):
+            flash("City name too long")
+            return(redirect(url_for("load_register_page")))
+
+      if len(street > 80):
+            flash("Street adress too long")
+            return(redirect(url_for("load_register_page")))
+      
+      db.session.add(User(
+           username = username, 
+           email = email,
+           password_hash = generate_password_hash(password),
+           phone_number = phone_number,
+           website_url = website_url,
+           user_type = user_type,
+           country = country,
+           city = city,
+           street = street
      ))
 
-     db.session.commit()
+      db.session.commit()
      
-     session["user_id"] = User.query.filter_by(username = username).first().id
+      session["user_id"] = User.query.filter_by(username = username).first().id
     
-     return(redirect(url_for("load_general_page")))
+      return(redirect(url_for("load_general_page")))
 
 @auth.route("/submit_login" , methods = ["POST"])
 def login_user():

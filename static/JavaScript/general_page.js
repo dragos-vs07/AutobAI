@@ -1,4 +1,4 @@
-const CATEGORICAL_FILTERS = ["make", "model", "body_style", "fuel_type", "engine_config", "transmission", "drivetrain"];
+const CATEGORICAL_FILTERS = ["make", "model", "body_style", "fuel_type", "engine_config", "transmission", "drivetrain", "country"];
 const NUMERICAL_FILTERS = ["power", "year", "price", "mileage", "displacement", "fuel_ef"];
 
 let savedFilterOptions = {};
@@ -29,6 +29,29 @@ function createListingElements(data)
         const title = document.createElement("h4");
         title.textContent = listing.title;
 
+        const sellerDiv = document.createElement("div");
+
+        const sellerNameDiv = document.createElement("div");
+
+        const sellerName = document.createElement("p");
+        sellerName.textContent = listing.seller_name;
+
+        sellerNameDiv.innerHTML = `<svg class = "pic" onclick = "window.location.href='/accountp'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>`;
+        sellerNameDiv.append(sellerName);
+        sellerNameDiv.classList.add("pic-pair-div");
+
+        const sellerTypeDiv = document.createElement("div");
+
+        const sellerType = document.createElement("p");
+        sellerType.textContent = listing.seller_type;
+
+        sellerTypeDiv.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-store preview-icon"><path d="M15 21v-5a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v5"/><path d="M17.774 10.31a1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.451 0 1.12 1.12 0 0 0-1.548 0 2.5 2.5 0 0 1-3.452 0 1.12 1.12 0 0 0-1.549 0 2.5 2.5 0 0 1-3.77-3.248l2.889-4.184A2 2 0 0 1 7 2h10a2 2 0 0 1 1.653.873l2.895 4.192a2.5 2.5 0 0 1-3.774 3.244"/><path d="M4 10.95V19a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8.05"/></svg>`;
+        sellerTypeDiv.append(sellerType);
+        sellerTypeDiv.classList.add("pic-pair-div");
+
+        sellerDiv.append(sellerNameDiv);
+        sellerDiv.append(sellerTypeDiv);
+
         const price = document.createElement("h4");
         price.textContent = listing.price + " €";
 
@@ -46,11 +69,29 @@ function createListingElements(data)
         const mileage = document.createElement("p");
         mileage.textContent = `${listing.mileage} km`;
 
+        
+        
         cell.appendChild(title);
+        cell.appendChild(sellerDiv);
         cell.appendChild(coverImg);
         cell.appendChild(price);
         cell.appendChild(carDef);
         cell.appendChild(mileage);
+
+
+            const locDiv = document.createElement("div");
+            locDiv.classList.add("pic-pair-div");
+            locDiv.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pinned preview-icon pic"><path d="M18 8c0 3.613-3.869 7.429-5.393 8.795a1 1 0 01-1.214 0C9.87 15.429 6 11.613 6 8a6 6 0 0112 0"/><path d="M4.474 15h-.197a1 1 0 00-.969.753l-1.097 4.35a1.5 1.5 0 001.444 1.898L20.344 22a1.5 1.5 0 001.446-1.897l-1.098-4.35a1 1 0 00-.969-.753h-.197"/><circle cx="12" cy="8" r="2"/></svg>';
+            const location = document.createElement("p");
+            if(listing.city)
+                location.textContent = `${listing.country}, ${listing.city}`;
+            else if(listing.country)
+                location.textContent = `${listing.country}`;
+            else
+                location.textContent = 'Location not specified'
+
+            locDiv.appendChild(location)
+            cell.appendChild(locDiv);
 
         if (userId != null && userId != listing.seller_id)
         {

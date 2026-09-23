@@ -292,6 +292,21 @@
 
                 <br>
                 <br>
+                
+                <div style="display:flex; flex-direction:row; gap:10px;">
+
+                    <select name="country" class = "input_box" style="text-align: center">
+                            {% for c in countries %}
+                                <option value="{{c}}"> {{c}} {% if listing.country == c %}selected{% endif %} </option>
+                            {% endfor %}
+                    </select>
+
+                    <input type="text" name="city" class = "input_box" placeholder="City" style="text-align: center" {% if listing.city == c %}value="{{listing.city}}"{% endif %}>
+
+                </div>               
+
+                <br>
+                <br>
 
                 <div>
                         <input type="radio" id = "prvlst"  name="status" value="private" {% if listing.status == "private" %}checked{% endif %}>

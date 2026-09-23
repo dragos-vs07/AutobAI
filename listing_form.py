@@ -3,6 +3,7 @@ import requests
 from datetime import datetime
 from flask import request
 from models import Listing, CarMake, CarModel
+from constants import countries
 
 def normalise_currency(value, unit):
     value = float(value)
@@ -64,7 +65,7 @@ def is_float(string):
 
 FIELDS = ["make_id", "model_id", "title", "price", "configuration", "drivetrain", "fuel_type",
                 "transmission", "description", "year", "mileage", "power", "displacement", "fuel_efficiency",
-                "colour", "body_style", "status"  ]
+                "colour", "body_style", "country", "city", "status"  ]
 
 NUMERICAL_FIELDS = ["price","year","mileage","power","displacement","fuel_efficiency"]
 
@@ -201,8 +202,19 @@ def parse_listing_form():
 
      if year is not None and not year.is_integer():
           return None, None, None, "Invalid year input"
-      
+
+     if form_data["country"]:
+          if form_data["country"] not in countries:
+               return None, None, None, "Country not found"
+
+          if form_data["city"]:
+               if len(form_data["city"]) > 30:
+                    return None, None, None, "City too long"
+          
+     elif form_data["city"]:
+          return None, None, None, "Please choose a country if you wish to specify the city"
+
      if form_data["status"] not in ("public","private"):
           return None, None, None, "Status must be either public or private"
-
+     
      return form_data, form_units, is_other, None

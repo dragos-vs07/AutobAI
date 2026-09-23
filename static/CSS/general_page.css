@@ -134,7 +134,13 @@ svg.is-favourited {
     transition: background-color 0.3s ease;
     background-color: rgb(68, 65, 65);
 }
-
+.pic-pair-div{
+    display: flex;
+    flex-direction: row;
+    gap: 3px;
+    justify-content: center;
+    align-items: center;
+}
 @media(max-width: 1450px){
     #filter_area{
     color: white;

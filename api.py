@@ -1,4 +1,4 @@
-from models import CarMake, CarModel, Listing, Favorites
+from models import CarMake, CarModel, Listing, Favorites, User
 from flask import Blueprint, request, session, jsonify
 from extensions import db
 import os
@@ -6,7 +6,7 @@ import json
 import pandas as pd
 import lightgbm as lgbm
 from datetime import datetime
-from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions
+from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions, countries
 
 api = Blueprint("api", __name__, url_prefix="/API")
 
@@ -171,6 +171,7 @@ CATEGORICAL_COLUMNS = {
     "engine_config": "configuration",
     "transmission": "transmission",
     "drivetrain": "drivetrain",
+    "country" : "country"
 }
 
 KNOWN_VALUES = {
@@ -179,6 +180,7 @@ KNOWN_VALUES = {
     "engine_config": engine_configurations,
     "transmission":  transmissions,
     "drivetrain":    drivetrains,
+    "country": countries
 }
 
 SORT_OPTIONS = {
@@ -221,6 +223,9 @@ def find_listings():
         listings = listings.filter(Listing.status == "public")  # all listings for a user getting his own listings, just public otherwise
 
     if seller_id != -1:
+        if not User.query.filter_by(id = seller_id).first():
+            return None, None, None, "User not found"
+        
         listings = listings.filter(Listing.seller_id == seller_id) # if a certain seller's listings are sought
 
     if favourites:  # if favourites are sought
@@ -297,11 +302,15 @@ def find_listings():
     "listings": [{
         "listing_id": l.id,
         "seller_id": l.seller_id,
+        "seller_name": l.seller.username,
+        "seller_type": l.seller.type,
         "title": l.title,
         "price": l.price,
         "brand": l.other_make if l.other_make else CarMake.query.filter_by(id=l.make_id).first().brand,
         "model": l.other_model if l.other_model else CarModel.query.filter_by(id=l.model_id).first().model,
         "mileage": l.mileage,
+        "country": l.country,
+        "city": l.city,
         "cover_img_path": l.images.filter_by(cover_image=True).first().image_path,
         "views": l.views,
         "favorites": Favorites.query.filter_by(listing_id=l.id).count(),

@@ -32,6 +32,7 @@ html , body{
     border: 1px solid #c9a227;
     color: white;
     padding-left: 6px;
+    font-size: large;
 }
 @media(max-width: 760px)
 {

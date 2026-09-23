@@ -13,6 +13,10 @@
         <h1> Register</h1>
                 <form class ="reg_form" method = "POST" action = "/submit_registration">
 
+                    <h2>Account information</h2>
+
+                    <br>
+
                     <h3>Username</h3>
                     <input type="text" class ="input_box" name = "username" required required minlength="5" maxlength="20">
 
@@ -31,6 +35,50 @@
                     <h3>Confirm password</h3>
                     <input type="password" class ="input_box" name = "cpassword" required required minlength="5" maxlength="20">
                     
+                    <br>
+
+                    <h2>Public information</h2>
+
+                    <br>
+
+                    <h3>Phone number</h3>
+                    <input type="tel" name="phone" class = "input_box" >
+
+                    <br>
+
+                    <h3>Website</h3>
+                    <input type="text" name="website_url" class = "input_box" placeholder="eg. https://mywebsite.com" >
+
+                    <br>
+
+                    <h3>User type</h3>
+                    <select name="user_type" class = "input_box" style="text-align: center">
+                        <option value=""> Other / Unspecified </option>
+                            {% for ut in user_types %}
+                                <option value="{{ut}}"> {{ut}} </option>
+                            {% endfor %}
+                    </select>
+
+                    <br>
+                     <h3>Adress</h3>
+                    <div id="adress_area" style="display:flex; flex-direction:column; gap:20px; justify-content: center; align-items:center;">
+
+                        <div style="display:flex; flex-direction:row; gap:10px;">
+
+                            <select name="country" class = "input_box" style="text-align: center">
+                                    {% for c in countries %}
+                                        <option value="{{c}}"> {{c}} </option>
+                                    {% endfor %}
+                            </select>
+
+                            <input type="text" name="city" class = "input_box" placeholder="City" style="text-align: center">
+
+                        </div>
+
+                        <input type="text" name="street" class = "input_box" placeholder="Street" style="text-align: center">
+
+                    </div>
+
                     <br>
 
                     <button type="submit" class ="btn">Create account</button>

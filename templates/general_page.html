@@ -104,8 +104,16 @@
                     </div>
             </div>
 
-            <div id ="filler">
+            <div class = "filter_option_area" style="position:relative;">
+                    <input id="country_input" placeholder="Location" class="input_box filter_input" data-cblist = "countries_checkbox_list">
 
+                    <div class="dropdown_checkbox_list" id="countries_checkbox_list">
+
+                        {% for c in countries %}
+                            <label><input type="checkbox" value="{{c}}" class ="input_box"  name="country" checked>{{c}}</label>
+                        {% endfor %}
+
+                    </div>
             </div>
 
             <div class = "filter_option_area">

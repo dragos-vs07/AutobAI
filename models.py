@@ -11,6 +11,12 @@ class User(db.Model):
     username = db.Column(db.String(80) , unique = True , nullable = False)
     email =  db.Column(db.String(80) , unique = True , nullable = False)
     password_hash = db.Column(db.String(255) ,  nullable = False)
+    phone_number = db.Column(db.String(30))
+    country = db.Column(db.String(30))
+    city = db.Column(db.String(30))
+    address = db.Column(db.String(80))
+    website_url = db.Column(db.String(250))
+    type = db.Column(db.String(30))
     creation_date = db.Column(db.DateTime , default = datetime.utcnow)
     listings = db.relationship('Listing', backref = 'seller', lazy = True)
     favorites = db.relationship('Favorites', backref = 'user', lazy = True )
@@ -36,6 +42,8 @@ class Listing(db.Model):
     # LISTING SPECIFICS
     title = db.Column(db.String(81), nullable = False)
     price = db.Column(db.Integer, nullable = False)
+    country = db.Column(db.String(30))
+    city = db.Column(db.String(30))
 
     # CAR SPECIFICATIONS
     make_id = db.Column(db.Integer, db.ForeignKey('car_make.id'), nullable = True)

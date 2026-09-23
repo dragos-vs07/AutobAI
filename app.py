@@ -8,7 +8,7 @@ import uuid
 import math
 import os
 from datetime import datetime
-from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions
+from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions, user_types, countries
 
 # the unit table follows metric , thus as follows:
 #  price = euro, mileage = km, engine power = hp(PS),
@@ -42,6 +42,7 @@ def load_general_page():
                fuel_types = ["Any"] + [f for f in fuel_types if f != "Unknown"],
                drivetrains = ["Any"] + [d for d in drivetrains if d != "Unknown"],
                transmissions = ["Any"] + [t for t in transmissions if t != "Unknown"],
+               countries = ["Any"] + countries,
                year_list = ["1950","1960","1970","1980"] + [f"{i}" for i in range(1985,datetime.today().year+1)],
                hp_list = [f"{i}" for i in range(0,450,50)] + [f"{i}" for i in range(400,1100,100)],
                price_list = [f"{i}" for i in range(0,10000,200)] + [f"{i}" for i in range(10000,20000,1000)] 
@@ -88,7 +89,8 @@ def load_make_listing_page():
           engine_configurations = engine_configurations,
           fuel_types = fuel_types,
           drivetrains = drivetrains,
-          transmissions = transmissions
+          transmissions = transmissions,
+          countries = countries
           )
 
 @app.route("/mylistingsp")
@@ -112,7 +114,9 @@ def load_predict_page():
 
 @app.route("/regp")
 def load_register_page():
-    return render_template("register_page.html")
+    return render_template("register_page.html",
+                           countries = countries,
+                           user_types = user_types)
 
 @app.route("/favouritesp")
 def load_favourites_page():
@@ -152,6 +156,7 @@ def load_edit_listing_page():
                transmissions = transmissions,
                engine_configurations = engine_configurations , 
                body_styles = body_styles,
+               countries = countries
                )
 
 @app.route("/accountp")
@@ -261,6 +266,8 @@ def make_listing():
            fuel_efficiency = normalise_fuel_efficiency(form_data["fuel_efficiency"] , form_units["fuelEfficiencyUnit"]) if form_data["fuel_efficiency"] is not None else None,
            colour = form_data["colour"] ,
            body_style = form_data["body_style"] ,
+           country = form_data['country'],
+           city = form_data['city'],
            status = form_data["status"]
       )
 
@@ -395,6 +402,8 @@ def confirm_edit(listing_id):
      listing.fuel_efficiency = normalise_fuel_efficiency(form_data["fuel_efficiency"], form_units["fuelEfficiencyUnit"]) if form_data["fuel_efficiency"] is not None else None
      listing.colour = form_data["colour"]
      listing.body_style = form_data["body_style"]
+     listing.country = form_data["country"]
+     listing.city = form_data["city"]
      listing.status = form_data["status"]
 
      new_images_paths = []
