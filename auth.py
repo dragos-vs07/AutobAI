@@ -58,11 +58,11 @@ def register_account():
             flash("Country not found")
             return(redirect(url_for("load_register_page")))
 
-      if len(city > 30):
+      if len(city) > 30:
             flash("City name too long")
             return(redirect(url_for("load_register_page")))
 
-      if len(street > 80):
+      if len(street) > 80:
             flash("Street adress too long")
             return(redirect(url_for("load_register_page")))
       
@@ -72,10 +72,10 @@ def register_account():
            password_hash = generate_password_hash(password),
            phone_number = phone_number,
            website_url = website_url,
-           user_type = user_type,
+           type = user_type,
            country = country,
            city = city,
-           street = street
+           address = street
      ))
 
       db.session.commit()

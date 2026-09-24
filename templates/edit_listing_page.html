@@ -302,7 +302,11 @@
 
                     <select name="country" class = "input_box" style="text-align: center" id="country_select">
                             {% for c in countries %}
-                                <option value="{{c}}"> {{c}} {% if listing.country == c %}selected{% endif %} </option>
+                                {% if c == "Other" %}
+                                    <option value="{{c}}"> Other / Unspecified {% if listing.country == c %}selected{% endif %} </option>
+                                {% else %}
+                                    <option value="{{c}}"> {{c}} </option>
+                                {% endif %}
                             {% endfor %}
                     </select>
 

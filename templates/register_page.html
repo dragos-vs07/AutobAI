@@ -45,7 +45,7 @@
                     </div>
                     <br>
 
-                    <h2>Public information</h2>
+                    <h2>Profile information</h2>
 
                     <br>
 
@@ -61,8 +61,8 @@
 
                     <h3>User type</h3>
                     <select name="user_type" class = "input_box" style="text-align: center">
-                        <option value=""> Other / Unspecified </option>
-                            {% for ut in user_types %}
+                        <option value="Other"> Other / Unspecified </option>
+                            {% for ut in user_types if ut != "Other" %}
                                 <option value="{{ut}}"> {{ut}} </option>
                             {% endfor %}
                     </select>
@@ -75,7 +75,11 @@
 
                             <select name="country" class = "input_box" style="text-align: center" id = "country_select">
                                     {% for c in countries %}
-                                        <option value="{{c}}"> {% if c != "Other" %} {{c}} {% else %} Other / Unspecified {% endif %} </option>
+                                        {% if c != "Other" %}
+                                        <option value="{{c}}">{{c}}</option>
+                                            {% else %}
+                                        <option value="Other">Other / Unspecified </option>
+                                        {% endif %}
                                     {% endfor %}
                             </select>
 

@@ -24,12 +24,12 @@
 
                             <select class ="input_box" id ="makes_dropdown_list" name="make_id">
 
+                                <option class="input_box" value="Unknown" data-brand = "Unknown">Unknown</option>
+                                <option class="input_box" value="Other" data-brand = "Other">Other</option>
+
                                 {% for b in brands %}
                                     <option value="{{b.id}}" class ="input_box" data-brand = "{{b.brand}}">{{b.brand}}</option>
                                 {% endfor %}
-
-                                <option class="input_box" value="Other" data-brand = "Other">Other</option>
-                                <option class="input_box" value="Unknown" data-brand = "Unknown">Unknown</option>
 
                             </select>
 
@@ -258,7 +258,13 @@
 
                     <select name="country" class = "input_box" style="text-align: center" id = "country_select">
                             {% for c in countries %}
-                                <option value="{{c}}"> {{c}} </option>
+
+                                {% if c == "Other" %}
+                                    <option value="{{c}}"> Other / Unspecified </option>
+                                {% else %}
+                                    <option value="{{c}}"> {{c}} </option>
+                                {% endif %}
+
                             {% endfor %}
                     </select>
 

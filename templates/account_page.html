@@ -14,17 +14,52 @@
 
             <div class = "container">
 
-                <p>Username:</p>
-                <p>{{user.username}}</p>
-                
+                <h3>User type and identity</h2>
+
+                <div class="pic-pair-div">
+                    <svg id = "userpic" class = "pic" onclick = "window.location.href='/accountp'" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="pic"><path stroke-linecap="round" stroke-linejoin="round" d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" /></svg>
+                    <strong>{{user.username}}</strong>
+                </div>
+
+                <div class="pic-pair-div">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-id-card-lanyard preview-icon pic"><path d="M13.5 8h-3"/><path d="m15 2-1 2h3a2 2 0 012 2v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6a2 2 0 012-2h3"/><path d="M16 22a4 4 0 00-8 0"/><path d="m9 2 3 6"/><circle cx="12" cy="15" r="3"/></svg><p>{{user.type}}</p>
+                </div>
+
                 <br>
 
-                <p>Email:</p>
-                <p>{{user.email}}</p>
+                <h3>Contact information</h2>
+
+                <div class="pic-pair-div">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail preview-icon pic"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+                    <p>{{user.email}}</p>
+                </div>
+
+                <div class="pic-pair-div">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-phone preview-icon pic"><path d="M13.832 16.568a1 1 0 0 0 1.213-.303l.355-.465A2 2 0 0 1 17 15h3a2 2 0 0 1 2 2v3a2 2 0 0 1-2 2A18 18 0 0 1 2 4a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v3a2 2 0 0 1-.8 1.6l-.468.351a1 1 0 0 0-.292 1.233 14 14 0 0 0 6.392 6.384"/></svg>
+                    <p>{{user.phone_number}}</p>
+                </div>
 
                 <br>
+
+                <h3>Auxiliary information</h2>
+
+                <div class="pic-pair-div">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-map-pinned preview-icon pic"><path d="M18 8c0 3.613-3.869 7.429-5.393 8.795a1 1 0 01-1.214 0C9.87 15.429 6 11.613 6 8a6 6 0 0112 0"/><path d="M4.474 15h-.197a1 1 0 00-.969.753l-1.097 4.35a1.5 1.5 0 001.444 1.898L20.344 22a1.5 1.5 0 001.446-1.897l-1.098-4.35a1 1 0 00-.969-.753h-.197"/><circle cx="12" cy="8" r="2"/></svg>
+                    <p>{{user.country}}, {{user.city}}, {{user.address}}</p>
+                </div>
                 
-                <button class ="btn" id = "logout_button" onclick = "window.location.href='/logout'">Logout</button>
+                <div class="pic-pair-div">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-link preview-icon pic"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+                    <p>{{user.website_url}}</p>
+                </div>
+
+                <br>
+                <br>
+
+                <div class="pic-pair-div">
+                    <button class ="btn" id = "logout_button" onclick = "window.location.href='/logout'">Logout</button>
+                    <button class ="btn" onclick = "window.location.href='/editaccountp'">Edit</button>
+                </div>
 
             </div>
 

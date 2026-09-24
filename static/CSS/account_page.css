@@ -18,6 +18,14 @@ body{
     background-color: rgb(24, 23, 23);
     border: 2px solid  white;
 }
+.pic-pair-div{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    justify-content: left;
+    align-items: center;
+    
+}
 #logout_button{
     display: flex;
     align-content: center;

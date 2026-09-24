@@ -129,10 +129,23 @@ def load_favourites_page():
 def load_login_page():
     return render_template("login_page.html")
 
+@app.route("/editaccountp")
+def load_edit_account_page():
+     if not session.get("user_id"):
+               return redirect(url_for("load_home"))
+
+     user = User.query.filter_by(id = session.get("user_id"))
+
+     if not user:
+          return redirect(url_for("load_home"))
+
+     return render_template("edit_account_page.html",
+                            user = user)
+
 @app.route("/editlistingp")
 def load_edit_listing_page():
      if not session.get("user_id"):
-           return redirect(url_for("load_home"))
+          return redirect(url_for("load_home"))
      
      listing_id = request.args.get("listing_id", type=int)
      if not listing_id :
@@ -167,7 +180,10 @@ def load_account_page():
 
      user = User.query.filter_by(id = session.get("user_id")).first()
 
-     return render_template("account_page.html", user = user)
+     return render_template(
+          "account_page.html",
+          user = user
+          )
 
 @app.route("/infop")
 def load_information_page():

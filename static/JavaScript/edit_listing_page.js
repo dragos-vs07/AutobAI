@@ -65,6 +65,18 @@ async function display_models(brand,firstLoad)
 {
     modelsddl.innerHTML = "";
 
+    let option = document.createElement("option");
+    option.value = "Unknown";
+    option.textContent = "Unknown";
+    option.className = "input_box";
+    modelsddl.appendChild(option);
+
+    option = document.createElement("option");
+    option.value = "Other";
+    option.textContent = "Other";
+    option.className = "input_box";
+    modelsddl.appendChild(option);
+
     if(brand != "Other" && brand != "Unknown")
     {
             const response = await fetch(`/API/get_models/${brand}`);
@@ -83,20 +95,6 @@ async function display_models(brand,firstLoad)
                 modelsddl.appendChild(option);
             }
     }
-
-    let option = document.createElement("option");
-    option.value = "Other";
-    option.textContent = "Other";
-    option.className = "input_box";
-    if(firstLoad &&  !listingOriginalModelId && listingOtherModel) 
-    option.selected = true;
-    modelsddl.appendChild(option);
-
-    option = document.createElement("option");
-    option.value = "Unknown";
-    option.textContent = "Unknown";
-    option.className = "input_box";
-    modelsddl.appendChild(option);
 
     updateOtherModelVisibility();
 }
