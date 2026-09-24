@@ -9,11 +9,10 @@ import math
 import os
 from datetime import datetime
 from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions, user_types, countries
-
+import validators
 # the unit table follows metric , thus as follows:
 #  price = euro, mileage = km, engine power = hp(PS),
 #  displacement = L, fuel efficiency = l/100km
-
 
 app = Flask(__name__)
 app.config.from_object("config.Config")
@@ -132,16 +131,116 @@ def load_login_page():
 @app.route("/editaccountp")
 def load_edit_account_page():
      if not session.get("user_id"):
-               return redirect(url_for("load_home"))
+           return redirect(url_for("load_home"))
 
-     user = User.query.filter_by(id = session.get("user_id"))
+     user = User.query.filter_by(id = session.get("user_id")).first()
 
      if not user:
           return redirect(url_for("load_home"))
 
      return render_template("edit_account_page.html",
-                            user = user)
+                            user = user,
+                            countries = countries,
+                            user_types = user_types)
 
+from werkzeug.security import generate_password_hash, check_password_hash
+
+@app.route("/confirm_account_edit", methods = ["POST"])
+def apply_changes():
+
+     if not session.get("user_id"):
+          return redirect(url_for("load_home"))
+
+     user = User.query.filter_by(id = session.get("user_id")).first()
+     
+     if not user:
+          return redirect(url_for("load_home"))
+
+     username = request.form.get("username","")
+     email = request.form.get("email","")
+     password = request.form.get("password","")
+     cpassword = request.form.get("cpassword","")
+     phone_number = request.form.get("phone","")
+     website_url = request.form.get("website_url","")
+     user_type = request.form.get("user_type","")
+     country = request.form.get("country","")
+     city = request.form.get("city","")
+     street = request.form.get("street","")
+     
+     if not username or not email:
+          flash("Please fill in all the required fields")
+          return(redirect(url_for("load_edit_page")))
+     
+     if any(char.isspace() for char in username) or any(char.isspace() for char in email):
+          flash("No whitespaces allowed in required fields input")
+          return(redirect(url_for("load_edit_page")))
+     
+     if len(username) < 5  or len(email) < 5:
+          flash("All required fields inputs must have at least 5 characters")
+          return(redirect(url_for("load_edit_page")))
+          
+     if username != user.username and User.query.filter_by(username = username).first() :
+          flash("Account with entered username already registered" , "nuquser")
+          return(redirect(url_for("load_edit_page")))
+          
+     if email != user.email and User.query.filter_by(email = email).first() :
+          flash("Account with entered email already registered" , "nuqemail")
+          return(redirect(url_for("load_edit_page")))
+     
+     
+     if website_url:
+          if not validators.url(website_url):
+               flash("Website url not valid")
+               return(redirect(url_for("load_edit_page")))
+     
+     if user_type not in user_types:
+          flash("Invalid user type")
+          return(redirect(url_for("load_edit_page")))
+     
+     if country not in countries:
+          flash("Country not found")
+          return(redirect(url_for("load_edit_page")))
+     
+     if len(city) > 30:
+          flash("City name too long")
+          return(redirect(url_for("load_edit_page")))
+     
+     if len(street) > 80:
+          flash("Street adress too long")
+          return(redirect(url_for("load_edit_page")))
+     
+
+     # if the user made any changes that require the password confirm ( changed email or typed something in password field )
+     if email != user.email or password: 
+          if not check_password_hash( user.password_hash, cpassword ):
+               flash("Failed to confirm the password")
+               return(redirect(url_for("load_edit_page")))
+
+          if any(char.isspace() for char in email) or ( password and any(char.isspace() for char in password) ) or any(char.isspace() for char in cpassword):
+               flash("No whitespaces allowed in required fields input")
+               return(redirect(url_for("load_edit_page")))
+
+          if 0 < len(password) < 5 or len(email) < 5:
+               flash("All required fields inputs must have at least 5 characters")
+               return(redirect(url_for("load_edit_page")))
+
+     user.username = username
+     user.phone_number = phone_number
+     user.country = country
+     user.city = city
+     user.address = street
+     user.website_url = website_url
+     user.type = user_type
+     user.email = email
+
+     if password:
+          user.password_hash = generate_password_hash(password)
+
+     db.session.commit()
+
+     flash("Account edited succesfully")
+     return(redirect(url_for("load_edit_page")))
+          
 @app.route("/editlistingp")
 def load_edit_listing_page():
      if not session.get("user_id"):
