@@ -1,6 +1,6 @@
-from flask import Flask , render_template , session , request , flash , redirect , url_for 
+from flask import Flask , render_template , session , request , flash , redirect , url_for
 from listing_form import parse_listing_form, normalise_displacement, normalise_engine_power, normalise_fuel_efficiency, normalise_mileage
-from extensions import db , migrate
+from extensions import db , migrate, limiter
 from api import api
 from auth import auth
 import validators
@@ -33,6 +33,11 @@ app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
 mail = Mail(app)
 
 srz = itsdangerous.URLSafeTimedSerializer(secret_key = app.config["SECRET_KEY"])
+
+def email_key():
+    return request.form.get("email", "")
+
+limiter.init_app(app)
 
 from models import User, CarMake, CarModel, Listing, ListingImages,  Conversations, Messages, Favorites
 
@@ -164,6 +169,8 @@ def load_reset_password_page(token):
      return render_template("reset_password_page.html", token = token)
 
 @app.route('/sendresetemail', methods=["POST"])
+@limiter.limit("3 per 15 minutes")  # per-IP, protects your server/Gmail quota
+@limiter.limit("3 per 5 minutes", key_func=email_key)  # per-target-email, protects the victim's inbox
 def send_reset_email():
 
      email = request.form.get("email")
@@ -407,6 +414,7 @@ def image_is_valid(image):
 
       
 @app.route("/upload_listing", methods = ["POST"])
+@limiter.limit("10 per hour", key_func=lambda: f"user:{session.get('user_id')}")
 def make_listing():
 
      # SECURITY CHECK

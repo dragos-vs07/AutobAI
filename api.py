@@ -1,6 +1,6 @@
 from models import CarMake, CarModel, Listing, Favorites, User
 from flask import Blueprint, request, session, jsonify
-from extensions import db
+from extensions import db, limiter
 import os
 import json 
 import pandas as pd
@@ -21,6 +21,8 @@ with open(CATEGORIES_PATH) as f:
 from pandas.api.types import CategoricalDtype
 
 @api.route("/predict_price")
+@limiter.limit("10 per minute", exempt_when=lambda: "user_id" in session)
+@limiter.limit("30 per minute", override_defaults=True)
 def make_prediction():
 
     user_inputs = ["make","model","fuel_type","transmission","mileage","year","power","offer"]
