@@ -15,8 +15,11 @@
             {% for c in conversations %}
 
             <div class = "conversation" onclick="display_conversation( {{ c.conversation_id}}, '{{c.other_user.username }}' )">
-                    <h3>{{c.other_user.username}}</h3>
-                    <p id ="last_message_{{c.conversation_id}}">{{c.latest_message}}</p>
+                    <h3 class="username">{{c.other_user.username}}</h3>
+                    <div class="last_message_time_pair">
+                        <p id ="last_message_{{c.conversation_id}}" class="last_message">{{c.latest_message_content}}</p>
+                        <p class="time">{{c.latest_message_send_date}}</p>
+                    </div>
             </div>
 
             {% endfor %}

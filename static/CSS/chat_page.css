@@ -17,6 +17,7 @@ html , body{
     flex-direction: column;
     width: 300px;
     flex-shrink: 0; 
+    gap: 10px;
 }
 
 #messages_area{
@@ -26,11 +27,14 @@ html , body{
     height: 80vh;
     width: 20rem;
     padding: 15px;
+    overflow-y: auto;
 }
 .other_user{
+    background-color:#1e1411;
     text-align: left;
 }
 .current_user{
+    background-color:rgb(29, 29, 29);
     margin-left: auto;
 }
 #chat_area{
@@ -56,7 +60,6 @@ html , body{
 }
 .message{
     border-radius: 10px;
-    background-color:rgb(29, 29, 29);
     border: 1px solid #c9a227;
     color: white;
     padding: 6px;
@@ -68,4 +71,25 @@ html , body{
     color: white;
     padding: 10px;
     cursor: pointer;
+    background-color: rgb(35, 35, 35);
+    transition: background-color 0.2s ease;
+}
+.last_message_time_pair{
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+.time{
+    font-size: small;
+    margin: 0;
+}
+.last_message{
+    font-size: small;
+    margin: 0;
+}
+.username{
+    margin: 0;
+}
+.conversation:hover{
+    background-color: rgb(53, 51, 51);
 }

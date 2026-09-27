@@ -24,7 +24,6 @@ function display_conversation(conversation_id, otherUsername)
              message.classList.add("message");
 
             messagesArea.appendChild(message);
-            document.getElementById("top_username").textContent = otherUsername;
 
             }
         else
@@ -33,6 +32,7 @@ function display_conversation(conversation_id, otherUsername)
             message.textContent = "No messages yet";
             messagesArea.appendChild(message);
         }
+        document.getElementById("top_username").textContent = otherUsername;
     })
 }
 
@@ -42,17 +42,7 @@ document.getElementById("message_form").addEventListener("submit",function(e){
     const input = document.getElementById("message_input");
     const content = input.value.trim();
 
-
     if (!content || !currentConversationId) return;
-
-    const message = document.createElement("p");
-    message.textContent = content;
-
-   
-    message.classList.add("current_user");     
-    message.classList.add("message");
-             
-    document.getElementById("messages_area").appendChild(message);
 
     socket.emit("send_message", {
         conversation_id: currentConversationId,
@@ -66,16 +56,16 @@ document.getElementById("message_form").addEventListener("submit",function(e){
 socket.on("new_message", function(data) {
     if(data.conversation_id == currentConversationId)
     {
-        const message = document.createElement("div");
-        const username = document.createElement("p");
-        const content = document.createElement("p");
+        const message = document.createElement("p");
+        message.textContent = data.content;
 
-        username.textContent = data.sender_username;
-        content.textContent = data.content;
+        if (data.sender_id == userId)
+            message.classList.add("current_user");    
+        else 
+            message.classList.add("other_user");     
 
-        message.appendChild(username);
-        message.appendChild(content);
-
+        message.classList.add("message");
+             
         document.getElementById("messages_area").appendChild(message);
     }
     document.getElementById(`last_message_${data.conversation_id}`).textContent = data.content;

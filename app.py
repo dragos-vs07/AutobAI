@@ -71,7 +71,13 @@ def load_general_page():
                fuel_efficiency_list = [1.0,2.0,3.0,4.0,5.5,6.0,6.5,7,7.5,8,8.5,9,9.5,10.0,11.0,12.0,13.0,14.0,15.0,16.0,17.0,18.0,19.0,20.0],
                mileage_list = [0,1000,2000,3000,4000,5000,10000,15000,20000,30000,40000,50000,60000,70000,80000,90000,100000] + [ f"{i}" for i in range(150000,550000,50000)] + [ f"{i}" for i in range(600000,1100000,100000)]
                )
-                            
+
+def format_message_time(dt):
+    if dt.date() == datetime.utcnow().date():
+        return dt.strftime("%H:%M")       
+    else:
+        return dt.strftime("%d %b %Y")    
+                 
 @app.route("/chatp")
 def load_chat_page():
 
@@ -89,7 +95,8 @@ def load_chat_page():
                     {
                          "conversation_id": c.id,
                          "other_user": c.user2 if c.user_id_1 == session.get("user_id") else c.user1,
-                         "latest_message": c.messages[-1].content if c.messages else None
+                         "latest_message_content": c.messages[-1].content if c.messages else None,
+                         "latest_message_send_date": format_message_time(c.messages[-1].send_date) if c.messages else None
                     }
                     for c in Conversations.query.filter(
                          or_(
@@ -163,7 +170,6 @@ def handle_send_message(data):
         "conversation_id": conversation_id,
         "content": msg.content,
         "sender_id": msg.user_id,
-        "sender_username": msg.user.username,
         "send_date": msg.send_date.isoformat()
     }, room=f"conversation_{conversation_id}")
 
