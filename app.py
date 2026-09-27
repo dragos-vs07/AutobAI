@@ -1,20 +1,26 @@
 from flask import Flask , render_template , session , request , flash , redirect , url_for
+from flask_mail import Mail, Message
+from flask_socketio import SocketIO, join_room, emit
 from listing_form import parse_listing_form, normalise_displacement, normalise_engine_power, normalise_fuel_efficiency, normalise_mileage
 from extensions import db , migrate, limiter
 from api import api
 from auth import auth
 import validators
-from flask_mail import Mail, Message
 import itsdangerous
 import uuid
 import os
 from datetime import datetime
 from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions, user_types, countries
+from sqlalchemy import or_
+from werkzeug.security import generate_password_hash, check_password_hash
+
 # the unit table follows metric , thus as follows:
 #  price = euro, mileage = km, engine power = hp(PS),
 #  displacement = L, fuel efficiency = l/100km
 
 app = Flask(__name__)
+socketio = SocketIO(app)
+
 app.config.from_object("config.Config")
 app.config["MAX_CONTENT_LENGTH"] = 60 * 1024 * 1024
 
@@ -66,6 +72,33 @@ def load_general_page():
                mileage_list = [0,1000,2000,3000,4000,5000,10000,15000,20000,30000,40000,50000,60000,70000,80000,90000,100000] + [ f"{i}" for i in range(150000,550000,50000)] + [ f"{i}" for i in range(600000,1100000,100000)]
                )
                             
+@app.route("/chatp")
+def load_chat_page():
+
+     if not session.get("user_id"):
+         return redirect(url_for("load_home"))
+
+     user = User.query.filter_by(id = session.get("user_id")).first()
+
+     if not user:
+          flash("User not found") 
+          return redirect(url_for("load_general_page"))
+     
+     return render_template("chat_page.html",
+               conversations = [
+                    {
+                         "conversation_id": c.id,
+                         "other_user": c.user2 if c.user_id_1 == session.get("user_id") else c.user1,
+                         "latest_message": c.messages[-1].content if c.messages else None
+                    }
+                    for c in Conversations.query.filter(
+                         or_(
+                              Conversations.user_id_1 == session.get("user_id"),
+                              Conversations.user_id_2 == session.get("user_id")
+                         )
+                    ).all()
+               ]    
+               )
 
 @app.route("/viewlisting")
 def load_view_listing_page():
@@ -91,6 +124,50 @@ def load_view_listing_page():
           images = listing.images.filter_by(cover_image = False).all(),
           is_favourited = "True" if  Favorites.query.filter_by(listing_id=listing_id, user_id=session.get("user_id")).first() else "False"
           )
+
+@socketio.on("join")
+def handle_join(data):
+    conversation_id = data.get("conversation_id")
+    user_id = session.get("user_id")
+
+    conv = Conversations.query.filter_by(id=conversation_id).first()
+
+    if not conv or not user_id or user_id not in (conv.user_id_1, conv.user_id_2):
+        return  # not authorized to join this conversation's room
+
+    join_room(f"conversation_{conversation_id}")
+
+@socketio.on("send_message")
+def handle_send_message(data):
+     conversation_id = data.get("conversation_id")
+     content = data.get("content")
+
+     if not session.get("user_id"):
+          return
+
+     conv = Conversations.query.filter_by(id=conversation_id).first()
+
+     if not conv or session.get("user_id") not in (conv.user_id_1, conv.user_id_2):
+          return  
+
+     msg = Messages(
+          conversation_id = conversation_id,
+          user_id = session.get("user_id"),
+          content = data.get("content",'').strip(),
+     )
+
+     db.session.add(msg)
+     db.session.commit()
+
+     emit("new_message", {
+        "conversation_id": conversation_id,
+        "content": msg.content,
+        "sender_id": msg.user_id,
+        "sender_username": msg.user.username,
+        "send_date": msg.send_date.isoformat()
+    }, room=f"conversation_{conversation_id}")
+
+
 
 @app.route("/mklistp")
 def load_make_listing_page():
@@ -157,8 +234,6 @@ def load_edit_account_page():
                             user = user,
                             countries = countries,
                             user_types = user_types)
-
-from werkzeug.security import generate_password_hash, check_password_hash
 
 @app.route("/sendresetemailpage")
 def load_send_reset_email_password_page():
@@ -331,7 +406,41 @@ def apply_changes():
 
      flash("Account edited succesfully")
      return(redirect(url_for("load_edit_page")))
-          
+
+@app.route("/start_conversation/<int:seller_id>")
+def start_conversation(seller_id):
+     if not session.get("user_id"):
+               return redirect(url_for("load_home"))
+     
+     user = User.query.filter_by(id = session.get("user_id")).first()
+     
+     if not user:
+          return redirect(url_for("load_home"))
+
+     seller = User.query.filter_by(id = seller_id).first()
+
+     if not seller:
+          flash("Seller not found")
+          return redirect(url_for("load_general_page"))
+
+     if session.get("user_id") == seller_id:
+          flash("Cannot message oneself")
+          return redirect(url_for("load_general_page"))
+     
+     if Conversations.query.filter_by(user_id_1 = session.get("user_id"), user_id_2 = seller_id).first() or Conversations.query.filter_by(user_id_2 = session.get("user_id"), user_id_1 = seller_id).first():     # if conversation already exists, just redirect
+          return redirect(url_for("load_chat_page"))
+
+     conv = Conversations(
+          user_id_1 = session.get("user_id"),
+          user_id_2 = seller_id
+          )
+
+     db.session.add(conv)
+     db.session.commit()
+
+     return redirect(url_for("load_chat_page"))
+
+     
 @app.route("/editlistingp")
 def load_edit_listing_page():
      if not session.get("user_id"):
@@ -667,4 +776,4 @@ def confirm_edit(listing_id):
 
      
 if __name__ == "__main__":
-        app.run()
+     socketio.run(app)

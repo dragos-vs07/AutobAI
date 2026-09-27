@@ -1,0 +1,71 @@
+html , body{
+    color: white;
+    height: 100%;
+    margin: 0;
+}
+#content{
+    display: flex;
+    flex-direction: row;
+}
+#contacts_area{
+    height: 93vh;
+    padding: 3rem;
+    border-radius: 15px;
+    background-color: rgb(24, 23, 23);
+    border: 2px solid white;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    flex-shrink: 0; 
+}
+
+#messages_area{
+    border-radius: 15px;
+    background-color: rgb(24, 23, 23);
+    border: 2px solid white;
+    height: 80vh;
+    width: 20rem;
+    padding: 15px;
+}
+.other_user{
+    text-align: left;
+}
+.current_user{
+    margin-left: auto;
+}
+#chat_area{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1; 
+}
+.input_box{
+    border-radius: 10px;
+    background-color:rgb(29, 29, 29);
+    border: 1px solid #c9a227;
+    color: white;
+    padding-left: 6px;
+    padding: 6px;
+}
+#message_form{
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    position: fixed;
+    bottom: 17px;
+}
+.message{
+    border-radius: 10px;
+    background-color:rgb(29, 29, 29);
+    border: 1px solid #c9a227;
+    color: white;
+    padding: 6px;
+    width: fit-content;
+}
+.conversation{
+    border-radius: 10px;
+    border: 1px solid #c9a227;
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+}

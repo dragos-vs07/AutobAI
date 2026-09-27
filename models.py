@@ -91,7 +91,10 @@ class Conversations(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     user_id_1 = db.Column(db.Integer, db.ForeignKey('user.id') , nullable = False)
     user_id_2 = db.Column(db.Integer, db.ForeignKey('user.id') , nullable = False)
-    messages = db.relationship('Messages', backref='conversation', lazy=True)
+    messages = db.relationship('Messages', backref='conversation', lazy=True, order_by='Messages.send_date')
+
+    user1 = db.relationship('User', foreign_keys=[user_id_1])
+    user2 = db.relationship('User', foreign_keys=[user_id_2])
 
 class Messages(db.Model):
     __tablename__ = 'message'
@@ -100,3 +103,6 @@ class Messages(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id') , nullable = False)
     content = db.Column(db.Text , nullable = False)
     send_date = db.Column(db.DateTime, default=datetime.utcnow)
+
+
+

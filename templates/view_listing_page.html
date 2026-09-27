@@ -68,7 +68,7 @@
             <h2 style="padding-left: 15px;">{{brand}} {{model}}</h2>
 
             <div class="buttons_area">
-                <button id="contact_button" class="btn">Contact</button>
+                <button id="contact_button" class="btn" onclick="window.location.href='/start_conversation/{{listing.seller_id}}'">Contact</button>
                 <button id="evaluate_button" class="btn" type="button" onclick="evaluate_auto( {{listing.id}},{{listing.price}} )">Evaluate</button>
                 {% if session.get("user_id") and session.get("user_id") != listing.seller_id %}
                 <svg id="fav_icon" class = "fav_icon pic" onclick = "checkFavourite(event)" style="height: 2rem;" data-listing-id = "${listing.listing_id}" xmlns="http://www.w3.org/2000/svg" class = "pic" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" >

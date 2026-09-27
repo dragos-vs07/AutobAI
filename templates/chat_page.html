@@ -1,0 +1,54 @@
+{% extends "main_template.html" %}
+
+{% block head %}
+
+    <link rel = "stylesheet" href = "{{ url_for( 'static' , filename = 'CSS/chat_page.css') }}" >
+
+{% endblock %}
+
+{% block content %}
+
+    <div id="content">
+
+        <div id = "contacts_area">
+
+            {% for c in conversations %}
+
+            <div class = "conversation" onclick="display_conversation( {{ c.conversation_id}}, '{{c.other_user.username }}' )">
+                    <h3>{{c.other_user.username}}</h3>
+                    <p id ="last_message_{{c.conversation_id}}">{{c.latest_message}}</p>
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+        <div id = "chat_area">
+                
+            <h2 id="top_username" style="margin: 0;"></h2>
+
+            <div id="messages_area">
+
+            </div>
+
+            <form id="message_form">
+                <input type="text" id = "message_input" placeholder="Type a message..." class = "input_box">
+                <button type="submit" class="btn">Send</button>
+            </form>
+
+        </div>
+        
+
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js" integrity="sha512-q/dWJ3kcmjBLU4Qc47E4A9kTB4m3wuTY7vkFJDTZKjTs8jhyGQnaUrxa0Ytd0ssMZhbNua9hE+E7Qv1j+DyZwA==" crossorigin="anonymous"></script>
+    <script type="text/javascript" charset="utf-8">
+        var socket = io();
+        socket.on('connect', function() {
+            socket.emit('my event', {data: 'I\'m connected!'});
+        });
+    </script>
+    <script> const userId = {{ session.get("user_id") | tojson }}; </script>
+    <script src = "{{ url_for( 'static' , filename = 'JavaScript/chat_page.js')}}" ></script>
+
+{% endblock %}

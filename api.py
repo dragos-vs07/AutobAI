@@ -1,4 +1,4 @@
-from models import CarMake, CarModel, Listing, Favorites, User
+from models import CarMake, CarModel, Listing, Favorites, User, Conversations
 from flask import Blueprint, request, session, jsonify
 from extensions import db, limiter
 import os
@@ -12,6 +12,40 @@ api = Blueprint("api", __name__, url_prefix="/API")
 
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "ml", "autobay_price_model.txt")
 CATEGORIES_PATH = os.path.join(os.path.dirname(__file__), "ml", "categories.json")
+
+NUMERIC_COLUMNS = {
+    "power": "power", "year": "year", "price": "price",
+    "displacement": "displacement", "mileage": "mileage",
+    "fuel_ef": "fuel_efficiency",
+}
+
+CATEGORICAL_COLUMNS = {
+    "body_style": "body_style",
+    "fuel_type": "fuel_type",
+    "engine_config": "configuration",
+    "transmission": "transmission",
+    "drivetrain": "drivetrain",
+    "country" : "country"
+}
+
+KNOWN_VALUES = {
+    "body_style":    body_styles,             # use the same lists your template gets
+    "fuel_type":     fuel_types,
+    "engine_config": engine_configurations,
+    "transmission":  transmissions,
+    "drivetrain":    drivetrains,
+    "country": countries 
+}
+
+SORT_OPTIONS = {
+    "newest":       Listing.id.desc(),
+    "price_asc":    Listing.price.asc(),
+    "price_desc":   Listing.price.desc(),
+    "mileage_asc":  Listing.mileage.asc(),
+    "mileage_desc": Listing.mileage.desc(),
+    "year_desc":    Listing.year.desc(),
+    "year_asc":     Listing.year.asc(),
+}
 
 price_model = lgbm.Booster(model_file = MODEL_PATH)
 
@@ -161,39 +195,6 @@ def toggle_fav():
                 "favourited": not bool(row)
             }), 200
 
-NUMERIC_COLUMNS = {
-    "power": "power", "year": "year", "price": "price",
-    "displacement": "displacement", "mileage": "mileage",
-    "fuel_ef": "fuel_efficiency",
-}
-
-CATEGORICAL_COLUMNS = {
-    "body_style": "body_style",
-    "fuel_type": "fuel_type",
-    "engine_config": "configuration",
-    "transmission": "transmission",
-    "drivetrain": "drivetrain",
-    "country" : "country"
-}
-
-KNOWN_VALUES = {
-    "body_style":    body_styles,             # use the same lists your template gets
-    "fuel_type":     fuel_types,
-    "engine_config": engine_configurations,
-    "transmission":  transmissions,
-    "drivetrain":    drivetrains,
-    "country": countries 
-}
-
-SORT_OPTIONS = {
-    "newest":       Listing.id.desc(),
-    "price_asc":    Listing.price.asc(),
-    "price_desc":   Listing.price.desc(),
-    "mileage_asc":  Listing.mileage.asc(),
-    "mileage_desc": Listing.mileage.desc(),
-    "year_desc":    Listing.year.desc(),
-    "year_asc":     Listing.year.asc(),
-}
 
 def in_or_other(col, values, other_cond):
     known = [v for v in values if v != "Other"]
@@ -320,6 +321,16 @@ def find_listings():
     } for l in listings]
 }), 200
 
+@api.route("/messages/<int:conversation_id>")
+def get_messages(conversation_id):
+    c = Conversations.query.filter_by(id = conversation_id).first()
+    return jsonify([
+        {
+            "user_id": m.user_id,
+            "content": m.content,
+            "date": m.send_date.isoformat()
+        } 
+    for m in c.messages ])
 
 @api.route("/delete_listing/<int:listing_id>", methods=["POST"])
 def delete_listing(listing_id):
