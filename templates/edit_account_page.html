@@ -25,12 +25,12 @@
                     <br>
 
                     <h3>Phone number</h3>
-                    <input type="tel" value="{{user.phone_number}}" name="phone" class = "input_box" >
+                    <input type="tel" value="{{user.phone_number or ''}}" name="phone" class = "input_box" >
 
                     <br>
 
                     <h3>Website</h3>
-                    <input type="text" value="{{user.website_url}}" name="website_url" class = "input_box" placeholder="eg. https://mywebsite.com" >
+                    <input type="text" value="{{user.website_url or ''}}" name="website_url" class = "input_box" placeholder="eg. https://mywebsite.com" >
 
                     <br>
 
@@ -59,12 +59,12 @@
                             </select>
 
            
-                                <input type="text" value="{{user.city}}" name="city" class = "input_box" placeholder="City" style="text-align: center">
+                                <input type="text" value="{{user.city or ''}}" name="city" class = "input_box" placeholder="City" style="text-align: center">
                                 
 
                         </div>
 
-                        <input type="text" value="{{user.address}}" name="street" class = "input_box" placeholder="Street" style="text-align: center">
+                        <input type="text" value="{{user.address or ''}}" name="street" class = "input_box" placeholder="Street" style="text-align: center">
 
                     </div>
 

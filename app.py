@@ -1,15 +1,15 @@
 from flask import Flask , render_template , session , request , flash , redirect , url_for 
-from listing_form import parse_listing_form, normalise_currency, normalise_displacement, normalise_engine_power, normalise_fuel_efficiency, normalise_mileage
+from listing_form import parse_listing_form, normalise_displacement, normalise_engine_power, normalise_fuel_efficiency, normalise_mileage
 from extensions import db , migrate
 from api import api
 from auth import auth
-import requests
+import validators
+from flask_mail import Mail, Message
+import itsdangerous
 import uuid
-import math
 import os
 from datetime import datetime
 from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions, user_types, countries
-import validators
 # the unit table follows metric , thus as follows:
 #  price = euro, mileage = km, engine power = hp(PS),
 #  displacement = L, fuel efficiency = l/100km
@@ -23,6 +23,16 @@ migrate.init_app(app, db)
 
 app.register_blueprint(api)
 app.register_blueprint(auth)
+
+app.config["MAIL_SERVER"] = "smtp.gmail.com"
+app.config["MAIL_PORT"] = 587
+app.config["MAIL_USE_TLS"] = True
+app.config["MAIL_USERNAME"] = os.environ.get("MAIL_USERNAME")
+app.config["MAIL_PASSWORD"] = os.environ.get("MAIL_PASSWORD")
+
+mail = Mail(app)
+
+srz = itsdangerous.URLSafeTimedSerializer(secret_key = app.config["SECRET_KEY"])
 
 from models import User, CarMake, CarModel, Listing, ListingImages,  Conversations, Messages, Favorites
 
@@ -145,6 +155,80 @@ def load_edit_account_page():
 
 from werkzeug.security import generate_password_hash, check_password_hash
 
+@app.route("/sendresetemailpage")
+def load_send_reset_email_password_page():
+     return render_template("send_reset_email_password_page.html")
+
+@app.route("/resetpasswordpage/<string:token>")
+def load_reset_password_page(token):
+     return render_template("reset_password_page.html", token = token)
+
+@app.route('/sendresetemail', methods=["POST"])
+def send_reset_email():
+
+     email = request.form.get("email")
+
+     user = User.query.filter_by(email = email).first()
+
+     if not user:
+          return render_template("send_reset_email_password_page.html", sent=True)
+     
+     token = srz.dumps(user.id)
+     url = url_for("load_reset_password_page", _external = True, token = token ) 
+
+     # email sending
+
+     msg = Message(
+          subject = "Reset the password of your AutobAI account",
+          sender = app.config["MAIL_USERNAME"],
+          recipients = [email]
+     )
+
+     msg.body = f"Use this link to reset your password: {url}"
+     mail.send(msg)
+
+     return render_template("send_reset_email_password_page.html",sent=True)
+
+@app.route('/resetpassword/<string:token>', methods = ["POST"])
+def reset_password(token):
+
+     user_id = 0
+
+     try:
+          user_id = srz.loads(token,max_age=3600)
+     except:
+          flash("Token expired")
+          return(redirect(url_for("load_send_reset_email_password_page")))
+     
+     new_password = request.form.get("new_password","")
+     cnew_password = request.form.get("confirm_new_password","")
+
+     if  any(char.isspace() for char in new_password) or any(char.isspace() for char in cnew_password):
+          flash("No whitespaces allowed in the password")
+          return(redirect(url_for("load_reset_password_page", token = token)))
+     
+     if len(new_password) < 5 or len(cnew_password) < 5:
+          flash("password must have at least 5 characters")
+          return(redirect(url_for("load_reset_password_page", token = token)))
+
+     if new_password != cnew_password:
+          flash("Confirmed password not the same" , "dpass")
+          return(redirect(url_for("load_reset_password_page", token = token)))
+
+     user = User.query.filter_by(id = user_id).first()
+
+     if not user:
+          flash("User not found")
+          return(redirect(url_for("load_send_reset_email_password_page")))
+
+     user.password_hash = generate_password_hash(new_password)
+
+     db.session.commit()
+
+     flash("Password changed successfully")
+     return(redirect(url_for("load_login_page")))
+
+     
 @app.route("/confirm_account_edit", methods = ["POST"])
 def apply_changes():
 

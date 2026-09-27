@@ -25,6 +25,8 @@
 
                     <button type="submit" class ="btn">Login</button>
 
+                    <p onclick = "window.location.href = '/sendresetemailpage'" style="cursor: pointer;">Reset password</p>
+
                     {% for m in get_flashed_messages() %}
                         <br>
                         <p style="color:rgb(139, 0, 0)">{{m}}</p>
