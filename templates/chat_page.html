@@ -17,8 +17,15 @@
             <div class = "conversation" onclick="display_conversation( {{ c.conversation_id}}, '{{c.other_user.username }}' )">
                     <h3 class="username">{{c.other_user.username}}</h3>
                     <div class="last_message_time_pair">
-                        <p id ="last_message_{{c.conversation_id}}" class="last_message">{{c.latest_message_content}}</p>
-                        <p class="time">{{c.latest_message_send_date}}</p>
+
+                        {% if c.latest_message_content %}
+                            <p id ="last_message_{{c.conversation_id}}" class="last_message">{{c.latest_message_content}}</p>
+                        {% endif %}
+
+                        {% if c.latest_message_send_date %}
+                            <p class="time">{{c.latest_message_send_date}}</p>
+                        {% endif %}
+
                     </div>
             </div>
 
@@ -53,5 +60,6 @@
     </script>
     <script> const userId = {{ session.get("user_id") | tojson }}; </script>
     <script src = "{{ url_for( 'static' , filename = 'JavaScript/chat_page.js')}}" ></script>
+    <script>display_conversation( {{ conversations[0].conversation_id | tojson}}, {{conversations[0].other_user.username | tojson}} )</script>
 
 {% endblock %}

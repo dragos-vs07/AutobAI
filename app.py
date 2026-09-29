@@ -1,6 +1,6 @@
 from flask import Flask , render_template , session , request , flash , redirect , url_for
 from flask_mail import Mail, Message
-from flask_socketio import SocketIO, join_room, emit
+from flask_socketio import SocketIO, join_room, leave_room, emit
 from listing_form import parse_listing_form, normalise_displacement, normalise_engine_power, normalise_fuel_efficiency, normalise_mileage
 from extensions import db , migrate, limiter
 from api import api
@@ -144,6 +144,18 @@ def handle_join(data):
 
     join_room(f"conversation_{conversation_id}")
 
+@socketio.on("leave")
+def handle_leave(data):
+     conversation_id = data.get("conversation_id")
+     user_id = session.get("user_id")
+     
+     conv = Conversations.query.filter_by(id=conversation_id).first()
+
+     if not conv or not user_id or user_id not in (conv.user_id_1, conv.user_id_2):
+          return
+     
+     leave_room(f"conversation_{conversation_id}")
+     
 @socketio.on("send_message")
 def handle_send_message(data):
      conversation_id = data.get("conversation_id")
@@ -173,7 +185,38 @@ def handle_send_message(data):
         "send_date": msg.send_date.isoformat()
     }, room=f"conversation_{conversation_id}")
 
+@app.route("/start_conversation/<int:seller_id>")
+def start_conversation(seller_id):
+     if not session.get("user_id"):
+          return redirect(url_for("load_home"))
+     
+     user = User.query.filter_by(id = session.get("user_id")).first()
+     
+     if not user:
+          return redirect(url_for("load_home"))
 
+     seller = User.query.filter_by(id = seller_id).first()
+
+     if not seller:
+          flash("Seller not found")
+          return redirect(url_for("load_general_page"))
+
+     if session.get("user_id") == seller_id:
+          flash("Cannot message oneself")
+          return redirect(url_for("load_general_page"))
+     
+     if Conversations.query.filter_by(user_id_1 = session.get("user_id"), user_id_2 = seller_id).first() or Conversations.query.filter_by(user_id_2 = session.get("user_id"), user_id_1 = seller_id).first():     # if conversation already exists, just redirect
+          return redirect(url_for("load_chat_page"))
+
+     conv = Conversations(
+          user_id_1 = session.get("user_id"),
+          user_id_2 = seller_id
+          )
+
+     db.session.add(conv)
+     db.session.commit()
+
+     return redirect(url_for("load_chat_page"))
 
 @app.route("/mklistp")
 def load_make_listing_page():
@@ -412,40 +455,6 @@ def apply_changes():
 
      flash("Account edited succesfully")
      return(redirect(url_for("load_edit_page")))
-
-@app.route("/start_conversation/<int:seller_id>")
-def start_conversation(seller_id):
-     if not session.get("user_id"):
-               return redirect(url_for("load_home"))
-     
-     user = User.query.filter_by(id = session.get("user_id")).first()
-     
-     if not user:
-          return redirect(url_for("load_home"))
-
-     seller = User.query.filter_by(id = seller_id).first()
-
-     if not seller:
-          flash("Seller not found")
-          return redirect(url_for("load_general_page"))
-
-     if session.get("user_id") == seller_id:
-          flash("Cannot message oneself")
-          return redirect(url_for("load_general_page"))
-     
-     if Conversations.query.filter_by(user_id_1 = session.get("user_id"), user_id_2 = seller_id).first() or Conversations.query.filter_by(user_id_2 = session.get("user_id"), user_id_1 = seller_id).first():     # if conversation already exists, just redirect
-          return redirect(url_for("load_chat_page"))
-
-     conv = Conversations(
-          user_id_1 = session.get("user_id"),
-          user_id_2 = seller_id
-          )
-
-     db.session.add(conv)
-     db.session.commit()
-
-     return redirect(url_for("load_chat_page"))
-
      
 @app.route("/editlistingp")
 def load_edit_listing_page():

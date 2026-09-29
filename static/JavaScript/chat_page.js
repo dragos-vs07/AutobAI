@@ -4,6 +4,10 @@ function display_conversation(conversation_id, otherUsername)
 {
     const messagesArea = document.getElementById("messages_area");
     messagesArea.innerHTML = '';
+
+    if(currentConversationId)
+        socket.emit("leave", {conversation_id: currentConversationId});
+
     currentConversationId = conversation_id;
 
     socket.emit("join", { conversation_id: conversation_id });
