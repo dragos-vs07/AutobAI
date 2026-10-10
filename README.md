@@ -18,9 +18,9 @@ Built with Python, Flask, PostgreSQL, Socket.IO and LightGBM.
 | Model | LightGBM regression |
 | Training data | AutoScout24 Germany listings (2011–2021 asking prices), makes with at least 20 listings |
 | Inputs | make, model, fuel, gearbox, mileage, age, horsepower, offer type |
-| MAE | **€1,718** |
-| RMSE | **€6,118** |
-| R² | **0.857** |
+| MAE | **€1,631** |
+| RMSE | **€4,361** |
+| R² | **0.927** |
 
 Metrics were measured on a held-out 20% test set (`random_state=42`). The typical error is about €1,700, while the larger RMSE shows that errors on expensive, rarer cars are bigger. Estimates are available for the makes and models seen in training; other cars are declined instead of guessed.
 
