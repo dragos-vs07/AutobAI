@@ -7,10 +7,11 @@ import pandas as pd
 import lightgbm as lgbm
 from datetime import datetime
 from constants import body_styles, engine_configurations, fuel_types, drivetrains, transmissions, countries
+from numpy import expm1
 
 api = Blueprint("api", __name__, url_prefix="/API")
 
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "ml", "autobay_price_model.txt")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "ml", "autobAI_price_model.txt")
 CATEGORIES_PATH = os.path.join(os.path.dirname(__file__), "ml", "categories.json")
 
 NUMERIC_COLUMNS = {
@@ -129,7 +130,7 @@ def make_prediction():
     prediction = price_model.predict(X)
 
     return jsonify({
-        "predicted_price": int(prediction[0])
+        "predicted_price": int(expm1(prediction[0]))
     }), 200
 
 @api.route("/get_models/<string:brand>")
