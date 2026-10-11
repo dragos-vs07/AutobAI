@@ -21,9 +21,22 @@
                 <button type="button" class="pag_btn" id = "next_page_btn" onclick="nextpage()" > > </button>
             </div>
 
-        <script>const userId = {{ user_id | tojson }};</script>
-        <script src = "{{ url_for( 'static' , filename = 'JavaScript/my_listings_page.js')}}" ></script>
-        
-        
     </div>
+
+    <div id="modal_shadow">
+        <div id="sold_modal_box" style="display:none;" class="modal_box">
+                <p>Mark this listing as sold?</p>
+                <p>This action cannot be undone, the listing will be archived permanently</p>
+                <input type="number" placeholder="Final sold price" id="sold_price_input" class ="input_box">
+                <br>
+                <div style="display:flex;flex-direction:row;gap:3px;">
+                    <button type="button" onclick="mark_listing_sold()" class="btn">Confirm</button>
+                    <button type="button"onclick="close_modal()" class="btn">Cancel</button>
+                </div>
+        </div>
+    </div>
+
+    <script>const userId = {{ user_id | tojson }};</script>
+    <script src = "{{ url_for( 'static' , filename = 'JavaScript/my_listings_page.js')}}" ></script>
+
 {% endblock %}

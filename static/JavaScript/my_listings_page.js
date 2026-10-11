@@ -2,6 +2,7 @@
 const LPP = 5;
 let currentPage = 1;
 let currentTotal = 0;
+let markAsSold = null;
 
 function updateButtons()
 {
@@ -10,7 +11,38 @@ function updateButtons()
     document.getElementById("next_page_btn").classList.toggle("hide_button", currentPage >= totalPages);
     document.getElementById("current_page").textContent = currentPage;
 }
+function displayModal()
+{
+   document.getElementById("sold_modal_box").style="display:flex;flex-direction:column;align-items: center;";
+   document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.7);display: flex;align-items: center;justify-content: center;z-index: 1000;"
+}
+function close_modal()
+{
+    document.getElementById("sold_modal_box").style="display:none;";
+    document.getElementById("modal_shadow").style="background: rgba(0, 0, 0, 0.0);display: none;"
+}
+function mark_listing_sold()
+{
+    sellPrice = document.getElementById("sold_price_input").value;
 
+    fetch(`/API/mark_listing_sold/${markAsSold}/${sellPrice}`, { method: "POST"})
+    .then( response => {
+
+        if(response.ok)
+        {
+            const soldListing = document.getElementById(`${markAsSold}`);
+            soldListing.classList.add("sold_listing");
+            close_modal();
+        }
+        else
+        {
+            response.json().then( data => {
+                alert(`Marking the listing as sold failed, ${data.message}`)
+            })
+        }
+        
+    })
+}
 function getAndDisplayListings()
 {
 
@@ -24,6 +56,8 @@ function getAndDisplayListings()
         for (const l of data.listings )
         {
             const listing = document.createElement("div");
+            listing.id = l.listing_id;
+
             listing.classList.add("listing");
 
             const img = document.createElement("img");
@@ -79,19 +113,43 @@ function getAndDisplayListings()
             textArea.appendChild(info1);
             textArea.appendChild(info2);
             
+            const btnsDiv = document.createElement("div");
+
             const editBtn = document.createElement("button");
             editBtn.innerHTML = "Edit";
             editBtn.classList.add("btn");
             editBtn.addEventListener("click", ()=>{
                 window.location.href = `/editlistingp?listing_id=${l.listing_id}`;
             })
-            textArea.appendChild(document.createElement("br"))
-            textArea.appendChild(editBtn)
 
+            textArea.appendChild(document.createElement("br"));
+            btnsDiv.appendChild(editBtn);
+
+            const soldBtn = document.createElement("button");
+            soldBtn.innerHTML = "Mark as sold";
+            soldBtn.classList.add("btn");
+
+            soldBtn.addEventListener("click",()=>{
+                displayModal();
+                markAsSold = l.listing_id;
+            })
+
+            btnsDiv.appendChild(soldBtn);
+            btnsDiv.style="display:flex;gap:5px;flex-direction:row;"
+            textArea.appendChild(btnsDiv);
             listing.appendChild(textArea);
 
+            if(l.sell_price)
+            {
+                const sold_price = document.createElement("p");
+                sold_price.textContent=l.sell_price;
+                listing.appendChild(sold_price);
+                listing.classList.add("sold_listing");
+            }
+            
             document.getElementById("listings_area").appendChild(listing);
         }
+
         if(data.listings.length == 0)
         {
                 const message = document.createElement("p");
@@ -99,6 +157,7 @@ function getAndDisplayListings()
                 message.innerText = "You published no listings";
                 document.getElementById("listings_area").appendChild(message);
         }
+
     });
 }
 

@@ -638,8 +638,11 @@ def confirm_edit(listing_id):
      listing = Listing.query.filter_by(id=listing_id).first()
 
      if not session.get("user_id") or not listing:
-           return redirect(url_for("load_home"))
+          return redirect(url_for("load_home"))
 
+     if listing.sell_date:    # listing marked as sold, no editing allowed anymore
+          return redirect(url_for("load_home"))
+     
      if listing.seller_id != session.get("user_id"):
           return redirect(url_for("load_home"))
 

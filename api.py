@@ -206,6 +206,31 @@ def in_or_other(col, values, other_cond):
         conds.append(other_cond)          # the "Other" condition passed in
     return db.or_(*conds)
 
+@api.route("/mark_listing_sold/<int:listing_id>/<int:sell_price>", methods=["POST"])
+def mark_listing_as_sold(listing_id,sell_price):
+
+    sold_listing = Listing.query.filter_by(id=listing_id).first()
+
+    if not sold_listing:
+        return jsonify({
+            "message": "Listing does not exist"
+        }), 404
+
+    if not sell_price:
+        return jsonify({
+            "message": "Please provide a final selling price"
+        }), 400
+
+    sold_listing.sell_price = sell_price
+    sold_listing.sell_date = datetime.today()
+    sold_listing.status = "private"
+
+    db.session.commit()
+    
+    return jsonify({
+        "status": "marked as sold successfully"
+    }), 200
+
 @api.route("/get_listings")
 def find_listings():
     page = max(1, request.args.get("page", 1, type=int))
@@ -318,6 +343,7 @@ def find_listings():
         "cover_img_path": l.images.filter_by(cover_image=True).first().image_path,
         "views": l.views,
         "favorites": Favorites.query.filter_by(listing_id=l.id).count(),
+        "sell_price": l.sell_price,
         "is_favourite": "True" if session.get("user_id") and Favorites.query.filter_by(listing_id=l.id, user_id=session.get("user_id")).first() else "False"
     } for l in listings]
 }), 200

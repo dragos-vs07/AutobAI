@@ -62,6 +62,32 @@ body{
     transition: background-color 0.3s ease;
     background-color: rgb(68, 65, 65);
 }
+.modal_box{
+    background-color:rgb(24, 23, 23);
+    border: 2px  solid  #c9a227;
+    border-radius: 15px;
+    padding: 15px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    color: white;
+}
+#modal_shadow{
+    position: fixed;
+    inset: 0;                      
+    display: none;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+}
+.sold_listing{
+    filter: blur(4px) grayscale(0.6);
+    pointer-events: none;             
+    user-select: none;
+}
+.show_modal{
+    display: block;
+}
 @media(max-width:830px){
     #listings_area{
         margin-left: 80px;
